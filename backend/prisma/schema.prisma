@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Group {
+  id        Int        @id @default(autoincrement())
+  name      String
+  category  String // milking / non-milking
+  animals   Animal[]
+  rations   Ration[]
+  leftovers Leftover[]
+  milks     Milk[]
+}
+
+model Animal {
+  id           Int      @id @default(autoincrement())
+  animalNumber String   @unique
+  groupId      Int
+  details      Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  group Group @relation(fields: [groupId], references: [id])
+}
+
+model Ration {
+  id       Int      @id @default(autoincrement())
+  groupId  Int
+  date     DateTime @default(now())
+  rationKg Float
+
+  group Group @relation(fields: [groupId], references: [id])
+}
+
+model Leftover {
+  id         Int      @id @default(autoincrement())
+  groupId    Int
+  date       DateTime @default(now())
+  leftoverKg Float
+
+  group Group @relation(fields: [groupId], references: [id])
+}
+
+model Milk {
+  id      Int      @id @default(autoincrement())
+  groupId Int
+  shift   String // morning / afternoon / evening
+  milkLit Float
+  date    DateTime @default(now())
+
+  group Group @relation(fields: [groupId], references: [id])
+}
+
+model Ingredient {
+  id            Int      @id @default(autoincrement())
+  name          String   @unique
+  pricePerKg    Float
+  dryMatterPerc Float
+  stockKg       Float
+  createdAt     DateTime @default(now())
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String?
+  role      String   @default("user")
+  createdAt DateTime @default(now())
+}
