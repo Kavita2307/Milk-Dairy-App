@@ -8,24 +8,27 @@ datasource db {
 }
 
 model Group {
-  id        Int        @id @default(autoincrement())
-  name      String
-  category  String // milking / non-milking
-  animals   Animal[]
-  rations   Ration[]
-  leftovers Leftover[]
-  milks     Milk[]
+  id       Int        @id @default(autoincrement())
+  name     String
+  type     String // "milking" / "non-milking"
+  userId   Int
+  user     User       @relation(fields: [userId], references: [id])
+  animals  Animal[]
+  rations  Ration[]
+  leftover Leftover[]
+  milks    Milk[]
 }
 
 model Animal {
   id           Int      @id @default(autoincrement())
-  animalNumber String   @unique
+  animalNumber String
+  userId       Int
   groupId      Int
   details      Json?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-
-  group Group @relation(fields: [groupId], references: [id])
+  user         User     @relation(fields: [userId], references: [id])
+  group        Group    @relation(fields: [groupId], references: [id])
 }
 
 model Ration {
@@ -66,10 +69,10 @@ model Ingredient {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  name      String?
-  role      String   @default("user")
-  createdAt DateTime @default(now())
+  id       Int      @id @default(autoincrement())
+  name     String?
+  email    String   @unique
+  password String
+  animals  Animal[]
+  groups   Group[]
 }

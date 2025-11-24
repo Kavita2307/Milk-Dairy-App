@@ -7,8 +7,9 @@ import {
   StyleSheet,
   FlatList,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+
 type IconName = ComponentProps<typeof MaterialCommunityIcons>["name"];
 
 const menuItems: {
@@ -17,28 +18,20 @@ const menuItems: {
   icon: IconName;
   route: string;
 }[] = [
-  { id: "0", title: "Herd Info", icon: "cow", route: "Herd Info" },
-  { id: "1", title: "Loading", icon: "tractor", route: "Loading" },
+  { id: "0", title: "Milking Group", icon: "cow", route: "MilkingGroups" },
   {
-    id: "2",
-    title: "Mix Precision",
-    icon: "chart-line",
-    route: "Mix Precision",
+    id: "1",
+    title: "Non-Milking Group",
+    icon: "cow-off",
+    route: "NonMilkingGroups",
   },
-  { id: "3", title: "Rations", icon: "file-document", route: "Rations" },
-  { id: "4", title: "Leftover", icon: "delete", route: "Leftover" },
-  { id: "5", title: "DM Correction", icon: "tune", route: "DM Correction" },
-  { id: "6", title: "Stock", icon: "cart", route: "Stock" },
-  { id: "7", title: "Display", icon: "exit-to-app", route: "Display" },
 ];
-
-export default function DashboardScreen() {
+export default function HerdInfoScreen() {
   const navigation = useNavigation<any>();
 
   return (
-    <View style={styles.screen}>
-      <Text style={styles.title}>Dashboard</Text>
-
+    <View style={styles.container}>
+      <Text style={styles.title}>Herd Information</Text>
       <FlatList
         data={menuItems}
         keyExtractor={(item) => item.id}
@@ -60,23 +53,52 @@ export default function DashboardScreen() {
           </TouchableOpacity>
         )}
       />
+
+      {/* Milking */}
+      {/* <TouchableOpacity
+        onPress={() => navigation.navigate("MilkingGroup")}
+        style={styles.card}
+      >
+        <Text style={styles.cardText}>Milking Group</Text>
+        <Feather name="chevron-right" size={26} color="#0ea5e9" />
+      </TouchableOpacity> */}
+
+      {/* Non Milking */}
+      {/* <TouchableOpacity
+        onPress={() => navigation.navigate("NonMilkingGroup")}
+        style={styles.card}
+      >
+        <Text style={styles.cardText}>Non-Milking Group</Text>
+        <Feather name="chevron-right" size={26} color="#0ea5e9" />
+      </TouchableOpacity> */}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
+  container: {
     flex: 1,
     backgroundColor: "#f3f4f6",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    padding: 20,
   },
   title: {
     fontSize: 24,
     fontWeight: "700",
     color: "#1f2937",
-    textAlign: "center",
+    marginBottom: 24,
+  },
+  card: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 12,
     marginBottom: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 1,
   },
   menuItem: {
     flexDirection: "row",
@@ -97,13 +119,10 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#111827",
   },
-  container: { flex: 1, padding: 20, justifyContent: "center" },
-  heading: { fontSize: 28, marginBottom: 20, textAlign: "center" },
-  button: {
-    marginVertical: 10,
-    backgroundColor: "#2d6cdf",
-    padding: 15,
-    borderRadius: 10,
+  cardText: {
+    flex: 1,
+    fontSize: 18,
+    color: "#1f2937",
+    fontWeight: "600",
   },
-  btnText: { fontSize: 20, color: "#fff", textAlign: "center" },
 });

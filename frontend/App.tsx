@@ -15,7 +15,8 @@ function Root() {
     );
   }
 
-  return user ? <AppNavigator /> : <AuthStack />;
+  //  return user ? <AppNavigator /> : <AuthStack />;
+  return <AppNavigator />;
 }
 
 export default function App() {

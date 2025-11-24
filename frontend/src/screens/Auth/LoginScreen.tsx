@@ -36,7 +36,9 @@ export default function LoginScreen() {
       <Button title="Login" onPress={submit} />
 
       {/* Register Link */}
-      <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+      <TouchableOpacity
+        onPress={() => (navigation as any).navigate("Register")}
+      >
         <Text style={{ color: "blue", marginTop: 20, textAlign: "center" }}>
           Register here
         </Text>
