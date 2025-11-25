@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useAuth } from "@/src/context/AuthContext";
 type IconName = ComponentProps<typeof MaterialCommunityIcons>["name"];
 
 const menuItems: {
@@ -18,12 +19,17 @@ const menuItems: {
   route: string;
 }[] = [
   { id: "0", title: "Herd Info", icon: "cow", route: "Herd Info" },
-  { id: "1", title: "Loading", icon: "tractor", route: "Loading" },
+  {
+    id: "1",
+    title: "Milking Groups",
+    icon: "cow",
+    route: "MilkingGroups",
+  },
   {
     id: "2",
-    title: "Mix Precision",
-    icon: "chart-line",
-    route: "Mix Precision",
+    title: "Non-Milking Groups",
+    icon: "cow-off",
+    route: "Non-MilkingGroups",
   },
   { id: "3", title: "Rations", icon: "file-document", route: "Rations" },
   { id: "4", title: "Leftover", icon: "delete", route: "Leftover" },
@@ -34,6 +40,7 @@ const menuItems: {
 
 export default function DashboardScreen() {
   const navigation = useNavigation<any>();
+  const { user } = useAuth();
 
   return (
     <View style={styles.screen}>
@@ -44,7 +51,9 @@ export default function DashboardScreen() {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={() => navigation.navigate(item.route)}
+            onPress={() =>
+              navigation.navigate(item.route, { userId: user?.id })
+            }
             style={styles.menuItem}
           >
             <MaterialCommunityIcons

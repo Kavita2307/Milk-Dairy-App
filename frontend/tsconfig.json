@@ -4,13 +4,8 @@
     "strict": true,
     "jsx": "react",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     }
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx"
-  ]
+  "include": ["**/*.ts", "**/*.tsx", "src/screens/MilkingGroup/MilkingGrouptsx"]
 }

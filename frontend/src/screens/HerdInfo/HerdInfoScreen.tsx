@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { useAuth } from "../../context/AuthContext";
 
 type IconName = ComponentProps<typeof MaterialCommunityIcons>["name"];
 
@@ -18,17 +19,19 @@ const menuItems: {
   icon: IconName;
   route: string;
 }[] = [
-  { id: "0", title: "Milking Group", icon: "cow", route: "MilkingGroups" },
+  { id: "0", title: "Milking Group", icon: "cow", route: "MilkingHerd" },
   {
     id: "1",
     title: "Non-Milking Group",
     icon: "cow-off",
-    route: "NonMilkingGroups",
+    route: "NonMilkingHerd",
   },
 ];
 export default function HerdInfoScreen() {
   const navigation = useNavigation<any>();
+  const { user } = useAuth();
 
+  console.log("herdinfoScreen userId:", user?.id);
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Herd Information</Text>
@@ -37,7 +40,9 @@ export default function HerdInfoScreen() {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={() => navigation.navigate(item.route)}
+            onPress={() =>
+              navigation.navigate(item.route, { userId: user?.id })
+            }
             style={styles.menuItem}
           >
             <MaterialCommunityIcons

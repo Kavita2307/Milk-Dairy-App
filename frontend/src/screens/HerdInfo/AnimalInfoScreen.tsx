@@ -14,9 +14,10 @@ export default function AnimalDetailsScreen() {
   const nav = useNavigation<any>();
   const route = useRoute<any>();
   const { groupId } = route.params;
-
+  const { userId } = route.params;
+  console.log("animalNumberInfoScreen:", animalNumber, groupId, userId);
   const save = () => {
-    API.post("/animals", { animalNumber, groupId }).then(() => {
+    API.post("/animals", { animalNumber, groupId, userId }).then(() => {
       alert("Saved");
       nav.goBack();
     });
@@ -24,18 +25,17 @@ export default function AnimalDetailsScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Add Animal</Text>
+      <Text style={styles.title}>Add Animal Details</Text>
 
-      <Text style={styles.label}>Animal Number</Text>
+      <Text style={styles.label}>Animal Age</Text>
       <TextInput
         value={animalNumber}
         onChangeText={setAnimalNumber}
         style={styles.input}
-        keyboardType="numeric"
       />
 
       <TouchableOpacity onPress={save} style={styles.button}>
-        <Text style={styles.buttonText}>Save Animal</Text>
+        <Text style={styles.buttonText}>Save Details</Text>
       </TouchableOpacity>
     </View>
   );

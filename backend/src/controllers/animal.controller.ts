@@ -28,14 +28,10 @@ export const addAnimal = async (
   res: Response
 ) => {
   try {
-    const { animalNumber, groupId } = req.body;
-
+    const { animalNumber, groupId, userId } = req.body;
+    console.log("animal: ", req.body);
     const animal = await prisma.animal.create({
-      data: {
-        animalNumber,
-        groupId: Number(groupId),
-        userId: req.user.userId,
-      },
+      data: req.body,
     });
 
     res.json(animal);
