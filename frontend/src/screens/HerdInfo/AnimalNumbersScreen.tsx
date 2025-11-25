@@ -190,7 +190,11 @@ export default function AnimalNumbersScreen() {
               key={item.id}
               style={styles.groupRow}
               onPress={() =>
-                nav.navigate("AnimalInfo", { groupId: item.id, userId })
+                nav.navigate("AnimalInfo", {
+                  animalNumber: item.animalNumber,
+                  groupId: groupId,
+                  userId,
+                })
               }
             >
               <Text style={styles.itemText}>Animal #{item.animalNumber}</Text>

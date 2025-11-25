@@ -10,14 +10,26 @@ import { API } from "../../api/api";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
 export default function AnimalDetailsScreen() {
-  const [animalNumber, setAnimalNumber] = useState("");
+  const [animalAge, setanimalAge] = useState("");
   const nav = useNavigation<any>();
   const route = useRoute<any>();
-  const { groupId } = route.params;
+  const { groupId, animalNumber } = route.params;
   const { userId } = route.params;
-  console.log("animalNumberInfoScreen:", animalNumber, groupId, userId);
+  // const save = () => {
+  //   API.post("/animals", { animalNumber, groupId, userId, animalAge }).then(
+  //     () => {
+  //       alert("Saved");
+  //       nav.goBack();
+  //     }
+  //   );
+  // };
   const save = () => {
-    API.post("/animals", { animalNumber, groupId, userId }).then(() => {
+    API.put("/animals/update-age", {
+      animalNumber,
+      groupId,
+      userId,
+      age: animalAge,
+    }).then(() => {
       alert("Saved");
       nav.goBack();
     });
@@ -29,8 +41,8 @@ export default function AnimalDetailsScreen() {
 
       <Text style={styles.label}>Animal Age</Text>
       <TextInput
-        value={animalNumber}
-        onChangeText={setAnimalNumber}
+        value={animalAge}
+        onChangeText={setanimalAge}
         style={styles.input}
       />
 

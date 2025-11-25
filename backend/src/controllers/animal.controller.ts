@@ -56,3 +56,43 @@ export const getAnimals = async (
     res.status(500).json({ error: "Error fetching animals" });
   }
 };
+
+export const updateAnimalAge = async (
+  req: Request & { user?: any },
+  res: Response
+) => {
+  const { animalNumber, groupId, userId, age } = req.body;
+
+  try {
+    // 1. Find the existing animal record
+    const animal = await prisma.animal.findFirst({
+      where: { animalNumber, groupId, userId },
+    });
+
+    if (!animal) {
+      return res.status(404).json({ error: "Animal not found" });
+    }
+
+    // 2. Merge new age into existing JSON details
+    const updatedDetails = {
+      ...(typeof animal.details === "object" && animal.details !== null
+        ? animal.details
+        : {}),
+      age: age,
+    };
+
+    // 3. Update in DB
+    const updatedAnimal = await prisma.animal.update({
+      where: { id: animal.id },
+      data: { details: updatedDetails },
+    });
+
+    return res.json({
+      message: "Animal age updated successfully",
+      data: updatedAnimal,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: "Failed to update animal age" });
+  }
+};

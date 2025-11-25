@@ -9,7 +9,7 @@ import {
 import { Feather } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
-export default function NonMilkingGroupScreen() {
+export default function NonMilkGroupInfoScreen() {
   const nav = useNavigation<any>();
   const route = useRoute<any>();
   const { userId } = route.params;

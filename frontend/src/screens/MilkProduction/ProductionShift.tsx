@@ -9,34 +9,34 @@ import {
 import { Feather } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
-export default function MilkGroupInfoScreen() {
+export default function MilkingGroupScreen() {
   const nav = useNavigation<any>();
   const route = useRoute<any>();
   const { userId } = route.params;
   const menuItems = [
     {
       id: 1,
-      title: "Ration",
-      icon: "full-milk-can",
-      route: "Ration",
+      title: "Shift 1 (Morning)",
+      icon: "sunrise",
+      route: "MilkProduction",
     },
     {
       id: 2,
-      title: "Leftover",
-      icon: "3/4full-milk-can",
-      route: "Leftover",
+      title: "Shift 2 (Afternoon)",
+      icon: "sun",
+      route: "MilkProduction",
     },
     {
       id: 3,
-      title: "Milk Production",
-      icon: "half-milk-can",
-      route: "ProductionShift",
+      title: "Shift 3 (Evening)",
+      icon: "sunset",
+      route: "MilkProduction",
     },
   ];
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Milking Groups Info</Text>
+      <Text style={styles.title}>Production Shifts</Text>
       <FlatList
         data={menuItems}
         keyExtractor={(item) => item.id.toString()}

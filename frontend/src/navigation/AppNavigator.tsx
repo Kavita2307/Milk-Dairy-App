@@ -69,8 +69,9 @@ import LeftoverScreen from "../screens/Leftover/LeftoverScreen";
 import DashboardScreen from "../screens/Dashboard/DashboardScreen";
 import RationScreen from "../screens/Ration/RationScreen";
 import MilkGroupInfoScreen from "../screens/MilkingGroup/MilkGroupInfo";
-import MilkProductionScreen from "../screens/MilkingGroup/MilkProductionScreen";
+import MilkProductionScreen from "../screens/MilkProduction/MilkProductionScreen";
 import MilkingGroupScreen from "../screens/MilkingGroup/MilkingGroup";
+import ProductionShiftScreen from "../screens/MilkProduction/ProductionShift";
 import NonMilkingGroupScreen from "../screens/Non-MilkingGroup/Non-MilkingGroup";
 import NonMilkGroupInfoScreen from "../screens/Non-MilkingGroup/Non-MilkGroupInfo";
 
@@ -95,6 +96,7 @@ export default function AppNavigator() {
       <Stack.Screen name="Dashboard" component={DashboardScreen} />
       <Stack.Screen name="MilkingGroups" component={MilkingGroupScreen} />
       <Stack.Screen name="MilkGroupInfo" component={MilkGroupInfoScreen} />
+      <Stack.Screen name="ProductionShift" component={ProductionShiftScreen} />
       <Stack.Screen
         name="Non-MilkingGroups"
         component={NonMilkingGroupScreen}

@@ -31,7 +31,7 @@ const menuItems: {
     icon: "cow-off",
     route: "Non-MilkingGroups",
   },
-  { id: "3", title: "Rations", icon: "file-document", route: "Rations" },
+  { id: "3", title: "Ingredients store", icon: "cart", route: "Ingredients" },
   { id: "4", title: "Leftover", icon: "delete", route: "Leftover" },
   { id: "5", title: "DM Correction", icon: "tune", route: "DM Correction" },
   { id: "6", title: "Stock", icon: "cart", route: "Stock" },
