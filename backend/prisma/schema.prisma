@@ -60,13 +60,37 @@ model Milk {
 }
 
 model Ingredient {
-  id            Int      @id @default(autoincrement())
-  name          String   @unique
-  pricePerKg    Float
-  dryMatterPerc Float
-  stockKg       Float
-  createdAt     DateTime @default(now())
+  id           Int       @id @default(autoincrement())
+  name         String    @unique
+  details      Json?     // free-form: { pricePerKg, dryMatterPct, other }
+  currentStock Float     @default(0) // in kg
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  stockEntries StockEntry[]
+  consumptions Consumption[]
 }
+
+model StockEntry {
+  id           Int      @id @default(autoincrement())
+  ingredientId Int
+  quantity     Float    // kg added (positive)
+  note         String?
+  createdAt    DateTime @default(now())
+
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+}
+
+model Consumption {
+  id           Int      @id @default(autoincrement())
+  ingredientId Int
+  quantity     Float    // kg consumed (positive)
+  note         String?
+  createdAt    DateTime @default(now())
+
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+}
+
 
 model User {
   id       Int      @id @default(autoincrement())
