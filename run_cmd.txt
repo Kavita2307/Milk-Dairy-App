@@ -1,0 +1,60 @@
+Backend:
+# install deps
+npm install
+
+npm install prisma@5.22.0 @prisma/client@5.22.0
+
+# generate prisma client
+npx prisma generate
+
+# run migration (creates tables)
+npx prisma migrate dev --name init
+
+# seed (if seed.ts exists)
+npx ts-node prisma/seed.ts
+
+# start dev server
+npm run dev
+
+Test endpoints in browser/Postman:
+
+Health: GET http://localhost:4000/ → { "status":"ok" }
+
+Groups: GET http://localhost:4000/api/groups → shows groups
+
+Animals: GET http://localhost:4000/api/animals
+
+
+frontend:
+In ed-app/src/api/api.ts set BASE_URL to your local backend:
+
+If you run app in Android emulator (default) use 10.0.2.2:
+
+const BASE = "http://10.0.2.2:4000/api";
+
+
+If you use iOS simulator (on mac), use http://localhost:4000/api.
+
+If you test on a physical device, use your PC’s LAN IP:
+
+Find IP: ipconfig (Windows) → look for IPv4 Address (e.g. 192.168.1.12)
+
+Set:
+
+const BASE = "http://192.168.1.12:4000/api";
+npm install
+npx expo start
+
+
+Use Expo Go (scan QR) on your phone or open Android/iOS simulators using the developer tools.
+
+If using Android emulator, the app will reach backend at 10.0.2.2:4000. If results fail, try switching the Expo connection mode (tunnel/LAN).
+
+H — Test full flow on app
+
+Open app and navigate to Groups → you should see groups from DB.
+
+Add animal -> should POST to /api/animals and create record in DB.
+
+Create ration, leftover, milk entries; check DB or use GET routes to verify.
+
