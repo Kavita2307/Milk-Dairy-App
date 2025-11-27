@@ -1,40 +1,20 @@
-// import { Request, Response } from "express";
-// import prisma from "../prisma/client";
-
-// export const addIngredient = async (req: Request, res: Response) => {
-//   try {
-//     const ing = await prisma.ingredient.create({ data: req.body });
-//     res.json(ing);
-//   } catch (err) {
-//     res.status(500).json({ error: "Failed to add ingredient" });
-//   }
-// };
-
-// export const getIngredients = async (_req: Request, res: Response) => {
-//   try {
-//     const data = await prisma.ingredient.findMany();
-//     res.json(data);
-//   } catch (err) {
-//     res.status(500).json({ error: "Failed to fetch ingredients" });
-//   }
-// };
 import { Request, Response } from "express";
 import prisma from "../prisma/client";
 
 export const listIngredients = async (_req: Request, res: Response) => {
   const ingredients = await prisma.ingredient.findMany({
     orderBy: { name: "asc" },
-    select: { id: true, name: true, details: true, currentStock: true },
+    select: { id: true, name: true, currentStock: true },
   });
   res.json(ingredients);
 };
 
 export const createIngredient = async (_req: Request, res: Response) => {
-  const { name, details, initialStock = 0 } = _req.body;
+  const { name, initialStock = 0 } = _req.body;
+  console.log("create ingredient: ", _req.body);
   const ing = await prisma.ingredient.create({
     data: {
       name,
-      details,
       currentStock: initialStock,
     },
   });

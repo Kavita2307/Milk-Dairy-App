@@ -34,7 +34,7 @@ export default function HerdInfoScreen() {
   console.log("herdinfoScreen userId:", user?.id);
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Herd Information</Text>
+      {/* <Text style={styles.title}>Herd Information</Text> */}
       <FlatList
         data={menuItems}
         keyExtractor={(item) => item.id}
@@ -83,6 +83,7 @@ export default function HerdInfoScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 25,
     backgroundColor: "#f3f4f6",
     padding: 20,
   },

@@ -41,6 +41,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const login = async (email: string, password: string) => {
+    console.log("inside login of auth context");
     const res = await API.post("/auth/login", { email, password });
     //  const { token, user } = res.data;
     // await AsyncStorage.setItem("token", token);

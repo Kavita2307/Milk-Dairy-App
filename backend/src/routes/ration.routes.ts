@@ -1,9 +1,18 @@
 import { Router } from "express";
-import { addRation, getRationByGroup } from "../controllers/ration.controller";
+import {
+  getRationByGroup,
+  updateRation,
+  addIngredient,
+  getIngredients,
+} from "../controllers/ration.controller";
+import { requireAuth } from "../middleware/auth";
 
 const router = Router();
 
-router.post("/", addRation);
-router.get("/:groupId", getRationByGroup);
+router.get("/:groupId", requireAuth, getRationByGroup);
+router.put("/update", requireAuth, updateRation);
+
+router.post("/ingredient/add", requireAuth, addIngredient);
+router.get("/ingredient/:groupId", requireAuth, getIngredients);
 
 export default router;

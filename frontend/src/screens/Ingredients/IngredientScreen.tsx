@@ -10,7 +10,7 @@ import { useNavigation } from "@react-navigation/native";
 import { API } from "../../api/api";
 
 export default function InventoryScreen() {
-  const nav = useNavigation();
+  const nav = useNavigation<any>();
   const [items, setItems] = useState<any[]>([]);
 
   const load = () => API.get("/ingredients").then((r) => setItems(r.data));

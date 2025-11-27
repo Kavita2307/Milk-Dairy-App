@@ -48,8 +48,6 @@ export default function NonMilkingGroupScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Non-Milking Groups</Text>
-
       <FlatList
         data={menuItems}
         keyExtractor={(item) => item.id.toString()}

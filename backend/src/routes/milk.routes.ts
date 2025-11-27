@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { addMilkEntry, getMilkByGroup } from "../controllers/milk.controller";
+import { saveMilk, readMilkLoadCell } from "../controllers/milk.controller";
+import { requireAuth } from "../middleware/auth";
 
 const router = Router();
 
-router.post("/", addMilkEntry);
-router.get("/:groupId", getMilkByGroup);
+router.post("/", requireAuth, saveMilk);
+router.get("/loadcell/read", requireAuth, readMilkLoadCell);
 
 export default router;

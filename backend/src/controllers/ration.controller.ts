@@ -1,21 +1,53 @@
 import { Request, Response } from "express";
 import prisma from "../prisma/client";
 
-export const addRation = async (req: Request, res: Response) => {
-  try {
-    const ration = await prisma.ration.create({ data: req.body });
-    res.json(ration);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to add ration" });
-  }
+/* Fetch complete ration + ingredients for a group */
+export const getRationByGroup = async (req: Request, res: Response) => {
+  const groupId = Number(req.params.groupId);
+
+  const ration = await prisma.ration.findFirst({
+    where: { groupId },
+  });
+
+  const ingredients = await prisma.ingredient.findMany({
+    where: { groupId },
+    orderBy: { id: "asc" },
+  });
+
+  res.json({ ration, ingredients });
 };
 
-export const getRationByGroup = async (req: Request, res: Response) => {
-  try {
-    const groupId = Number(req.params.groupId);
-    const ration = await prisma.ration.findMany({ where: { groupId } });
-    res.json(ration);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch ration data" });
-  }
+/* Update ration main info */
+export const updateRation = async (req: Request, res: Response) => {
+  const { groupId, userId, data } = req.body;
+
+  const ration = await prisma.ration.upsert({
+    where: { groupId },
+    update: { ...data },
+    create: { groupId, userId, ...data },
+  });
+
+  res.json(ration);
+};
+
+/* Add ingredient row */
+export const addIngredient = async (req: Request, res: Response) => {
+  const { groupId, name, kg, total } = req.body;
+
+  const ingredient = await prisma.ingredient.create({
+    data: { groupId, name, kg, total },
+  });
+
+  res.json(ingredient);
+};
+
+/* Get ingredients only */
+export const getIngredients = async (req: Request, res: Response) => {
+  const groupId = Number(req.params.groupId);
+
+  const ingredients = await prisma.ingredient.findMany({
+    where: { groupId },
+  });
+
+  res.json(ingredients);
 };

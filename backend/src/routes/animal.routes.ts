@@ -13,7 +13,8 @@ import { Router } from "express";
 import {
   addAnimal,
   getAnimals,
-  updateAnimalAge,
+  getAnimalDetails,
+  updateAnimalDetails,
 } from "../controllers/animal.controller";
 import { requireAuth } from "../middleware/auth";
 
@@ -21,6 +22,7 @@ const router = Router();
 
 router.post("/", requireAuth, addAnimal);
 router.get("/", requireAuth, getAnimals);
-router.put("/update-age", requireAuth, updateAnimalAge);
+router.get("/:animalNumber", requireAuth, getAnimalDetails);
+router.put("/update-details", requireAuth, updateAnimalDetails);
 
 export default router;

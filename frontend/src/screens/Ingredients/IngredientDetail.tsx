@@ -5,7 +5,7 @@ import { useRoute, useNavigation } from "@react-navigation/native";
 
 export default function IngredientDetail() {
   const route = useRoute<any>();
-  const nav = useNavigation();
+  const nav = useNavigation<any>();
   const { id } = route.params;
   const [ing, setIng] = useState<any>(null);
 

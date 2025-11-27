@@ -1,7 +1,10 @@
 import { Router } from "express";
 import {
-  addIngredient,
-  getIngredients,
+  addStock,
+  createIngredient,
+  getIngredient,
+  listIngredients,
+  recordConsumption,
 } from "../controllers/ingredient.controller";
 
 const router = Router();

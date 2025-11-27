@@ -18,7 +18,12 @@ const menuItems: {
   icon: IconName;
   route: string;
 }[] = [
-  { id: "0", title: "Herd Info", icon: "cow", route: "Herd Info" },
+  {
+    id: "0",
+    title: "Herd Information",
+    icon: "cow",
+    route: "Herd Information",
+  },
   {
     id: "1",
     title: "Milking Groups",
@@ -44,7 +49,7 @@ export default function DashboardScreen() {
 
   return (
     <View style={styles.screen}>
-      <Text style={styles.title}>Dashboard</Text>
+      {/* <Text style={styles.title}>Dashboard</Text> */}
 
       <FlatList
         data={menuItems}
@@ -78,6 +83,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f3f4f6",
     paddingHorizontal: 16,
+    paddingTop: 25,
     paddingVertical: 12,
   },
   title: {

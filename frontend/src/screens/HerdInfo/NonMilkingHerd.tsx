@@ -16,28 +16,38 @@ export default function NonMilkingGroupScreen() {
   const menuItems = [
     {
       id: 4,
-      title: "Group 4 – Starter calf (0–2 months)",
+      title: "Group 4 – Starter calf",
+      extrainfo: "(0–2 months)",
       route: "AnimalNumbers",
     },
     {
       id: 5,
-      title: "Group 5 – Starter calf (3–6 months)",
+      title: "Group 5 – Starter calf",
+      extrainfo: "(3–6 months)",
       route: "AnimalNumbers",
     },
     {
       id: 6,
-      title: "Group 6 – Grower calf (6–12 months)",
+      title: "Group 6 – Grower calf",
+      extrainfo: "(6–12 months)",
       route: "AnimalNumbers",
     },
-    { id: 7, title: "Group 7 – Heifer (12–24 months)", route: "AnimalNumbers" },
+    {
+      id: 7,
+      title: "Group 7 – Heifer",
+      extrainfo: "(12–24 months)",
+      route: "AnimalNumbers",
+    },
     {
       id: 8,
-      title: "Group 8 – Dry cow (Far off -60 to -21 days)",
+      title: "Group 8 – Dry cow",
+      extrainfo: "(Far off -60 to -21 days)",
       route: "AnimalNumbers",
     },
     {
       id: 9,
-      title: "Group 9 – Dry cow (Close up -21 to 0 days)",
+      title: "Group 9 – Dry cow",
+      extrainfo: "(Close up -21 to 0 days)",
       route: "AnimalNumbers",
     },
   ];
@@ -54,10 +64,21 @@ export default function NonMilkingGroupScreen() {
             key={item.id}
             style={styles.groupRow}
             onPress={() =>
-              nav.navigate(item.route, { groupId: item.id, userId })
+              nav.navigate(item.route, {
+                groupId: item.id,
+                groupTitle: item.title,
+                userId,
+              })
             }
           >
-            <Text style={styles.groupText}>{item.title}</Text>
+            {/* <Text style={styles.groupText}>
+              {item.title} {item.extrainfo}
+            </Text> */}
+            <Text style={styles.groupText}>
+              {item.title}{" "}
+              <Text style={styles.extraInfoText}>{item.extrainfo}</Text>
+            </Text>
+
             <Feather name="chevron-right" size={26} color="#0ea5e9" />
           </TouchableOpacity>
         )}
@@ -69,6 +90,7 @@ export default function NonMilkingGroupScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 25,
     backgroundColor: "#f3f4f6",
     padding: 20,
   },
@@ -117,5 +139,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
     color: "#1f2937",
+  },
+  extraInfoText: {
+    color: "#6b7280",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });

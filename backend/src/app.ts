@@ -19,8 +19,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/groups", groupRoutes);
 app.use("/api/animals", animalRoutes);
 app.use("/api/ration", rationRoutes);
+
 app.use("/api/leftover", leftoverRoutes);
 app.use("/api/milk", milkRoutes);
-app.use("/api/ingredients", ingredientRoutes);
+app.use("/api/ingredient", ingredientRoutes);
 
 export default app;

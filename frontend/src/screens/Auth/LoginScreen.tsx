@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  Keyboard,
+  TouchableOpacity,
+} from "react-native";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigation } from "@react-navigation/native";
 
@@ -11,7 +18,10 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
 
   const submit = async () => {
+    Keyboard.dismiss(); // 👈 closes keyboard immediately
+    console.log("clicked on login button");
     await login(email, password);
+    console.log("clicked... login button done");
   };
 
   return (

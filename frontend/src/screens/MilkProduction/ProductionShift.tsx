@@ -8,84 +8,33 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import CustomShiftTabBar from "@/src/components/CustomShiftTabBar";
+import MilkProduction from "../MilkProduction/MilkProductionScreen";
 
 export default function MilkingGroupScreen() {
   const nav = useNavigation<any>();
   const route = useRoute<any>();
-  const { userId } = route.params;
-  const menuItems = [
-    {
-      id: 1,
-      title: "Shift 1 (Morning)",
-      icon: "sunrise",
-      route: "MilkProduction",
-    },
-    {
-      id: 2,
-      title: "Shift 2 (Afternoon)",
-      icon: "sun",
-      route: "MilkProduction",
-    },
-    {
-      id: 3,
-      title: "Shift 3 (Evening)",
-      icon: "sunset",
-      route: "MilkProduction",
-    },
-  ];
+  const { userId, groupId } = route.params;
+  const Tab = createMaterialTopTabNavigator();
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Production Shifts</Text>
-      <FlatList
-        data={menuItems}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            key={item.id}
-            style={styles.groupRow}
-            onPress={() =>
-              nav.navigate(item.route, { groupId: item.id, userId })
-            }
-          >
-            <Text style={styles.groupText}>{item.title}</Text>
-            <Feather name="chevron-right" size={26} color="#0ea5e9" />
-          </TouchableOpacity>
-        )}
+    <Tab.Navigator tabBar={(props) => <CustomShiftTabBar {...props} />}>
+      <Tab.Screen
+        name="Shift 1 (Morning)"
+        component={MilkProduction}
+        initialParams={{ groupId, userId, shift: "morning" }}
       />
-    </View>
+      <Tab.Screen
+        name="Shift 2 (Afternoon)"
+        component={MilkProduction}
+        initialParams={{ groupId, userId, shift: "afternoon" }}
+      />
+      <Tab.Screen
+        name="Shift 3 (Evening)"
+        component={MilkProduction}
+        initialParams={{ groupId, userId, shift: "evening" }}
+      />
+    </Tab.Navigator>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f3f4f6",
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#1f2937",
-    marginBottom: 24,
-  },
-  groupRow: {
-    backgroundColor: "#ffffff",
-    padding: 20,
-    borderRadius: 12,
-    marginBottom: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    elevation: 1,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 1 },
-    shadowRadius: 2,
-  },
-  groupText: {
-    flex: 1,
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#1f2937",
-  },
-});

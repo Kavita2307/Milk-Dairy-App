@@ -1,95 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import {
-//   View,
-//   Text,
-//   TouchableOpacity,
-//   FlatList,
-//   StyleSheet,
-// } from "react-native";
-// import { useNavigation, useRoute } from "@react-navigation/native";
-// import { API } from "../../api/api";
-
-// export default function AnimalNumbersScreen() {
-//   const route = useRoute<any>();
-//   const { groupId } = route.params;
-//   const { userId } = route.params;
-//   console.log("animalNumberScreen: ", groupId, userId);
-//   const nav = useNavigation<any>();
-
-//   const [animals, setAnimals] = useState<any[]>([]);
-
-//   useEffect(() => {
-//     API.get("/animals").then((res) => {
-//       setAnimals(res.data.filter((a: any) => a.groupId === groupId));
-//     });
-//   }, []);
-
-//   return (
-//     <View style={styles.container}>
-//       <Text style={styles.header}>Animal Numbers</Text>
-
-//       <TouchableOpacity
-//         onPress={() =>
-//           nav.navigate("AnimalNumberInfoScreen", { groupId, userId })
-//         }
-//         style={styles.addButton}
-//       >
-//         <Text style={styles.addButtonText}>➕ Add New Animal</Text>
-//       </TouchableOpacity>
-
-//       <FlatList
-//         data={animals}
-//         keyExtractor={(i) => i.id.toString()}
-//         renderItem={({ item }) => (
-//           <View style={styles.itemContainer}>
-//             <Text style={styles.itemText}>Animal #{item.animalNumber}</Text>
-//           </View>
-//         )}
-//       />
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     padding: 20,
-//     backgroundColor: "transparent",
-//   },
-//   header: {
-//     fontSize: 24,
-//     fontWeight: "700",
-//     marginBottom: 16,
-//   },
-//   addButton: {
-//     backgroundColor: "#10B981",
-//     padding: 16,
-//     borderRadius: 8,
-//     marginBottom: 16,
-//   },
-//   addButtonText: {
-//     color: "#FFFFFF",
-//     textAlign: "center",
-//     fontWeight: "600",
-//   },
-//   itemContainer: {
-//     backgroundColor: "#FFFFFF",
-//     padding: 16,
-//     borderRadius: 12,
-//     marginBottom: 12,
-//     // basic shadow for iOS
-//     shadowColor: "#000",
-//     shadowOffset: { width: 0, height: 1 },
-//     shadowOpacity: 0.1,
-//     shadowRadius: 2,
-//     // elevation for Android
-//     elevation: 2,
-//   },
-//   itemText: {
-//     fontSize: 18,
-//     fontWeight: "500",
-//   },
-// });
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -105,7 +13,7 @@ import { API } from "../../api/api";
 export default function AnimalNumbersScreen() {
   const nav = useNavigation<any>();
   const route = useRoute<any>();
-  const { groupId, userId } = route.params;
+  const { groupId, groupTitle, userId } = route.params;
 
   const [animals, setAnimals] = useState<any[]>([]);
   const [showForm, setShowForm] = useState(false);
@@ -117,10 +25,13 @@ export default function AnimalNumbersScreen() {
       setAnimals(res.data.filter((a: any) => a.groupId === groupId));
     });
   };
-
   useEffect(() => {
     loadAnimals();
-  }, []);
+
+    nav.setOptions({
+      title: groupTitle || `Group ${groupId}`,
+    });
+  }, [groupId, groupTitle]);
 
   const saveAnimal = () => {
     if (!animalNumber.trim()) {
@@ -141,7 +52,7 @@ export default function AnimalNumbersScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Animal Numbers</Text>
+      <Text style={styles.header}>Animal List</Text>
 
       {/* Add Button */}
       {!showForm && (
@@ -185,7 +96,7 @@ export default function AnimalNumbersScreen() {
         data={animals}
         keyExtractor={(i) => i.id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.itemContainer}>
+          <View>
             <TouchableOpacity
               key={item.id}
               style={styles.groupRow}
@@ -209,9 +120,17 @@ export default function AnimalNumbersScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 25,
+    backgroundColor: "#f3f4f6",
     padding: 20,
+    color: "black",
   },
-  header: { fontSize: 24, fontWeight: "700", marginBottom: 16 },
+  header: {
+    fontSize: 22,
+    fontWeight: "600",
+    marginBottom: 16,
+    paddingLeft: 8,
+  },
   addButton: {
     backgroundColor: "#10B981",
     padding: 16,
@@ -281,5 +200,5 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     elevation: 2,
   },
-  itemText: { fontSize: 18, fontWeight: "500" },
+  itemText: { flex: 1, fontSize: 18, fontWeight: "500", color: "#1f2937" },
 });

@@ -36,7 +36,7 @@ export default function MilkingGroupScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Milking Groups</Text>
+      {/* <Text style={styles.title}>Milking Groups</Text> */}
       <FlatList
         data={menuItems}
         keyExtractor={(item) => item.id.toString()}
@@ -45,7 +45,11 @@ export default function MilkingGroupScreen() {
             key={item.id}
             style={styles.groupRow}
             onPress={() =>
-              nav.navigate(item.route, { groupId: item.id, userId })
+              nav.navigate(item.route, {
+                groupId: item.id,
+                groupTitle: item.title,
+                userId,
+              })
             }
           >
             <Text style={styles.groupText}>{item.title}</Text>
@@ -60,6 +64,7 @@ export default function MilkingGroupScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 25,
     backgroundColor: "#f3f4f6",
     padding: 20,
   },

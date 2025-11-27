@@ -1,21 +1,31 @@
 import { Request, Response } from "express";
 import prisma from "../prisma/client";
 
-export const addMilkEntry = async (req: Request, res: Response) => {
+// Save milk
+export const saveMilk = async (req: Request, res: Response) => {
   try {
-    const milk = await prisma.milk.create({ data: req.body });
-    res.json(milk);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to add milk entry" });
+    const { groupId, userId, milkLit, shift } = req.body;
+
+    if (!groupId || !milkLit || !shift) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const entry = await prisma.milk.create({
+      data: {
+        groupId: Number(groupId),
+        milkLit: Number(milkLit),
+        shift,
+      },
+    });
+
+    return res.json({ message: "Saved", entry });
+  } catch (error) {
+    return res.status(500).json({ error: "Server error" });
   }
 };
 
-export const getMilkByGroup = async (req: Request, res: Response) => {
-  try {
-    const groupId = Number(req.params.groupId);
-    const milk = await prisma.milk.findMany({ where: { groupId } });
-    res.json(milk);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch milk data" });
-  }
+// Load cell mock
+export const readMilkLoadCell = async (_req: Request, res: Response) => {
+  const random = Math.floor(Math.random() * 40); // 0–40 litres
+  return res.json({ weight: random });
 };
