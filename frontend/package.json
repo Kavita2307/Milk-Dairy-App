@@ -13,6 +13,7 @@
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
     "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-native-community/datetimepicker": "8.4.4",
     "@react-navigation/bottom-tabs": "^7.8.6",
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/material-top-tabs": "^7.4.4",
@@ -30,6 +31,10 @@
     "expo-symbols": "~1.0.7",
     "expo-system-ui": "~6.0.8",
     "expo-web-browser": "~15.0.9",
+    "metro": "^0.83.1",
+    "metro-cache": "^0.81.0",
+    "metro-file-map": "^0.81.0",
+    "metro-runtime": "^0.81.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-native": "0.81.5",
@@ -45,6 +50,7 @@
   },
   "devDependencies": {
     "@react-native-community/cli": "latest",
+    "@react-native/metro-config": "^0.82.1",
     "@types/react": "~19.1.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",

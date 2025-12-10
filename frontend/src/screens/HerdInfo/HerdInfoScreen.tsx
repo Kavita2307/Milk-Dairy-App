@@ -58,24 +58,6 @@ export default function HerdInfoScreen() {
           </TouchableOpacity>
         )}
       />
-
-      {/* Milking */}
-      {/* <TouchableOpacity
-        onPress={() => navigation.navigate("MilkingGroup")}
-        style={styles.card}
-      >
-        <Text style={styles.cardText}>Milking Group</Text>
-        <Feather name="chevron-right" size={26} color="#0ea5e9" />
-      </TouchableOpacity> */}
-
-      {/* Non Milking */}
-      {/* <TouchableOpacity
-        onPress={() => navigation.navigate("NonMilkingGroup")}
-        style={styles.card}
-      >
-        <Text style={styles.cardText}>Non-Milking Group</Text>
-        <Feather name="chevron-right" size={26} color="#0ea5e9" />
-      </TouchableOpacity> */}
     </View>
   );
 }

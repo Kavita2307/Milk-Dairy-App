@@ -1,43 +1,26 @@
-// import { Request, Response } from "express";
-// import prisma from "../prisma/client";
-
-// export const addAnimal = async (req: Request, res: Response) => {
-//   try {
-//     const animal = await prisma.animal.create({ data: req.body });
-//     res.json(animal);
-//   } catch (err) {
-//     res.status(500).json({ error: "Failed to add animal" });
-//   }
-// };
-
-// export const getAnimals = async (_req: Request, res: Response) => {
-//   try {
-//     const animals = await prisma.animal.findMany({
-//       include: { group: true },
-//     });
-//     res.json(animals);
-//   } catch (err) {
-//     res.status(500).json({ error: "Failed to fetch animals" });
-//   }
-// };
 import { Request, Response } from "express";
 import prisma from "../prisma/client";
 
-export const addAnimal = async (
-  req: Request & { user?: any },
-  res: Response
-) => {
+export const addAnimal = async (req: Request, res: Response) => {
   try {
     const { animalNumber, groupId, userId } = req.body;
     console.log("animal: ", req.body);
+    if (!animalNumber || !groupId || !userId) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
     const animal = await prisma.animal.create({
-      data: req.body,
+      data: {
+        animalNumber,
+        groupId: Number(groupId),
+        userId: Number(userId),
+      },
     });
 
-    res.json(animal);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: "Failed to add animal" });
+    return res.json(animal);
+  } catch (error) {
+    console.error("Add animal error:", error);
+    return res.status(500).json({ error: "Server error" });
   }
 };
 
@@ -73,25 +56,50 @@ export const getAnimalDetails = async (
   return res.json(animal);
 };
 
+// export const updateAnimalDetails = async (req: Request, res: Response) => {
+//   const { animalNumber, groupId, userId, details } = req.body;
+
+//   const animal = await prisma.animal.findFirst({
+//     where: { animalNumber: req.params.animalNumber },
+//   });
+
+//   if (!animal) {
+//     return res.status(404).json({ error: "Animal not found" });
+//   }
+
+//   const updated = await prisma.animal.update({
+//     where: { id: animal.id },
+//     data: {
+//       details: {
+//         ...((animal.details as Record<string, any>) || {}),
+//         ...(details as Record<string, any>),
+//       },
+//     },
+//   });
+
+//   res.json(updated);
+// };
 export const updateAnimalDetails = async (req: Request, res: Response) => {
-  const { animalNumber, groupId, userId, details } = req.body;
+  const { animalNumber, details } = req.body;
 
   const animal = await prisma.animal.findFirst({
-    where: { animalNumber: req.params.animalNumber },
+    where: { animalNumber },
   });
 
   if (!animal) {
     return res.status(404).json({ error: "Animal not found" });
   }
 
+  const mergedDetails = {
+    ...(typeof animal.details === "object" && animal.details !== null
+      ? animal.details
+      : {}),
+    ...details,
+  };
+
   const updated = await prisma.animal.update({
     where: { id: animal.id },
-    data: {
-      details: {
-        ...((animal.details as Record<string, any>) || {}),
-        ...(details as Record<string, any>),
-      },
-    },
+    data: { details: mergedDetails },
   });
 
   res.json(updated);

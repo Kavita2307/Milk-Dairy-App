@@ -7,19 +7,18 @@ import {
   TextInput,
   Animated,
   Keyboard,
-  Platform,
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { API } from "../../api/api";
+import { readLoadCell } from "../../api/loadCell";
 
 export default function MilkProductionScreen() {
   const route = useRoute<any>();
-  const { groupId, userId, shift } = route.params;
+  const { groupId, userId, shift, animalNumber } = route.params;
 
   const [milkLit, setMilkLit] = useState("0");
   const [useLoadCell, setUseLoadCell] = useState(false);
 
-  // ---------- FLOATING ARROW ----------
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const slideAnim = new Animated.Value(100); // hidden initially
@@ -52,21 +51,38 @@ export default function MilkProductionScreen() {
       show.remove();
       hide.remove();
     };
-  }, []);
+  }, [slideAnim]);
 
-  // ---------- API CALLS ----------
-  const fetchMilkFromLoadCell = () => {
-    API.get("/milk/loadcell/read")
-      .then((res) => setMilkLit(String(res.data.weight)))
-      .catch(() => alert("Failed to read load cell"));
+  // const fetchMilkFromLoadCell = () => {
+  //   API.get("/milk/loadcell/read")
+  //     .then((res) => setMilkLit(String(res.data.weight)))
+  //     .catch(() => alert("Failed to read load cell"));
+  // };
+
+  const fetchMilkFromLoadCell = async () => {
+    try {
+      const data = await readLoadCell();
+
+      // Only accept stable weight
+      if (!data.stable) {
+        alert("Milk is still measuring… Please wait");
+        return;
+      }
+
+      // Weight from ESP32 is in KG
+      setMilkLit(data.weight.toFixed(2));
+    } catch {
+      alert("Weighing machine not connected");
+    }
   };
 
   const saveMilk = () => {
+    console.log("milk: ", milkLit);
     API.post("/milk", {
       groupId,
-      userId,
       milkLit: Number(milkLit),
       shift,
+      animalNumber,
     })
       .then(() => alert("Milk Saved Successfully"))
       .catch(() => alert("Error saving milk data"));

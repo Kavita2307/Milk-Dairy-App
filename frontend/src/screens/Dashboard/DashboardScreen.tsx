@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useAuth } from "@/src/context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 type IconName = ComponentProps<typeof MaterialCommunityIcons>["name"];
 
 const menuItems: {
@@ -38,9 +38,7 @@ const menuItems: {
   },
   { id: "3", title: "Ingredients store", icon: "cart", route: "Ingredients" },
   { id: "4", title: "Leftover", icon: "delete", route: "Leftover" },
-  { id: "5", title: "DM Correction", icon: "tune", route: "DM Correction" },
-  { id: "6", title: "Stock", icon: "cart", route: "Stock" },
-  { id: "7", title: "Display", icon: "exit-to-app", route: "Display" },
+  { id: "5", title: "Report", icon: "file", route: "Report" },
 ];
 
 export default function DashboardScreen() {

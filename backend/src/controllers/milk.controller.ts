@@ -4,19 +4,22 @@ import prisma from "../prisma/client";
 // Save milk
 export const saveMilk = async (req: Request, res: Response) => {
   try {
-    const { groupId, userId, milkLit, shift } = req.body;
+    const { groupId, milkLit, shift, animalNumber } = req.body;
 
-    if (!groupId || !milkLit || !shift) {
+    if (!groupId || !milkLit || !shift || !animalNumber) {
       return res.status(400).json({ error: "Missing required fields" });
     }
-
+    console.log("Milk backend: ", req.body);
     const entry = await prisma.milk.create({
       data: {
         groupId: Number(groupId),
         milkLit: Number(milkLit),
         shift,
+        animalNumber: animalNumber.toString(),
       },
     });
+
+    console.log("Saved entry:", entry);
 
     return res.json({ message: "Saved", entry });
   } catch (error) {

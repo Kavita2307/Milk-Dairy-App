@@ -43,21 +43,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const login = async (email: string, password: string) => {
     console.log("inside login of auth context");
     const res = await API.post("/auth/login", { email, password });
-    //  const { token, user } = res.data;
-    // await AsyncStorage.setItem("token", token);
-    // await AsyncStorage.setItem("user", JSON.stringify(user));
     await AsyncStorage.setItem("token", res.data.token);
     await AsyncStorage.setItem("user", JSON.stringify(res.data.user));
-    // setUser(user);
     setUser(res.data.user);
   };
 
   const register = async (email: string, password: string, name?: string) => {
     const res = await API.post("/auth/register", { email, password, name });
-    // const { token, user } = res.data;
-    //await AsyncStorage.setItem("token", token);
-    //await AsyncStorage.setItem("user", JSON.stringify(user));
-    //  setUser(user);
     await AsyncStorage.setItem("token", res.data.token);
     await AsyncStorage.setItem("user", JSON.stringify(res.data.user));
     setUser(res.data.user);

@@ -1,57 +1,3 @@
-// import React from "react";
-// import { NavigationContainer } from "@react-navigation/native";
-// import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
-// import HerdInfoScreen from "../screens/Herd/HerdInfoScreen";
-// import GroupListScreen from "../screens/Groups/GroupListScreen";
-// import IngredientScreen from "../screens/Ingredients/IngredientScreen";
-// import ReportsScreen from "../screens/Reports/ReportsScreen";
-// import LeftoverScreen from "../screens/Leftover/LeftoverScreen";
-// import DashboardScreen from "../screens/Dashboard/DashboardScreen";
-// import BottomStacks from "../navigation/BottomTabs";
-// import MilkingGroupsScreen from "../screens/Herd/MilkingGroupScreen";
-// import NonMilkingGroupsScreen from "../screens/Herd/NonMilkingGroupScreen";
-// import AnimalNumbersScreen from "../screens/Herd/AnimalNumbersScreen";
-// import AnimalInfoScreen from "../screens/Herd/AnimalInfoScreen";
-// import LoginScreen from "../screens/Auth/LoginScreen";
-// import RegisterScreen from "../screens/Auth/RegisterScreen";
-// import AppHeader from "./AppHeader";
-
-// const Stack = createNativeStackNavigator();
-// export default function AppNavigator() {
-//   return (
-//     <NavigationContainer>
-//       {/* <BottomStacks /> */}
-//       <Stack.Navigator
-//         screenOptions={{
-//           header: () => <AppHeader />, // 👈 GLOBAL HEADER HERE
-//         }}
-//       >
-//         {/* <Stack.Navigator screenOptions={{ headerShown: false }}> */}
-//         {/* Main Stacks */}
-//         <Stack.Screen name="MainStacks" component={BottomStacks} />
-//         <Stack.Screen name="Login" component={LoginScreen} />
-//         <Stack.Screen name="Register" component={RegisterScreen} />
-
-//         {/* Dashboard Menu Pages */}
-//         <Stack.Screen name="Herd Info" component={HerdInfoScreen} />
-//         <Stack.Screen name="MilkingGroups" component={MilkingGroupsScreen} />
-//         <Stack.Screen
-//           name="NonMilkingGroups"
-//           component={NonMilkingGroupsScreen}
-//         />
-//         <Stack.Screen name="AnimalNumbers" component={AnimalNumbersScreen} />
-//         <Stack.Screen name="AnimalInfo" component={AnimalInfoScreen} />
-
-//         <Stack.Screen name="Dashboard" component={DashboardScreen} />
-//         <Stack.Screen name="Groups" component={GroupListScreen} />
-//         <Stack.Screen name="Ingredients" component={IngredientScreen} />
-//         <Stack.Screen name="Reports" component={ReportsScreen} />
-//         <Stack.Screen name="Leftover" component={LeftoverScreen} />
-//       </Stack.Navigator>
-//     </NavigationContainer>
-//   );
-// }
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -62,7 +8,8 @@ import HerdInfoScreen from "../screens/HerdInfo/HerdInfoScreen";
 import MilkingHerdScreen from "../screens/HerdInfo/MilkingHerd";
 import NonMilkingHerdScreen from "../screens/HerdInfo/NonMilkingHerd";
 import AnimalNumbersScreen from "../screens/HerdInfo/AnimalNumbersScreen";
-import AnimalInfoScreen from "../screens/HerdInfo/AnimalInfoScreen";
+import MilkAnimalInfoScreen from "../screens/HerdInfo/MilkAnimalInfoScreen";
+import NonMilkAnimalInfoScreen from "../screens/HerdInfo/NonMilkAnimalInfoScreen";
 import IngredientScreen from "../screens/Ingredients/IngredientScreen";
 import ReportsScreen from "../screens/Reports/ReportsScreen";
 import LeftoverScreen from "../screens/Leftover/LeftoverScreen";
@@ -79,8 +26,6 @@ import IngredientCreate from "../screens/Ingredients/IngredientCreate";
 import IngredientDetail from "../screens/Ingredients/IngredientDetail";
 import AddStock from "../screens/Ingredients/AddStock";
 import ProfileScreen from "./ProfileScreen";
-import RegisterScreen from "../screens/Auth/RegisterScreen";
-import LoginScreen from "../screens/Auth/LoginScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -91,11 +36,11 @@ export default function AppNavigator() {
         header: ({ options }) => <AppHeader title={options.title || ""} />,
       })}
     >
-      <Stack.Screen
+      {/* <Stack.Screen
         name="MainStacks"
         component={BottomStacks}
         options={{ title: "Dashboard" }}
-      />
+      /> */}
       <Stack.Screen
         name="Dashboard"
         component={DashboardScreen}
@@ -125,7 +70,12 @@ export default function AppNavigator() {
         options={{ title: "Non-Milking Group" }}
       />
       <Stack.Screen name="AnimalNumbers" component={AnimalNumbersScreen} />
-      <Stack.Screen name="AnimalInfo" component={AnimalInfoScreen} />
+      <Stack.Screen name="MilkAnimalInfo" component={MilkAnimalInfoScreen} />
+      <Stack.Screen
+        name="NonMilkAnimalInfo"
+        component={NonMilkAnimalInfoScreen}
+      />
+
       <Stack.Screen
         name="MilkingGroups"
         component={MilkingGroupScreen}

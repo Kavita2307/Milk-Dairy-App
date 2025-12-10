@@ -56,6 +56,7 @@ CREATE TABLE "Milk" (
     "groupId" INTEGER NOT NULL,
     "shift" TEXT NOT NULL,
     "milkLit" DOUBLE PRECISION NOT NULL,
+    "animalNumber" TEXT NOT NULL,
     "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Milk_pkey" PRIMARY KEY ("id")

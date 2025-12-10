@@ -3,7 +3,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import Ration from "../../screens/Ration/RationScreen";
 import Leftover from "../../screens/Leftover/LeftoverScreen";
-import CustomTabBar from "@/src/components/CustomTabBar";
+import CustomTabBar from "../../components/CustomTabBar";
 
 export default function MilkGroupInfoScreen() {
   const nav = useNavigation<any>();

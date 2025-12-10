@@ -1,99 +1,25 @@
-// import { PrismaClient } from "@prisma/client";
-// const prisma = new PrismaClient();
-
-// async function main() {
-//   console.log("🌱 Seeding database...");
-
-//   // 1. Create default user
-//   const user = await prisma.user.upsert({
-//     where: { email: "admin@example.com" },
-//     update: {},
-//     create: {
-//       name: "Admin",
-//       email: "admin@example.com",
-//       password: "admin@1234", // put bcrypt hash here if needed
-//     },
-//   });
-
-//   console.log("👤 User created:", user.email);
-
-//   // 2. GROUP SEED DATA (milking + non-milking)
-//   const groups = [
-//     { name: "Group 1 (High Yielder)", type: "milking" },
-//     { name: "Group 2 (Medium Yielder)", type: "milking" },
-//     { name: "Group 3 (Low Yielder)", type: "milking" },
-//     { name: "Group 4 – Starter calf (0–2 months)", type: "non-milking" },
-//     { name: "Group 5 – Starter calf (3–6 months)", type: "non-milking" },
-//     { name: "Group 6 – Grower calf (6–12 months)", type: "non-milking" },
-//     { name: "Group 7 – Heifer (12–24 months)", type: "non-milking" },
-//     { name: "Group 8 – Dry cow (Far off)", type: "non-milking" },
-//     { name: "Group 9 – Dry cow (Close up)", type: "non-milking" },
-//   ];
-
-//   console.log("📌 Creating Groups...");
-
-//   const createdGroups = [];
-//   for (const g of groups) {
-//     const created = await prisma.group.create({
-//       data: {
-//         name: g.name,
-//         type: g.type,
-//         userId: user.id,
-//       },
-//     });
-//     createdGroups.push(created);
-//   }
-
-//   console.log("🐄 Groups created:", createdGroups.length);
-
-//   // 3. Animals for each group (sample data)
-//   console.log("🐮 Adding sample animals...");
-
-//   for (const group of createdGroups) {
-//     await prisma.animal.create({
-//       data: {
-//         animalNumber: `AN-${group.id}01`,
-//         groupId: group.id,
-//         userId: user.id,
-//       },
-//     });
-//   }
-
-//   console.log("✅ Seed completed successfully!");
-// }
-
-// main()
-//   .catch((e) => {
-//     console.error(e);
-//     process.exit(1);
-//   })
-//   .finally(async () => {
-//     await prisma.$disconnect();
-//   });
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("🌱 Seeding database...");
+  console.log("Seeding database...");
 
-  // ----------------------------------------------------------
   // 1. USER
-  // ----------------------------------------------------------
+
   const user = await prisma.user.upsert({
-    where: { email: "admin@example.com" },
+    where: { email: "admin@gmail.com" },
     update: {},
     create: {
       name: "Admin",
-      email: "admin@example.com",
-      password: "admin@1234", // In production: bcrypt hash
+      email: "admin@gmail.com",
+      password: "admin@1234",
     },
   });
 
-  console.log("👤 User:", user.email);
+  console.log("User:", user.email);
 
-  // ----------------------------------------------------------
-  // 2. GROUPS (milking + non-milking)
-  // ----------------------------------------------------------
+  // 2. GROUPS (milking & non-milking)
+
   const groups = [
     { id: 1, name: "Group 1 (High Yielder)", type: "milking" },
     { id: 2, name: "Group 2 (Medium Yielder)", type: "milking" },
@@ -106,7 +32,7 @@ async function main() {
     { id: 9, name: "Group 9 – Dry cow (Close up)", type: "non-milking" },
   ];
 
-  console.log("📌 Seeding Groups...");
+  console.log("Seeding Groups...");
 
   const createdGroups = [];
   for (const g of groups) {
@@ -124,12 +50,11 @@ async function main() {
     createdGroups.push(created);
   }
 
-  console.log("🐄 Groups:", createdGroups.length);
+  console.log("Groups:", createdGroups.length);
 
-  // ----------------------------------------------------------
   // 3. SAMPLE ANIMALS 1 per group
-  // ----------------------------------------------------------
-  console.log("🐮 Seeding animals...");
+
+  console.log("Seeding animals...");
 
   for (const group of createdGroups) {
     await prisma.animal.upsert({
@@ -149,12 +74,11 @@ async function main() {
     });
   }
 
-  console.log("🐄 Animals Added");
+  console.log("Animals Added");
 
-  // ----------------------------------------------------------
   // 4. RATION SEED (only for milking groups)
-  // ----------------------------------------------------------
-  console.log("🍽 Seeding ration...");
+
+  console.log("Seeding ration...");
 
   const sampleRation = {
     name: "Group Ration",
@@ -182,12 +106,11 @@ async function main() {
     });
   }
 
-  console.log("🥣 Ration added for milking groups");
+  console.log("Ration added for milking groups");
 
-  // ----------------------------------------------------------
   // 5. INGREDIENTS per group
-  // ----------------------------------------------------------
-  console.log("🌾 Adding ingredients...");
+
+  console.log("Adding ingredients...");
 
   const ingredientSeed = [
     { name: "Wheat Straw", kg: 1.4, total: 89, price: 12 },
@@ -212,12 +135,11 @@ async function main() {
     }
   }
 
-  console.log("🌿 Ingredients added with stock");
+  console.log("Ingredients added with stock");
 
-  // ----------------------------------------------------------
-  // 6. Leftover + Milk sample entries
-  // ----------------------------------------------------------
-  console.log("🥛 Seeding leftover + milk...");
+  // 6. Leftover & Milk sample entries
+
+  console.log("Seeding leftover & milk...");
 
   await prisma.leftover.create({
     data: {
@@ -228,20 +150,19 @@ async function main() {
 
   await prisma.milk.createMany({
     data: [
-      { groupId: 1, shift: "morning", milkLit: 185 },
-      { groupId: 1, shift: "evening", milkLit: 165 },
+      { groupId: 1, shift: "morning", milkLit: 185, animalNumber: "101" },
+      { groupId: 1, shift: "evening", milkLit: 165, animalNumber: "101" },
     ],
   });
 
-  console.log("✨ Leftover & Milk seed added");
+  console.log("Leftover & Milk seed added");
 
-  // ----------------------------------------------------------
-  console.log("🌱 Seed Complete!");
+  console.log("Seed Complete!");
 }
 
 main()
   .catch((err) => {
-    console.error("❌ SEED ERROR:", err);
+    console.error("SEED ERROR:", err);
     process.exit(1);
   })
   .finally(async () => {

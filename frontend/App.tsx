@@ -17,8 +17,8 @@ function Root() {
   }
   console.log("app.tsx: userId ", user?.id);
   //console.log(user);
-  return user ? <AppNavigator /> : <AuthStack />;
-  // return <AppNavigator />;
+  //return user ? <AppNavigator /> : <AuthStack />;
+  return <AppNavigator />;
 }
 
 export default function App() {

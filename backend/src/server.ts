@@ -6,6 +6,7 @@ import ingredientRoutes from "./routes/ingredient.routes";
 import rationRoutes from "./routes/ration.routes";
 import leftoverRoutes from "./routes/leftover.routes";
 import milkRoutes from "./routes/milk.routes";
+import analyticsRoutes from "./routes/analytics.routes";
 
 const app = express();
 
@@ -18,5 +19,6 @@ app.use("/api/ingredient", ingredientRoutes);
 app.use("/api/ration", rationRoutes);
 app.use("/api/leftover", leftoverRoutes);
 app.use("/api/milk", milkRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 app.listen(4000, () => console.log("Server running on port 4000"));

@@ -100,13 +100,21 @@ export default function AnimalNumbersScreen() {
             <TouchableOpacity
               key={item.id}
               style={styles.groupRow}
-              onPress={() =>
-                nav.navigate("AnimalInfo", {
-                  animalNumber: item.animalNumber,
-                  groupId: groupId,
-                  userId,
-                })
-              }
+              onPress={() => {
+                if (groupId < 4) {
+                  nav.navigate("MilkAnimalInfo", {
+                    animalNumber: item.animalNumber,
+                    groupId,
+                    userId,
+                  });
+                } else {
+                  nav.navigate("NonMilkAnimalInfo", {
+                    animalNumber: item.animalNumber,
+                    groupId,
+                    userId,
+                  });
+                }
+              }}
             >
               <Text style={styles.itemText}>Animal #{item.animalNumber}</Text>
             </TouchableOpacity>

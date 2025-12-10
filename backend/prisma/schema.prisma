@@ -73,6 +73,7 @@ model Milk {
   groupId Int
   shift   String // morning / afternoon / evening
   milkLit Float
+  animalNumber String
   date    DateTime @default(now())
 
   group Group @relation(fields: [groupId], references: [id])

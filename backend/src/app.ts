@@ -8,6 +8,7 @@ import rationRoutes from "./routes/ration.routes";
 import leftoverRoutes from "./routes/leftover.routes";
 import milkRoutes from "./routes/milk.routes";
 import ingredientRoutes from "./routes/ingredient.routes";
+import analyticsRoutes from "./routes/analytics.routes";
 
 const app = express();
 app.use(cors());
@@ -23,5 +24,6 @@ app.use("/api/ration", rationRoutes);
 app.use("/api/leftover", leftoverRoutes);
 app.use("/api/milk", milkRoutes);
 app.use("/api/ingredient", ingredientRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 export default app;

@@ -9,8 +9,6 @@ import {
 
 const router = Router();
 
-// router.post("/", addIngredient);
-// router.get("/", getIngredients);
 router.get("/", listIngredients); // GET /ingredients
 router.post("/", createIngredient); // POST /ingredients
 router.get("/:id", getIngredient); // GET /ingredients/:id

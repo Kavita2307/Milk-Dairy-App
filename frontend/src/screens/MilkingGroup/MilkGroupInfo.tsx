@@ -1,18 +1,10 @@
 import React, { useEffect } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  FlatList,
-} from "react-native";
-import { Feather } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import Ration from "../../screens/Ration/RationScreen";
 import Leftover from "../../screens/Leftover/LeftoverScreen";
-import ProductionShift from "../../screens/MilkProduction/ProductionShift";
-import CustomTabBar from "@/src/components/CustomTabBar";
+import MilkingAnimalnumber from "../../screens/MilkProduction/MilkingAnimalNumber";
+import CustomTabBar from "../../components/CustomTabBar";
 
 export default function MilkGroupInfoScreen() {
   const nav = useNavigation<any>();
@@ -40,7 +32,7 @@ export default function MilkGroupInfoScreen() {
       />
       <Tab.Screen
         name="Milk Production"
-        component={ProductionShift}
+        component={MilkingAnimalnumber}
         initialParams={{ groupId, userId }}
       />
     </Tab.Navigator>
