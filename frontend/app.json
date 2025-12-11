@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "EDMILK",
-    "slug": "EDMILK",
+    "slug": "frontend",
     "version": "1.0.0",
     "jsEngine": "jsc",
     "orientation": "portrait",
@@ -17,6 +17,7 @@
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/logo.jpeg"
       },
+      "versionCode": 1,
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.kavita2307.frontend"
