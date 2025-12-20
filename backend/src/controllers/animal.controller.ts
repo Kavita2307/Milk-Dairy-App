@@ -3,7 +3,7 @@ import prisma from "../prisma/client";
 
 export const addAnimal = async (req: Request, res: Response) => {
   try {
-    const { animalNumber, groupId, userId } = req.body;
+    const { animalNumber, groupId, userId, details } = req.body;
     console.log("animal: ", req.body);
     if (!animalNumber || !groupId || !userId) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -14,6 +14,7 @@ export const addAnimal = async (req: Request, res: Response) => {
         animalNumber,
         groupId: Number(groupId),
         userId: Number(userId),
+        details: details || {},
       },
     });
 
@@ -31,7 +32,6 @@ export const getAnimals = async (
   try {
     const animals = await prisma.animal.findMany({
       where: { userId: req.user.userId },
-      include: { group: true },
     });
 
     res.json(animals);
@@ -56,50 +56,24 @@ export const getAnimalDetails = async (
   return res.json(animal);
 };
 
-// export const updateAnimalDetails = async (req: Request, res: Response) => {
-//   const { animalNumber, groupId, userId, details } = req.body;
-
-//   const animal = await prisma.animal.findFirst({
-//     where: { animalNumber: req.params.animalNumber },
-//   });
-
-//   if (!animal) {
-//     return res.status(404).json({ error: "Animal not found" });
-//   }
-
-//   const updated = await prisma.animal.update({
-//     where: { id: animal.id },
-//     data: {
-//       details: {
-//         ...((animal.details as Record<string, any>) || {}),
-//         ...(details as Record<string, any>),
-//       },
-//     },
-//   });
-
-//   res.json(updated);
-// };
 export const updateAnimalDetails = async (req: Request, res: Response) => {
-  const { animalNumber, details } = req.body;
-
+  const { animalNumber, groupId, userId, details } = req.body;
   const animal = await prisma.animal.findFirst({
-    where: { animalNumber },
+    where: { animalNumber: animalNumber, userId: userId, groupId: groupId },
   });
 
   if (!animal) {
     return res.status(404).json({ error: "Animal not found" });
   }
 
-  const mergedDetails = {
-    ...(typeof animal.details === "object" && animal.details !== null
-      ? animal.details
-      : {}),
-    ...details,
-  };
-
   const updated = await prisma.animal.update({
     where: { id: animal.id },
-    data: { details: mergedDetails },
+    data: {
+      details: {
+        ...((animal.details as Record<string, any>) || {}),
+        ...(details as Record<string, any>),
+      },
+    },
   });
 
   res.json(updated);

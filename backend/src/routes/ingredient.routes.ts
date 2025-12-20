@@ -1,18 +1,39 @@
+// import { Router } from "express";
+// import {
+//   addStock,
+//   createIngredient,
+//   getIngredient,
+//   listIngredients,
+//   recordConsumption,
+// } from "../controllers/ingredient.controller";
+// import { requireAuth } from "../middleware/auth";
+
+// const router = Router();
+
+// router.get("/", requireAuth, listIngredients); // GET /ingredients
+// router.post("/", requireAuth, createIngredient); // POST /ingredients
+// router.get("/:id", requireAuth, getIngredient); // GET /ingredients/:id
+// router.post("/:id/add-stock", requireAuth, addStock); // POST /ingredients/:id/add-stock
+// router.post("/:id/consume", requireAuth, recordConsumption); // POST /ingredients/:id/consume
+
+// export default router;
+// src/routes/ingredient.routes.ts
 import { Router } from "express";
 import {
-  addStock,
   createIngredient,
-  getIngredient,
-  listIngredients,
-  recordConsumption,
+  getIngredients,
+  getIngredientById,
+  updateIngredient,
+  addStock,
 } from "../controllers/ingredient.controller";
 
 const router = Router();
 
-router.get("/", listIngredients); // GET /ingredients
-router.post("/", createIngredient); // POST /ingredients
-router.get("/:id", getIngredient); // GET /ingredients/:id
-router.post("/:id/add-stock", addStock); // POST /ingredients/:id/add-stock
-router.post("/:id/consume", recordConsumption); // POST /ingredients/:id/consume
+router.post("/", createIngredient);
+router.get("/", getIngredients);
+router.get("/:id", getIngredientById);
+router.put("/:id", updateIngredient);
 
+//router.post("/add-stock", addStock);
+router.post("/:ingredientId/add-stock", addStock);
 export default router;

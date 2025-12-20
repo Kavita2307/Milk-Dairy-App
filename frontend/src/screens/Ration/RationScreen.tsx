@@ -19,10 +19,10 @@ export default function RationScreen() {
 
   const loadRation = () => {
     console.log("Loading ration for groupId:", groupId);
-    API.get(`/ration/${groupId}`).then((res) => {
-      setRation(res.data.ration);
-      setIngredients(res.data.ingredients);
-    });
+    // API.get(`/ration/${groupId}`).then((res) => {
+    //   setRation(res.data.ration);
+    //   setIngredients(res.data.ingredients);
+    // });
   };
 
   useEffect(() => {

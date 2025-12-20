@@ -1,6 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
+const JWT_SECRET = process.env.JWT_SECRET || "secret";
+
+export interface AuthRequest extends Request {
+  user?: { id: number; email?: string };
+}
 export const requireAuth = (
   req: Request & { user?: any },
   res: Response,

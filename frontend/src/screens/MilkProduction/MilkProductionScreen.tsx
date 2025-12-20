@@ -129,7 +129,6 @@ export default function MilkProductionScreen() {
               value={milkLit}
               onChangeText={setMilkLit}
               keyboardType="numeric"
-              autoFocus={true}
               placeholder="Enter milk quantity"
             />
 
@@ -261,7 +260,7 @@ const styles = StyleSheet.create({
   arrowButton: {
     backgroundColor: "#0EA5E9",
     paddingVertical: 12,
-    paddingHorizontal: 18,
+    paddingHorizontal: 15,
     borderRadius: 30,
     elevation: 5,
     shadowColor: "#000",

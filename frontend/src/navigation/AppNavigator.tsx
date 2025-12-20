@@ -5,13 +5,12 @@ import AppHeader from "./AppHeader";
 import BottomStacks from "./BottomTabs";
 
 import HerdInfoScreen from "../screens/HerdInfo/HerdInfoScreen";
-import MilkingHerdScreen from "../screens/HerdInfo/MilkingHerd";
-import NonMilkingHerdScreen from "../screens/HerdInfo/NonMilkingHerd";
+import MilkingHerdScreen from "../screens/HerdInfo/MilkAnimal/MilkingHerd";
+import NonMilkingHerdScreen from "../screens/HerdInfo/NonMilkAnimal/NonMilkingHerd";
 import AnimalNumbersScreen from "../screens/HerdInfo/AnimalNumbersScreen";
-import MilkAnimalInfoScreen from "../screens/HerdInfo/MilkAnimalInfoScreen";
-import NonMilkAnimalInfoScreen from "../screens/HerdInfo/NonMilkAnimalInfoScreen";
-import IngredientScreen from "../screens/Ingredients/IngredientScreen";
-import ReportsScreen from "../screens/Reports/ReportsScreen";
+import MilkAnimalInfoScreen from "../screens/HerdInfo/MilkAnimal/MilkAnimalInfoScreen";
+import NonMilkAnimalInfoScreen from "../screens/HerdInfo/NonMilkAnimal/NonMilkAnimalInfoScreen";
+import Reports from "../screens/Reports/ReportsScreen";
 import LeftoverScreen from "../screens/Leftover/LeftoverScreen";
 import DashboardScreen from "../screens/Dashboard/DashboardScreen";
 import RationScreen from "../screens/Ration/RationScreen";
@@ -21,11 +20,12 @@ import MilkingGroupScreen from "../screens/MilkingGroup/MilkingGroup";
 import ProductionShiftScreen from "../screens/MilkProduction/ProductionShift";
 import NonMilkingGroupScreen from "../screens/Non-MilkingGroup/Non-MilkingGroup";
 import NonMilkGroupInfoScreen from "../screens/Non-MilkingGroup/Non-MilkGroupInfo";
-import RecordConsumption from "../screens/Ingredients/RecordConsumption";
-import IngredientCreate from "../screens/Ingredients/IngredientCreate";
-import IngredientDetail from "../screens/Ingredients/IngredientDetail";
-import AddStock from "../screens/Ingredients/AddStock";
 import ProfileScreen from "./ProfileScreen";
+import InventoryScreen from "../screens/Ingredients/InventoryScreen";
+import AddIngredientScreen from "../screens/Ingredients/AddIngredientScreen";
+import IngredientDetailScreen from "../screens/Ingredients/IngredientDetailScreen";
+import UpdateMilkAnimalInfo from "../screens/HerdInfo/MilkAnimal/UpdateMilkAnimalInfo";
+import DailyFeedEfficiency from "../screens/Reports/DailyFeedEfficiency ";
 
 const Stack = createNativeStackNavigator();
 
@@ -82,6 +82,14 @@ export default function AppNavigator() {
         options={{ title: "Milking Groups" }}
       />
       <Stack.Screen name="MilkGroupInfo" component={MilkGroupInfoScreen} />
+      <Stack.Screen
+        name="UpdateMilkAnimalInfo"
+        component={UpdateMilkAnimalInfo}
+      />
+      <Stack.Screen
+        name="UpdateNonMilkAnimalInfo"
+        component={NonMilkAnimalInfoScreen}
+      />
       <Stack.Screen name="ProductionShift" component={ProductionShiftScreen} />
       <Stack.Screen
         name="Non-MilkingGroups"
@@ -92,13 +100,24 @@ export default function AppNavigator() {
         name="Non-MilkGroupInfo"
         component={NonMilkGroupInfoScreen}
       />
-      <Stack.Screen name="Ingredients" component={IngredientScreen} />
-      <Stack.Screen name="RecordConsumption" component={RecordConsumption} />
-      <Stack.Screen name="IngredientCreate" component={IngredientCreate} />
-      <Stack.Screen name="IngredientDetail" component={IngredientDetail} />
-      <Stack.Screen name="AddStock" component={AddStock} />
 
-      <Stack.Screen name="Reports" component={ReportsScreen} />
+      <Stack.Screen name="Inventory" component={InventoryScreen} />
+      <Stack.Screen name="AddIngredient" component={AddIngredientScreen} />
+      <Stack.Screen
+        name="IngredientDetail"
+        component={IngredientDetailScreen}
+        options={{ title: "Ingredients" }}
+      />
+      <Stack.Screen
+        name="Reports"
+        component={Reports}
+        options={{ title: "Reports" }}
+      />
+      <Stack.Screen
+        name="DailyFeedEfficiency"
+        component={DailyFeedEfficiency}
+        options={{ title: "Daily Feed Efficiency" }}
+      />
       <Stack.Screen name="Leftover" component={LeftoverScreen} />
       <Stack.Screen name="Ration" component={RationScreen} />
       <Stack.Screen name="MilkProduction" component={MilkProductionScreen} />

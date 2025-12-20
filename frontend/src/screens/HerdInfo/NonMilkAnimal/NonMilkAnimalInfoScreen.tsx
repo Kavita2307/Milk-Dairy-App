@@ -11,9 +11,10 @@ import {
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { API } from "../../api/api";
+import { API } from "../../../api/api";
 
 export default function NonMilkAnimalDetailsScreen() {
+  const [animalNumber, setAnimalNumber] = useState("");
   /* ================= BASIC ================= */
   const [birthDate, setBirthDate] = useState("");
   const [birthWeight, setBirthWeight] = useState("");
@@ -47,11 +48,10 @@ export default function NonMilkAnimalDetailsScreen() {
 
   const nav = useNavigation<any>();
   const route = useRoute<any>();
-  const { animalNumber } = route.params;
+  const { groupId, userId } = route.params;
 
   useEffect(() => {
-    loadDetails();
-    nav.setOptions({ title: `Animal ${animalNumber}` });
+    nav.setOptions({ title: `Animal Details` });
 
     const show = Keyboard.addListener("keyboardDidShow", (e) => {
       setKeyboardVisible(true);
@@ -78,12 +78,7 @@ export default function NonMilkAnimalDetailsScreen() {
       hide.remove();
     };
   }, []);
-  const loadDetails = () => {
-    API.get(`/animals/${animalNumber}`).then((res) => {
-      const d = res.data.details || {};
-      setDetails(d);
-    });
-  };
+
   /* ================= AGE CALCULATION ================= */
   const calculateAgeDays = (dateStr: string) => {
     const birth = new Date(dateStr);
@@ -96,6 +91,7 @@ export default function NonMilkAnimalDetailsScreen() {
 
   /* ================= RESET FORM ================= */
   const resetForm = () => {
+    setAnimalNumber("");
     setBirthDate("");
     setBirthWeight("");
     setAgeDays("");
@@ -154,7 +150,13 @@ export default function NonMilkAnimalDetailsScreen() {
     <>
       <ScrollView style={styles.container}>
         <Text style={styles.title}>Animal Details</Text>
-
+        <Text style={styles.sectionTitle}>Animal Number</Text>
+        <TextInput
+          style={styles.input}
+          value={animalNumber}
+          onChangeText={setAnimalNumber}
+          placeholder="e.g. 101"
+        />
         {/* BASIC */}
         <Text style={styles.sectionTitle}>Basic Information</Text>
 
@@ -277,74 +279,6 @@ export default function NonMilkAnimalDetailsScreen() {
         <TouchableOpacity style={styles.saveBtn} onPress={save}>
           <Text style={styles.saveBtnText}>Save</Text>
         </TouchableOpacity>
-        {/* show save details*/}
-        {details && Object.keys(details).length > 0 && (
-          <View style={styles.detailsBox}>
-            <Text style={styles.detailsTitle}>Animal Details</Text>
-
-            {/* ================= BASIC INFORMATION ================= */}
-            <Text style={styles.sectionTitle}>Basic Information</Text>
-
-            <Text style={styles.detailsItem}>
-              Birth Date: {details.birthDate || "-"}
-            </Text>
-
-            <Text style={styles.detailsItem}>
-              Birth Weight: {details.birthWeightKg || "-"} kg
-            </Text>
-
-            <Text style={styles.detailsItem}>
-              Age (Days): {details.ageDays || "-"}
-            </Text>
-
-            <Text style={styles.detailsItem}>
-              Last Body Weight: {details.lastBodyWeightKg || "-"} kg
-            </Text>
-
-            {/* ================= PEDIGREE ================= */}
-            <Text style={styles.sectionTitle}>Pedigree</Text>
-
-            <Text style={styles.detailsItem}>
-              Dam Name / No: {details.pedigree?.damNo || "-"}
-            </Text>
-
-            <Text style={styles.detailsItem}>
-              Bull Name: {details.pedigree?.bullName || "-"}
-            </Text>
-
-            <Text style={styles.detailsItem}>
-              Dam Previous Lactation Yield:{" "}
-              {details.pedigree?.damPrevYieldKg || "-"} kg
-            </Text>
-
-            {/* ================= HEALTH PARAMETERS ================= */}
-            <Text style={styles.sectionTitle}>Health Parameters</Text>
-
-            <Text style={styles.detailsItem}>
-              Body Condition Score (1-5): {details.health?.bcs || "-"}
-            </Text>
-
-            <Text style={styles.detailsItem}>
-              Dung Score (1-5): {details.health?.dungScore || "-"}
-            </Text>
-
-            <Text style={styles.detailsItem}>
-              Congenital Anomaly: {details.health?.congenitalAnomaly || "None"}
-            </Text>
-
-            <Text style={styles.detailsItem}>
-              Last Deworming Date: {details.health?.lastDewormingDate || "-"}
-            </Text>
-
-            <Text style={styles.detailsItem}>
-              Vaccination Done (Till Date): {details.health?.vaccination || "-"}
-            </Text>
-
-            <Text style={styles.detailsItem}>
-              Other Conditions: {details.health?.otherConditions || "None"}
-            </Text>
-          </View>
-        )}
       </ScrollView>
 
       {/* FLOATING ARROW */}

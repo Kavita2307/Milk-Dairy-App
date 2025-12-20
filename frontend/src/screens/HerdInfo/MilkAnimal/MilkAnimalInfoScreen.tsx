@@ -9,12 +9,13 @@ import {
   Animated,
   Keyboard,
 } from "react-native";
-import { API } from "../../api/api";
+import { API } from "../../../api/api";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Platform, Pressable } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 export default function AnimalDetailsScreen() {
+  const [animalNumber, setAnimalNumber] = useState("");
   const [age, setAge] = useState("");
   const [weight, setWeight] = useState("");
   const [lactationNo, setLactationNo] = useState("");
@@ -39,15 +40,14 @@ export default function AnimalDetailsScreen() {
 
   const nav = useNavigation<any>();
   const route = useRoute<any>();
-  const { groupId, animalNumber, userId } = route.params;
+  const { groupId, userId } = route.params;
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const slideAnim = new Animated.Value(100); // hidden initially
 
   useEffect(() => {
-    loadDetails();
-    nav.setOptions({ title: `Animal ${animalNumber}` });
+    nav.setOptions({ title: `Animal Details` });
     const show = Keyboard.addListener("keyboardDidShow", (e) => {
       setKeyboardVisible(true);
       setKeyboardHeight(e.endCoordinates.height);
@@ -76,26 +76,9 @@ export default function AnimalDetailsScreen() {
       hide.remove();
     };
   }, []);
-  const calculateDaysInMilk = (dateOfCalving?: string) => {
-    if (!dateOfCalving) return "";
-
-    const calvingDate = new Date(dateOfCalving);
-    const today = new Date();
-
-    const diffTime = today.getTime() - calvingDate.getTime();
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-    return diffDays >= 0 ? diffDays : "";
-  };
-
-  const loadDetails = () => {
-    API.get(`/animals/${animalNumber}`).then((res) => {
-      const d = res.data.details || {};
-      setDetails(d);
-    });
-  };
 
   const resetForm = () => {
+    setAnimalNumber("");
     setAge("");
     setWeight("");
     setLactationNo("");
@@ -139,8 +122,11 @@ export default function AnimalDetailsScreen() {
     };
 
     try {
-      await API.put("/animals/update-details", {
+      console.log("Saving animal details:", animalNumber, payload);
+      await API.post("/animals", {
         animalNumber,
+        groupId,
+        userId,
         details: payload,
       });
 
@@ -150,6 +136,7 @@ export default function AnimalDetailsScreen() {
       resetForm(); //  CLEAR inputs
 
       Keyboard.dismiss(); // optional UX improvement
+      return nav.goBack();
     } catch (err) {
       alert("Failed to save animal details");
     }
@@ -159,6 +146,14 @@ export default function AnimalDetailsScreen() {
     <>
       <ScrollView style={styles.container}>
         <Text style={styles.title}>Add Animal Details</Text>
+        <Text style={styles.sectionTitle}>Animal Number</Text>
+        <TextInput
+          value={animalNumber}
+          onChangeText={setAnimalNumber}
+          style={styles.input}
+          keyboardType="numeric"
+          placeholder="e.g. 101"
+        />
 
         {/* ================= BASIC INFO ================= */}
         <Text style={styles.sectionTitle}>Basic Information</Text>
@@ -301,75 +296,6 @@ export default function AnimalDetailsScreen() {
         <TouchableOpacity onPress={save} style={styles.saveBtn}>
           <Text style={styles.saveBtnText}>Save</Text>
         </TouchableOpacity>
-
-        {/* ================= SHOW SAVED DETAILS ================= */}
-
-        {details && (
-          <View style={styles.detailsBox}>
-            <Text style={styles.detailsTitle}>Animal Details</Text>
-
-            {/* BASIC INFO */}
-            <Text style={styles.sectionTitle}>Basic Information</Text>
-            <Text style={styles.detailsItem}>
-              Age: {details.ageMonths || "-"} months
-            </Text>
-            <Text style={styles.detailsItem}>
-              Body Weight: {details.bodyWeightKg || "-"} kg
-            </Text>
-            <Text style={styles.detailsItem}>
-              Lactation No: {details.lactationNo || "-"}
-            </Text>
-
-            <Text style={styles.detailsItem}>
-              Date of Calving: {details.dateOfCalving || "-"}
-            </Text>
-
-            <Text style={styles.detailsItem}>
-              Days in Milk:{" "}
-              {details.dateOfCalving
-                ? `${calculateDaysInMilk(details.dateOfCalving)} days`
-                : "-"}
-            </Text>
-
-            <Text style={styles.detailsItem}>
-              Milk Yield (7 Day Avg): {details.milkYield7DayAvg || "_"} kg
-            </Text>
-
-            {/* PEDIGREE */}
-            <Text style={styles.sectionTitle}>Pedigree</Text>
-            <Text style={styles.detailsItem}>
-              Dam No: {details.pedigree?.damNo || "-"}
-            </Text>
-            <Text style={styles.detailsItem}>
-              Bull Name: {details.pedigree?.bullName || "-"}
-            </Text>
-            <Text style={styles.detailsItem}>
-              Dam Previous Lactation Yield:{" "}
-              {details.pedigree?.damPrevYieldKg || "-"} kg
-            </Text>
-
-            {/* HEALTH */}
-            <Text style={styles.sectionTitle}>Health Parameters</Text>
-            <Text style={styles.detailsItem}>
-              Body Condition Score: {details.health?.bcs || "-"}
-            </Text>
-            <Text style={styles.detailsItem}>
-              Dung Score: {details.health?.dungScore || "-"}
-            </Text>
-            <Text style={styles.detailsItem}>
-              Lameness Score: {details.health?.lameness || "-"}
-            </Text>
-            <Text style={styles.detailsItem}>
-              Teat Score: {details.health?.teatScore || "-"}
-            </Text>
-            <Text style={styles.detailsItem}>
-              Vaccination: {details.health?.vaccination?.join(", ")}
-            </Text>
-            <Text style={styles.detailsItem}>
-              Other Conditions: {details.health?.otherConditions || "None"}
-            </Text>
-          </View>
-        )}
       </ScrollView>
 
       {/* ---------- FLOATING RIGHT ARROW BUTTON ---------- */}
@@ -453,6 +379,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginTop: 10,
+    marginBottom: 30,
   },
   saveBtnText: {
     color: "#fff",
@@ -487,7 +414,8 @@ const styles = StyleSheet.create({
     paddingBottom: 6,
     borderBottomWidth: 2,
     borderBottomColor: "#FBBF24",
-  }, // ---------- FLOATING ARROW ----------
+  },
+  // ---------- FLOATING ARROW ----------
   arrowContainer: {
     position: "absolute",
     right: 20,

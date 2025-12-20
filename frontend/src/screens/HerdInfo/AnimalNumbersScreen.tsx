@@ -14,13 +14,14 @@ export default function AnimalNumbersScreen() {
   const nav = useNavigation<any>();
   const route = useRoute<any>();
   const { groupId, groupTitle, userId } = route.params;
+  const [loading, setLoading] = useState(false);
 
   const [animals, setAnimals] = useState<any[]>([]);
-  const [showForm, setShowForm] = useState(false);
   const [animalNumber, setAnimalNumber] = useState("");
 
   // Fetch animals for this group
   const loadAnimals = () => {
+    console.log("Loading animals for group:", groupId);
     API.get("/animals").then((res) => {
       setAnimals(res.data.filter((a: any) => a.groupId === groupId));
     });
@@ -33,63 +34,29 @@ export default function AnimalNumbersScreen() {
     });
   }, [groupId, groupTitle]);
 
-  const saveAnimal = () => {
-    if (!animalNumber.trim()) {
-      alert("Enter a valid animal number");
-      return;
-    }
-
-    API.post("/animals", {
-      animalNumber,
-      groupId,
-      userId,
-    }).then(() => {
-      setAnimalNumber("");
-      setShowForm(false);
-      loadAnimals(); // reload list
-    });
-  };
-
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Animal List</Text>
 
       {/* Add Button */}
-      {!showForm && (
-        <TouchableOpacity
-          onPress={() => setShowForm(true)}
-          style={styles.addButton}
-        >
-          <Text style={styles.addButtonText}>➕ Add New Animal</Text>
-        </TouchableOpacity>
-      )}
-
-      {/* Input Form */}
-      {showForm && (
-        <View style={styles.formBox}>
-          <Text style={styles.label}>Animal Number</Text>
-
-          <TextInput
-            value={animalNumber}
-            onChangeText={setAnimalNumber}
-            style={styles.input}
-            placeholder="Enter animal number"
-          />
-
-          <View style={{ flexDirection: "row", gap: 10 }}>
-            <TouchableOpacity onPress={saveAnimal} style={styles.saveBtn}>
-              <Text style={styles.saveBtnText}>Save</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setShowForm(false)}
-              style={styles.cancelBtn}
-            >
-              <Text style={styles.cancelBtnText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
+      <TouchableOpacity
+        onPress={() => {
+          if (groupId < 4) {
+            nav.navigate("MilkAnimalInfo", {
+              groupId,
+              userId,
+            });
+          } else {
+            nav.navigate("NonMilkAnimalInfo", {
+              groupId,
+              userId,
+            });
+          }
+        }}
+        style={styles.addButton}
+      >
+        <Text style={styles.addButtonText}>➕ Add New Animal</Text>
+      </TouchableOpacity>
 
       {/* Animal List */}
       <FlatList
@@ -102,13 +69,13 @@ export default function AnimalNumbersScreen() {
               style={styles.groupRow}
               onPress={() => {
                 if (groupId < 4) {
-                  nav.navigate("MilkAnimalInfo", {
+                  nav.navigate("UpdateMilkAnimalInfo", {
                     animalNumber: item.animalNumber,
                     groupId,
                     userId,
                   });
                 } else {
-                  nav.navigate("NonMilkAnimalInfo", {
+                  nav.navigate("UpdateNonMilkAnimalInfo", {
                     animalNumber: item.animalNumber,
                     groupId,
                     userId,

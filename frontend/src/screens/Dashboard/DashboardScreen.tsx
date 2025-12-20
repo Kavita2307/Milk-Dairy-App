@@ -36,9 +36,8 @@ const menuItems: {
     icon: "cow-off",
     route: "Non-MilkingGroups",
   },
-  { id: "3", title: "Ingredients store", icon: "cart", route: "Ingredients" },
-  { id: "4", title: "Leftover", icon: "delete", route: "Leftover" },
-  { id: "5", title: "Report", icon: "file", route: "Report" },
+  { id: "3", title: "Ingredients store", icon: "cart", route: "Inventory" },
+  { id: "4", title: "Report", icon: "file", route: "Reports" },
 ];
 
 export default function DashboardScreen() {

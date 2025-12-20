@@ -56,7 +56,11 @@ export default function NonMilkingGroupScreen() {
             key={item.id}
             style={styles.groupRow}
             onPress={() =>
-              nav.navigate(item.route, { groupId: item.id, userId })
+              nav.navigate(item.route, {
+                groupId: item.id,
+                userId,
+                groupTitle: item.title,
+              })
             }
           >
             <Text style={styles.groupText}>{item.title}</Text>

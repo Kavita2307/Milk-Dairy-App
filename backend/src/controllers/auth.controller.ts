@@ -30,6 +30,7 @@ export const register = async (req: Request, res: Response) => {
 };
 
 export const login = async (req: Request, res: Response) => {
+  console.log("inside login of auth controller");
   try {
     const { email, password } = req.body;
     console.log("login backend email: ", email, password);
