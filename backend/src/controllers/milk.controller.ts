@@ -4,7 +4,7 @@ import prisma from "../prisma/client";
 // Save milk
 export const saveMilk = async (req: Request, res: Response) => {
   try {
-    const { groupId, milkLit, shift, animalNumber } = req.body;
+    const { groupId, milkLit, shift, animalNumber, userId } = req.body;
 
     if (!groupId || !milkLit || !shift || !animalNumber) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -16,6 +16,7 @@ export const saveMilk = async (req: Request, res: Response) => {
         milkLit: Number(milkLit),
         shift,
         animalNumber: animalNumber.toString(),
+        userId: userId,
       },
     });
 

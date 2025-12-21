@@ -3,27 +3,27 @@ import prisma from "../prisma/client";
 import { subDays, startOfDay } from "date-fns";
 
 // 1) Herd summary (counts)
-export const herdSummary = async (_req: Request, res: Response) => {
-  try {
-    const [totalAnimals, totalGroups, milkingGroups, nonMilkingGroups] =
-      await Promise.all([
-        prisma.animal.count(),
-        prisma.group.count(),
-        prisma.group.count({ where: { type: "milking" } }),
-        prisma.group.count({ where: { type: "non-milking" } }),
-      ]);
+// export const herdSummary = async (_req: Request, res: Response) => {
+//   try {
+//     const [totalAnimals, totalGroups, milkingGroups, nonMilkingGroups] =
+//       await Promise.all([
+//         prisma.animal.count(),
+//         prisma.group.count(),
+//         prisma.group.count({ where: { type: "milking" } }),
+//         prisma.group.count({ where: { type: "non-milking" } }),
+//       ]);
 
-    res.json({
-      totalAnimals,
-      totalGroups,
-      milkingGroups,
-      nonMilkingGroups,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Server error" });
-  }
-};
+//     res.json({
+//       totalAnimals,
+//       totalGroups,
+//       milkingGroups,
+//       nonMilkingGroups,
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: "Server error" });
+//   }
+// };
 
 // 2) Milk per day (last 7 days) for a given group
 export const milkLast7Days = async (req: Request, res: Response) => {

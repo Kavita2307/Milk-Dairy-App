@@ -1,17 +1,3 @@
-// import React from "react";
-// import { View, Text } from "react-native";
-
-// export default function ReportsScreen() {
-//   return (
-//     <View style={{ padding: 20 }}>
-//       <Text style={{ fontSize: 24 }}>Reports</Text>
-//       <Text>Daily Feed Efficiency</Text>
-//       <Text>Milk Yield</Text>
-//       <Text>Dry Matter Intake</Text>
-//       <Text>Mix Accuracy</Text>
-//     </View>
-//   );
-// }
 import React from "react";
 import type { ComponentProps } from "react";
 import {
@@ -41,14 +27,19 @@ const menuItems: {
   },
   {
     id: "1",
+    title: "Dry Matter Intake",
+    icon: "cart",
+    route: "DryMatterIntake",
+  },
+  {
+    id: "2",
     title: "Milk Yield",
     icon: "cow-off",
-    route: "NonMilkingHerd",
+    route: "MilkYield",
   },
-  { id: "2", title: "Dry Matter Intake", icon: "cart", route: "Inventory" },
-  { id: "3", title: "Mix Accuracy", icon: "file", route: "Reports" },
+  // { id: "3", title: "Mix Accuracy", icon: "file", route: "Reports" },
 ];
-export default function HerdInfoScreen() {
+export default function ReportsScreen() {
   const navigation = useNavigation<any>();
   const { user } = useAuth();
 

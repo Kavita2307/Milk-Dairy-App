@@ -1,250 +1,308 @@
-// import React, { useEffect, useState } from "react";
-// import {
-//   View,
-//   Text,
-//   TouchableOpacity,
-//   FlatList,
-//   StyleSheet,
-//   TextInput,
-//   Dimensions,
-//   Button,
-//   ScrollView,
-// } from "react-native";
-// import { useRoute, useNavigation } from "@react-navigation/native";
-// import { API } from "../../api/api";
-// import { LineChart } from "react-native-chart-kit";
-// import DailyFeedEfficiencyTable from "../../components/DailyFeedEfficiencyTable";
-// // import * as Print from "expo-print";
-// // import * as Sharing from "expo-sharing";
-// // import * as FileSyste m from "expo-file-system";
-// // import XLSX from "xlsx";
-// // import RNFS from "react-native-fs";
-// import DateTimePicker from "@react-native-community/datetimepicker";
-
-// const screenWidth = Dimensions.get("window").width;
-
-// export default function DailyFeedEfficiency() {
-//   const nav = useNavigation<any>();
-//   const route = useRoute<any>();
-//   const { userId } = route.params;
-//   const [report, setReport] = useState<any>(null);
-//   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-//   const [showPicker, setShowPicker] = useState(false);
-
-//   const formatDate = (date: Date) => {
-//     return date.toISOString().split("T")[0]; // YYYY-MM-DD
-//   };
-//   const loadReport = async () => {
-//     const data = await API.post("/reports/daily-feed-efficiency", {
-//       date: "2025-12-12",
-//       tmrDmPercent: 50,
-//       tmrCostPerKg: 15,
-//     });
-//     setReport(data);
-//   };
-//   const loadReportByDate = async (date: Date) => {
-//     const data = await API.post("/reports/daily-feed-efficiency", {
-//       groupId: 1,
-//       date: formatDate(date),
-//       tmrDmPercent: 50,
-//       tmrCostPerKg: 15,
-//     });
-
-//     setReport(data);
-//   };
-//   useEffect(() => {
-//     // loadReport();
-//     loadReportByDate(selectedDate);
-//   }, []);
-
-//   /* ---------- PDF EXPORT ---------- */
-//   // const exportPDF = async () => {
-//   //   const html = `
-//   //     <h1>Daily Feed Efficiency</h1>
-//   //     <p>Date: ${report.date}</p>
-//   //     <p>Total Milking Cows: ${report.totalMilkingCows}</p>
-//   //     <p>Avg DM Intake/Cow: ${report.avgDMIntakePerCow}</p>
-//   //     <p>DMI/Ltr Milk: ${report.dmiPerLtrMilk} g</p>
-//   //     <p>Feeding Cost/Ltr: ₹${report.feedingCostPerLtr}</p>
-//   //   `;
-
-//   //   // const file = await RNHTMLtoPDF.convert({
-//   //   //   html,
-//   //   //   fileName: "daily_feed_efficiency",
-//   //   //   base64: true,
-//   //   // });
-//   //   const { uri } = await Print.printToFileAsync({ html });
-//   //   await Sharing.shareAsync(uri);
-
-//   //   alert("PDF Exported: " + uri);
-//   // };
-
-//   /* ---------- EXCEL EXPORT ---------- */
-//   // const exportExcel = async () => {
-//   //   const ws = XLSX.utils.json_to_sheet([report]);
-//   //   const wb = XLSX.utils.book_new();
-//   //   XLSX.utils.book_append_sheet(wb, ws, "Report");
-
-//   //   const excelData = XLSX.write(wb, {
-//   //     type: "base64",
-//   //     bookType: "xlsx",
-//   //   });
-
-//   //   const uri = FileSystem.documentDirectory + "daily_feed_efficiency.xlsx";
-
-//   //   await FileSystem.writeAsStringAsync(uri, base64, {
-//   //     encoding: FileSystem.EncodingType.Base64,
-//   //   });
-
-//   //   await Sharing.shareAsync(uri);
-//   // };
-
-//   // if (!report) return <Text>Loading...</Text>;
-
-//   return (
-//     // <ScrollView style={{ padding: 16 }}>
-//     //   <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-//     //     Daily Feed Efficiency
-//     //   </Text>
-
-//     //   <Text style={{ fontWeight: "bold" }}>Select Date</Text>
-
-//     //   <Button
-//     //     title={formatDate(selectedDate)}
-//     //     onPress={() => setShowPicker(true)}
-//     //   />
-//     //   <Text>Total Milking Cows: {report.totalMilkingCows}</Text>
-//     //   <Text>Avg TMR Intake/Cow: {report.avgTMRIntakePerCow} kg</Text>
-//     //   <Text>Avg DM Intake/Cow: {report.avgDMIntakePerCow} kg</Text>
-//     //   <Text>Total Milk: {report.totalMilkLtr} Ltr</Text>
-//     //   <Text>DMI/Ltr Milk: {report.dmiPerLtrMilk} g</Text>
-//     //   <Text>Feeding Cost/Ltr: ₹{report.feedingCostPerLtr}</Text>
-
-//     //   {/* -------- GRAPH -------- */}
-//     //   <LineChart
-//     //     data={{
-//     //       labels: ["DM Intake", "Milk Avg", "Cost/Ltr"],
-//     //       datasets: [
-//     //         {
-//     //           data: [
-//     //             report.avgDMIntakePerCow,
-//     //             report.groupAvgMilk,
-//     //             report.feedingCostPerLtr,
-//     //           ],
-//     //         },
-//     //       ],
-//     //     }}
-//     //     width={screenWidth - 32}
-//     //     height={220}
-//     //     chartConfig={{
-//     //       backgroundColor: "#ffffff",
-//     //       backgroundGradientFrom: "#ffffff",
-//     //       backgroundGradientTo: "#ffffff",
-//     //       decimalPlaces: 2,
-//     //       color: () => `#2e7d32`,
-//     //       labelColor: () => "#000",
-//     //     }}
-//     //     style={{ marginVertical: 16 }}
-//     //   />
-
-//     //   {/* <Button title="Export PDF" onPress={exportPDF} /> */}
-//     //   <View style={{ height: 10 }} />
-//     //   {/* <Button title="Export Excel" onPress={exportExcel} /> */}
-//     //   {showPicker && (
-//     //     <DateTimePicker
-//     //       value={selectedDate}
-//     //       mode="date"
-//     //       display="default"
-//     //       onChange={(event, date) => {
-//     //         setShowPicker(false);
-//     //         if (date) {
-//     //           setSelectedDate(date);
-//     //           loadReportByDate(date);
-//     //         }
-//     //       }}
-//     //     />
-//     //   )}
-//     // </ScrollView>
-//     <ScrollView>
-//       {report && <DailyFeedEfficiencyTable report={report} />}
-//     </ScrollView>
-//   );
-// }
 import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   ScrollView,
-  Button,
+  StyleSheet,
   ActivityIndicator,
+  Button,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { API } from "../../api/api";
-import { DailyFeedEfficiencyTable } from "../../components/DailyFeedEfficiencyTable";
+import { DailyFeedEfficiencyReport } from "../../types/models";
+import { useRoute } from "@react-navigation/native";
+import { Picker } from "@react-native-picker/picker";
 
-const formatDate = (date: Date) => {
-  return date.toISOString().split("T")[0];
+const groupNames: Record<string, string> = {
+  "1": "Group 1 (High Yielder)",
+  "2": "Group 2 (Medium Yielder)",
+  "3": "Group 3 (Low Yielder)",
+  "4": "Group 4 (Calves)",
+  "5": "Group 5 (Starter)",
+  "6": "Group 6 (Grower)",
+  "7": "Group 7 (Heifer)",
+  "8": "Group 8 (Dry)",
+  "9": "Group 9 (Dry Close Up)",
 };
 
-const DailyFeedEfficiency = () => {
-  const [report, setReport] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
+export default function DailyFeedEfficiencyScreen() {
+  const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [loading, setLoading] = useState(false);
+  const [report, setReport] = useState<DailyFeedEfficiencyReport | null>(null);
+  const route = useRoute<any>();
+  const [selectedGroupId, setSelectedGroupId] = useState<string>("1");
+  const [groupId, setGroupId] = useState(1);
+  const { userId } = route.params;
 
-  const loadReport = async (date: Date) => {
+  const formatLocalDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+  // const exportToExcel = async () => {
+  //   if (!report) {
+  //     alert("No report data to export");
+  //     return;
+  //   }
+
+  //   const data = Object.entries(report.groups).map(([id, g]) => ({
+  //     Group: groupNames[id],
+  //     Animals: g.animals,
+  //     Milk: g.totalMilk,
+  //     AvgMilk: g.avgMilk,
+  //     TMRFed: g.tmrFed,
+  //     TMRIntake: g.tmrIntake,
+  //   }));
+
+  //   const ws = XLSX.utils.json_to_sheet(data);
+  //   const wb = XLSX.utils.book_new();
+  //   XLSX.utils.book_append_sheet(wb, ws, "Daily Report");
+
+  //   const wbout = XLSX.write(wb, { type: "binary", bookType: "xlsx" });
+
+  //   const path = `${RNFS.DownloadDirectoryPath}/DailyFeedReport.xlsx`;
+
+  //   await RNFS.writeFile(path, wbout, "ascii");
+
+  //   alert("✅ Excel exported to Downloads folder");
+  // };
+  // const exportToPDF = async () => {
+  //   const file = await pdf.convert({
+  //     html: "<h1>Daily Feed Report</h1>",
+  //     fileName: "DailyFeedReport",
+  //     directory: "Documents",
+  //   });
+
+  //   alert(`PDF saved at ${file.filePath}`);
+  // };
+
+  const loadReport = async (selectedDate: Date) => {
     try {
       setLoading(true);
-      const response = await API.post("/reports/daily-feed-efficiency", {
-        groupId: 1,
-        date: formatDate(date),
-        tmrDmPercent: 50,
-        tmrCostPerKg: 15,
+
+      const formattedDate = formatLocalDate(selectedDate);
+      console.log("date and userId", formattedDate, userId);
+      const response = await API.get("/report/daily-feed-efficiency", {
+        params: { userId, groupId, date: formattedDate },
       });
+      console.log("response: ", response.data);
       setReport(response.data);
+      console.log("REPORT GROUPS:", report?.groups);
     } catch (error) {
-      console.error(error);
+      console.error("Failed to load report:", error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadReport(selectedDate);
-  }, []);
+    loadReport(date);
+    const firstGroupId = Object.keys(groupNames)[0];
+    if (firstGroupId) {
+      setSelectedGroupId(firstGroupId);
+    }
+    console.log("Default groupId:", selectedGroupId);
+  }, [date]);
 
   return (
-    <ScrollView style={{ padding: 10 }}>
-      {/* DATE PICKER */}
-      <View style={{ marginBottom: 10 }}>
-        <Text style={{ fontWeight: "bold" }}>Select Date</Text>
-        <Button
-          title={formatDate(selectedDate)}
-          onPress={() => setShowPicker(true)}
-        />
-
-        {showPicker && (
-          <DateTimePicker
-            value={selectedDate}
-            mode="date"
-            display="default"
-            onChange={(event, date) => {
-              setShowPicker(false);
-              if (date) {
-                setSelectedDate(date);
-                loadReport(date);
-              }
-            }}
-          />
-        )}
+    <ScrollView style={styles.container}>
+      <View style={styles.exportRow}>
+        {/* <Button title="Excel" onPress={exportToExcel} /> */}
+        {/* <Button title="PDF" onPress={exportToPDF} /> */}
       </View>
+
+      {/* DATE PICKER */}
+      <View style={styles.dateRow}>
+        <Text style={styles.dateText}>Date: {date.toDateString()}</Text>
+        <Button title="Change Date" onPress={() => setShowPicker(true)} />
+      </View>
+
+      {showPicker && (
+        <DateTimePicker
+          value={date}
+          mode="date"
+          display="default"
+          onChange={(_, selectedDate) => {
+            setShowPicker(false);
+            if (selectedDate) {
+              setDate(selectedDate);
+              loadReport(selectedDate);
+            }
+          }}
+        />
+      )}
 
       {loading && <ActivityIndicator size="large" />}
 
-      {/* REPORT TABLE */}
-      {report && <DailyFeedEfficiencyTable report={report} />}
+      {report && (
+        <>
+          {/* SUMMARY */}
+          <View style={styles.summaryCard}>
+            <Text style={styles.summaryTitle}>Daily Summary</Text>
+
+            <View style={styles.summaryRow}>
+              <Text style={styles.label}>Total Herd</Text>
+              <Text style={styles.value}>{report.totalHerdStrength}</Text>
+            </View>
+
+            <View style={styles.summaryRow}>
+              <Text style={styles.label}>Total Milk (Ltr)</Text>
+              <Text style={styles.value}>{report.totalMilk}</Text>
+            </View>
+
+            <View style={styles.summaryRow}>
+              <Text style={styles.label}>Feed Cost (₹)</Text>
+              <Text style={styles.value}>{report.totalFeedCost}</Text>
+            </View>
+
+            <View style={styles.summaryRow}>
+              <Text style={styles.label}>Feed / Ltr (₹)</Text>
+              <Text style={styles.value}>{report.feedCostPerLiter}</Text>
+            </View>
+          </View>
+
+          {/* GROUP WISE */}
+          <Text style={styles.sectionTitle}>Select Group</Text>
+
+          <View style={styles.dropdownContainer}>
+            <Picker
+              selectedValue={selectedGroupId}
+              onValueChange={(value) => {
+                setSelectedGroupId(value);
+                setGroupId(Number(value));
+              }}
+              style={styles.picker}
+              dropdownIconColor="#333"
+            >
+              {Object.entries(groupNames).map(([id, name]) => (
+                <Picker.Item key={id} label={name} value={id} />
+              ))}
+            </Picker>
+          </View>
+
+          <Text style={styles.sectionTitle}>Group Wise Report</Text>
+
+          {Object.entries(report.groups)
+            .filter(([groupId]) => groupId === selectedGroupId)
+            .map(([groupId, g]) => (
+              <View key={groupId} style={styles.groupCard}>
+                <Text style={styles.groupTitle}>{groupNames[groupId]}</Text>
+
+                <View style={styles.row}>
+                  <Text style={styles.label}>Animals</Text>
+                  <Text style={styles.value}>{g.animals}</Text>
+                </View>
+
+                <View style={styles.row}>
+                  <Text style={styles.label}>Milk (Ltr)</Text>
+                  <Text style={styles.value}>{g.totalMilk}</Text>
+                </View>
+
+                <View style={styles.row}>
+                  <Text style={styles.label}>Avg Milk / Cow</Text>
+                  <Text style={styles.value}>{g.avgMilk}</Text>
+                </View>
+
+                <View style={styles.row}>
+                  <Text style={styles.label}>TMR Intake (kg)</Text>
+                  <Text style={styles.value}>{g.tmrIntake}</Text>
+                </View>
+              </View>
+            ))}
+        </>
+      )}
     </ScrollView>
   );
-};
-
-export default DailyFeedEfficiency;
+}
+const styles = StyleSheet.create({
+  container: {
+    padding: 12,
+    backgroundColor: "#f4f6f8",
+  },
+  dateRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  dateText: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    marginVertical: 10,
+  },
+  card: {
+    backgroundColor: "#fff",
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 10,
+    elevation: 2,
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    marginBottom: 6,
+  },
+  dropdownContainer: {
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    marginBottom: 10,
+    elevation: 2,
+  },
+  summaryCard: {
+    backgroundColor: "#fff",
+    padding: 16,
+    marginTop: 5,
+    borderRadius: 12,
+    marginBottom: 12,
+    elevation: 3,
+  },
+  summaryTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    marginBottom: 10,
+  },
+  summaryRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: 4,
+  },
+  groupCard: {
+    backgroundColor: "#fff",
+    padding: 14,
+    borderRadius: 12,
+    marginBottom: 10,
+    elevation: 2,
+  },
+  groupTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    marginBottom: 8,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: 3,
+  },
+  label: {
+    color: "#555",
+    fontSize: 14,
+  },
+  value: {
+    fontWeight: "600",
+    fontSize: 14,
+  },
+  picker: {
+    height: 190,
+  },
+  exportRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: 10,
+  },
+});

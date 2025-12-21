@@ -83,6 +83,7 @@ export default function MilkProductionScreen() {
       milkLit: Number(milkLit),
       shift,
       animalNumber,
+      userId,
     })
       .then(() => alert("Milk Saved Successfully"))
       .catch(() => alert("Error saving milk data"));

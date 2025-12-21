@@ -26,14 +26,15 @@ import {
   updateIngredient,
   addStock,
 } from "../controllers/ingredient.controller";
+import { requireAuth } from "../middleware/auth";
 
 const router = Router();
 
-router.post("/", createIngredient);
-router.get("/", getIngredients);
-router.get("/:id", getIngredientById);
-router.put("/:id", updateIngredient);
+router.post("/", requireAuth, createIngredient);
+router.get("/", requireAuth, getIngredients);
+router.get("/:id", requireAuth, getIngredientById);
+router.put("/:id", requireAuth, updateIngredient);
 
 //router.post("/add-stock", addStock);
-router.post("/:ingredientId/add-stock", addStock);
+router.post("/:ingredientId/add-stock", requireAuth, addStock);
 export default router;

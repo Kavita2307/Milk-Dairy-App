@@ -38,6 +38,7 @@ const menuItems: {
   },
   { id: "3", title: "Ingredients store", icon: "cart", route: "Inventory" },
   { id: "4", title: "Report", icon: "file", route: "Reports" },
+  { id: "5", title: "Display", icon: "file", route: "Display" },
 ];
 
 export default function DashboardScreen() {

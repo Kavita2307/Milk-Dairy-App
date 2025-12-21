@@ -26,6 +26,13 @@ import AddIngredientScreen from "../screens/Ingredients/AddIngredientScreen";
 import IngredientDetailScreen from "../screens/Ingredients/IngredientDetailScreen";
 import UpdateMilkAnimalInfo from "../screens/HerdInfo/MilkAnimal/UpdateMilkAnimalInfo";
 import DailyFeedEfficiency from "../screens/Reports/DailyFeedEfficiency ";
+import DryMatterIntake from "../screens/Reports/DryMatterIntake";
+import MilkYield from "../screens/Reports/MilkYield";
+import CowWise from "../screens/Reports/CowWise";
+import GroupWise from "../screens/Reports/GroupWise";
+// import RationMixAccuracy from "../screens/Reports/RationMixAccuracy";
+// import PrintHerdInfo from "../screens/Reports/PrintHerdInfo";
+import Display from "../screens/Display/DisplayScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -46,13 +53,11 @@ export default function AppNavigator() {
         component={DashboardScreen}
         options={{ title: "Dashboard" }}
       />
-
       <Stack.Screen
         name="ProfileScreen"
         component={ProfileScreen}
         options={{ title: "Profile Details" }}
       />
-
       {/* Dashboard Menu Pages */}
       <Stack.Screen
         name="Herd Information"
@@ -75,7 +80,6 @@ export default function AppNavigator() {
         name="NonMilkAnimalInfo"
         component={NonMilkAnimalInfoScreen}
       />
-
       <Stack.Screen
         name="MilkingGroups"
         component={MilkingGroupScreen}
@@ -100,7 +104,6 @@ export default function AppNavigator() {
         name="Non-MilkGroupInfo"
         component={NonMilkGroupInfoScreen}
       />
-
       <Stack.Screen name="Inventory" component={InventoryScreen} />
       <Stack.Screen name="AddIngredient" component={AddIngredientScreen} />
       <Stack.Screen
@@ -116,7 +119,34 @@ export default function AppNavigator() {
       <Stack.Screen
         name="DailyFeedEfficiency"
         component={DailyFeedEfficiency}
-        options={{ title: "Daily Feed Efficiency" }}
+        options={{ title: "Daily Feed Efficiency Report" }}
+      />
+      <Stack.Screen
+        name="DryMatterIntake"
+        component={DryMatterIntake}
+        options={{ title: "Dry Matter Intake Report" }}
+      />
+      <Stack.Screen
+        name="MilkYield"
+        component={MilkYield}
+        options={{ title: "Milk Yield Report" }}
+      />
+      <Stack.Screen
+        name="CowWise"
+        component={CowWise}
+        options={{ title: "Milking Cow wise Report" }}
+      />
+      <Stack.Screen
+        name="GroupWise"
+        component={GroupWise}
+        options={{ title: "Milking Group wise Report" }}
+      />
+      {/*<Stack.Screen name="RationMixAccuracy" component={RationMixAccuracy} />
+      <Stack.Screen name="PrintHerdInfo" component={PrintHerdInfo} /> */}
+      <Stack.Screen
+        name="Display"
+        component={Display}
+        options={{ title: "Display" }}
       />
       <Stack.Screen name="Leftover" component={LeftoverScreen} />
       <Stack.Screen name="Ration" component={RationScreen} />

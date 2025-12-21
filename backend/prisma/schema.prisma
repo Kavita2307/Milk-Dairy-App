@@ -47,6 +47,7 @@ model Leftover {
   groupId    Int
   date       DateTime @default(now())
   leftoverKg Float
+  userId Int
 
 }
 
@@ -58,6 +59,7 @@ model Milk {
   milkLit      Float
   animalNumber String
   date         DateTime @default(now())
+userId Int
 
 }
 
@@ -80,7 +82,7 @@ model Ingredient {
 
 model StockEntry {
   id Int @id @default(autoincrement())
-
+user Int
   ingredientId Int
   quantity Float        // kg
   note String?
@@ -92,7 +94,7 @@ model StockEntry {
 
 model Consumption {
   id Int @id @default(autoincrement())
-
+userId Int
   ingredientId Int
   quantity Float        // kg used
   note String?
