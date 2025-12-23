@@ -1,13 +1,13 @@
-import Sidebar from "../components/Sidebar";
-import AppRoutes from "./routes";
+import Navbar from "../components/Navbar";
+import Router from "./routes";
 
 export default function App() {
   return (
-    <div style={{ display: "flex" }}>
-      <Sidebar />
-      <main style={{ padding: 24, flex: 1 }}>
-        <AppRoutes />
+    <>
+      <Navbar />
+      <main>
+        <Router />
       </main>
-    </div>
+    </>
   );
 }

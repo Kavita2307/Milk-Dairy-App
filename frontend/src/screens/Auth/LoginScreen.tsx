@@ -6,6 +6,7 @@ import {
   Button,
   Keyboard,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigation } from "@react-navigation/native";
@@ -18,9 +19,14 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
 
   const submit = async () => {
-    Keyboard.dismiss(); // 👈 closes keyboard immediately
+    Keyboard.dismiss(); // closes keyboard immediately
     console.log("clicked on login button");
-    await login(email, password);
+    try {
+      await login(email, password);
+      Alert.alert("Success 🎉", "Logged in successfully!");
+    } catch (err: any) {
+      Alert.alert("Login failed", err.response?.data?.error || err.message);
+    }
     console.log("clicked... login button done");
   };
 

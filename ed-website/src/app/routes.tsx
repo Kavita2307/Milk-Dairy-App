@@ -1,8 +1,8 @@
 import { Routes, Route } from "react-router-dom";
-import Login from "../pages/AnimalNutrition/Login";
-import FarmerDashboard from "../pages/AnimalNutrition/FarmerDashboard";
-import OfficialDashboard from "../pages/AnimalNutrition/OfficialDashboard";
-import FarmerView from "../pages/AnimalNutrition/FarmerView";
+import Login from "../Pages/AnimalNutrition/Login";
+import FarmerDashboard from "../Pages/AnimalNutrition/FarmerDashboard";
+import OfficialDashboard from "../Pages/AnimalNutrition/OfficialDashboard";
+import FarmerView from "../Pages/AnimalNutrition/FarmerView";
 import { ProtectedRoute } from "./ProtectedRoute";
 
 export default function AppRoutes() {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -15,6 +15,7 @@ import { readLoadCell } from "../../api/loadCell";
 export default function LeftoverScreen() {
   const route = useRoute<any>();
   const { groupId, userId } = route.params;
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const [weight, setWeight] = useState("0");
   const [useLoadCell, setUseLoadCell] = useState(false);
@@ -56,21 +57,41 @@ export default function LeftoverScreen() {
   //     .catch(() => alert("Failed to read load cell"));
   // };
 
-  const fetchFromLoadCell = async () => {
-    try {
-      const data = await readLoadCell();
+  // const fetchFromLoadCell = async () => {
+  //   try {
+  //     const data = await readLoadCell();
 
-      // Only accept stable weight
-      if (!data.stable) {
-        alert("Leftover is still measuring… Please wait");
-        return;
+  //     // Only accept stable weight
+  //     if (!data.stable) {
+  //       alert("Leftover is still measuring… Please wait");
+  //       return;
+  //     }
+
+  //     // Weight from ESP32 is in KG
+  //     setWeight(data.weight.toFixed(2));
+  //   } catch {
+  //     alert("Weighing machine not connected");
+  //   }
+  // };
+  const fetchFromLoadCell = () => {
+    if (intervalRef.current) return;
+
+    intervalRef.current = setInterval(async () => {
+      try {
+        const data = await readLoadCell();
+
+        setWeight(data.weight.toFixed(2));
+
+        if (data.stable) {
+          clearInterval(intervalRef.current!);
+          intervalRef.current = null;
+        }
+      } catch {
+        clearInterval(intervalRef.current!);
+        intervalRef.current = null;
+        alert("Weighing machine not connected");
       }
-
-      // Weight from ESP32 is in KG
-      setWeight(data.weight.toFixed(2));
-    } catch {
-      alert("Weighing machine not connected");
-    }
+    }, 500);
   };
 
   const saveLeftover = () => {
@@ -112,7 +133,7 @@ export default function LeftoverScreen() {
               onPress={fetchFromLoadCell}
               style={styles.fetchBtn}
             >
-              <Text style={styles.fetchBtnText}>Get Weight</Text>
+              {/* <Text style={styles.fetchBtnText}>Get Weight</Text> */}
             </TouchableOpacity>
           </View>
         ) : (
@@ -125,7 +146,7 @@ export default function LeftoverScreen() {
               value={weight}
               onChangeText={setWeight}
               keyboardType="numeric"
-              autoFocus={true} // Auto-open keyboard
+              // autoFocus={true} // Auto-open keyboard
               placeholder="Enter weight"
             />
 

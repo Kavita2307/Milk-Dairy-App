@@ -8,47 +8,38 @@ import {
   Alert,
 } from "react-native";
 import { API } from "../../api/api";
-
-/* -------------------- */
-/* TYPES */
-/* -------------------- */
-
-interface WeightResponse {
-  weight: number;
-  unit: string;
-  stable: boolean;
-  timestamp: number;
-}
-
-/* -------------------- */
-/* SCREEN */
-/* -------------------- */
+import { readLoadCell } from "@/src/api/loadCell";
 
 export default function WeighingMachineScreen() {
-  const [weight, setWeight] = useState(0);
+  const [weight, setWeight] = useState<number>(0);
   const [stable, setStable] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [tareWeight, setTareWeight] = useState(0);
+  const [tareWeight, setTareWeight] = useState<number>(0);
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  /* --------------------
-     LOAD WEIGHT
-  -------------------- */
+  // LOAD WEIGHT
+
   const loadWeight = async () => {
     try {
-      const res = await API.get<WeightResponse>("/api/weight");
+      const data = await readLoadCell();
 
-      setWeight(res.data.weight);
-      setStable(res.data.stable);
-    } catch (error) {
-      console.error("Weight fetch error", error);
+      // Only accept stable weight
+      if (!data.stable) {
+        alert("Milk is still measuring… Please wait");
+        return;
+      }
+
+      // Weight from ESP32 is in KG
+      setWeight(data.weight);
+      setStable(data.stable);
+    } catch {
+      alert("Weighing machine not connected");
     }
   };
 
-  /* --------------------
-     AUTO REFRESH (500ms)
-  -------------------- */
+  // AUTO REFRESH (500ms)
+
   useEffect(() => {
     loadWeight();
 
@@ -61,9 +52,8 @@ export default function WeighingMachineScreen() {
     };
   }, []);
 
-  /* --------------------
-     TARE / ZERO
-  -------------------- */
+  // TARE / ZERO
+
   const handleTare = async () => {
     try {
       setLoading(true);
@@ -89,11 +79,11 @@ export default function WeighingMachineScreen() {
 
       {/* WEIGHT DISPLAY */}
       <View style={styles.weightCard}>
-        <Text style={styles.label}>Gross Weight</Text>
+        <Text style={styles.label}> Weight</Text>
         <Text style={styles.weightText}>{weight.toFixed(2)} kg</Text>
 
-        <Text style={styles.label}>Net Weight</Text>
-        <Text style={styles.netWeightText}>{netWeight.toFixed(2)} kg</Text>
+        {/* <Text style={styles.label}>Net Weight</Text>
+        <Text style={styles.netWeightText}>{netWeight.toFixed(2)} kg</Text> */}
 
         <Text
           style={[styles.status, { color: stable ? "#16a34a" : "#dc2626" }]}
@@ -120,10 +110,6 @@ export default function WeighingMachineScreen() {
     </View>
   );
 }
-
-/* -------------------- */
-/* STYLES */
-/* -------------------- */
 
 const styles = StyleSheet.create({
   container: {

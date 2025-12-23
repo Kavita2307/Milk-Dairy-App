@@ -1,0 +1,60 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 40px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #eee;
+  font-family: Arial, sans-serif;
+}
+
+/* Logo */
+.navbar__logo img {
+  height: 45px;
+}
+
+/* Menu */
+.navbar__menu {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+}
+
+.navbar__menu a {
+  text-decoration: none;
+  color: #111;
+  font-weight: 500;
+  position: relative;
+}
+
+.navbar__menu a:hover {
+  color: #0b2c4a;
+}
+
+/* Active (About Us highlighted) */
+.navbar__menu a.active {
+  color: #1a73e8;
+  font-weight: 600;
+}
+
+/* Disabled (ED Milk - Coming Soon) */
+.navbar__menu a.disabled {
+  pointer-events: none;
+  color: #999;
+}
+
+/* Auth Button */
+.navbar__auth .login-btn {
+  background-color: transparent;
+  border: 1px solid #0b2c4a;
+  color: #0b2c4a;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.navbar__auth .login-btn:hover {
+  background-color: #0b2c4a;
+  color: #ffffff;
+}

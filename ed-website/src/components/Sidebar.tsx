@@ -1,23 +1,23 @@
 import { Link } from "react-router-dom";
-import { colors } from "../theme/colors";
+import { theme } from "../styles/theme";
 
 export default function Sidebar() {
   return (
-    <aside style={{ background: colors.sidebar, color: "white", width: 240 }}>
-      <h2 style={{ padding: 16 }}>ED Website</h2>
-      <nav>
-        <Link to="/" className="link">
-          Home
-        </Link>
-        <Link to="/about-us" className="link">
-          About Us
-        </Link>
-        <Link to="/animal-nutrition/login" className="link">
-          Animal Nutrition
-        </Link>
-        <Link to="/ed-milk" className="link">
-          ED Milk
-        </Link>
+    <aside
+      style={{
+        width: 240,
+        background: theme.sidebarBg,
+        color: "white",
+        minHeight: "100vh",
+        padding: 16,
+      }}
+    >
+      <h2>ED Website</h2>
+      <nav style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <Link to="/">Home</Link>
+        <Link to="/about-us">About Us</Link>
+        <Link to="/animal-nutrition/login">Animal Nutrition</Link>
+        <Link to="/ed-milk">ED Milk</Link>
       </nav>
     </aside>
   );

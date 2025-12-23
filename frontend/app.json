@@ -48,6 +48,7 @@
       "reactCompiler": true
     },
     "extra": {
+      "apiUrl": "https://edmilk.com/edmilk/api",
       "eas": {
         "projectId": "14361e12-4287-4f2c-8206-90fa613696a7"
       }

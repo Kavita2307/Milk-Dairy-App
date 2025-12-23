@@ -1,20 +1,19 @@
-// import { Request, Response } from "express";
-// import prisma from "../prisma/client";
+import { Request, Response } from "express";
+import prisma from "../prisma/client";
 
-// /* Fetch complete ration + ingredients for a group */
-// export const getRationByGroup = async (req: Request, res: Response) => {
-//   const groupId = Number(req.params.groupId);
+/* Fetch complete ration + ingredients for a group */
+export const getRationByGroup = async (req: Request, res: Response) => {
+  const groupId = Number(req.params.groupId);
+  const ration = await prisma.ration.findFirst({
+    where: { groupId },
+  });
 
-//   const ration = await prisma.ration.findFirst({
-//     where: { groupId },
-//   });
+  const ingredients = await prisma.ingredient.findMany({
+    orderBy: { id: "asc" },
+  });
 
-//   const ingredients = await prisma.ingredient.findMany({
-//     orderBy: { id: "asc" },
-//   });
-
-//   res.json({ ration, ingredients });
-// };
+  res.json({ ration, ingredients });
+};
 
 // /* Update ration main info */
 // export const updateRation = async (req: Request, res: Response) => {

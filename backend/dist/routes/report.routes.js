@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const report_controller_1 = require("../controllers/report.controller");
+const auth_1 = require("../middleware/auth");
+const router = (0, express_1.Router)();
+router.get("/daily-feed-efficiency", auth_1.requireAuth, report_controller_1.dailyFeedEfficiencyReport);
+router.get("/daily-average-dmi", auth_1.requireAuth, report_controller_1.dailyAverageDmiReport);
+router.get("/cow-wise-milk", auth_1.requireAuth, report_controller_1.cowWiseMilkReport);
+router.get("/cow-numbers", auth_1.requireAuth, report_controller_1.getCowNumbers);
+router.get("/group-wise-daily-milk-avg", auth_1.requireAuth, report_controller_1.groupWiseDailyMilkAvgReport);
+exports.default = router;

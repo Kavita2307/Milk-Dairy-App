@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -18,6 +18,7 @@ export default function MilkProductionScreen() {
 
   const [milkLit, setMilkLit] = useState("0");
   const [useLoadCell, setUseLoadCell] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
@@ -59,21 +60,41 @@ export default function MilkProductionScreen() {
   //     .catch(() => alert("Failed to read load cell"));
   // };
 
-  const fetchMilkFromLoadCell = async () => {
-    try {
-      const data = await readLoadCell();
+  // const fetchMilkFromLoadCell = async () => {
+  //   try {
+  //     const data = await readLoadCell();
 
-      // Only accept stable weight
-      if (!data.stable) {
-        alert("Milk is still measuring… Please wait");
-        return;
+  //     // Only accept stable weight
+  //     if (!data.stable) {
+  //       alert("Milk is still measuring… Please wait");
+  //       return;
+  //     }
+
+  //     // Weight from ESP32 is in KG
+  //     setMilkLit(data.weight.toFixed(2));
+  //   } catch {
+  //     alert("Weighing machine not connected");
+  //   }
+  // };
+  const fetchMilkFromLoadCell = () => {
+    if (intervalRef.current) return;
+
+    intervalRef.current = setInterval(async () => {
+      try {
+        const data = await readLoadCell();
+
+        setMilkLit(data.weight.toFixed(2));
+
+        if (data.stable) {
+          clearInterval(intervalRef.current!);
+          intervalRef.current = null;
+        }
+      } catch {
+        clearInterval(intervalRef.current!);
+        intervalRef.current = null;
+        alert("Weighing machine not connected");
       }
-
-      // Weight from ESP32 is in KG
-      setMilkLit(data.weight.toFixed(2));
-    } catch {
-      alert("Weighing machine not connected");
-    }
+    }, 500);
   };
 
   const saveMilk = () => {
@@ -117,7 +138,7 @@ export default function MilkProductionScreen() {
               onPress={fetchMilkFromLoadCell}
               style={styles.fetchBtn}
             >
-              <Text style={styles.fetchBtnText}>Get Milk Weight</Text>
+              {/* <Text style={styles.fetchBtnText}>Get Milk Weight</Text> */}
             </TouchableOpacity>
           </View>
         ) : (

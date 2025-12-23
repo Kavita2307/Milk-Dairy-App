@@ -78,35 +78,37 @@ async function main() {
 
   // // 4. RATION SEED (only for milking groups)
 
-  // console.log("Seeding ration...");
+  console.log("Seeding ration...");
 
-  // const sampleRation = {
-  //   name: "Group Ration",
-  //   no: 120,
-  //   kg: 50,
-  //   total: 3000,
-  //   thisLoad: 3000,
-  //   lastLoad: 2980,
-  //   diff: 20,
-  //   rationSize: 45.0,
-  //   days: 1,
-  // };
+  const sampleRation = {
+    name: "Group Ration",
+    no: 120,
+    kg: 50,
+    total: 3000,
+    thisLoad: 3000,
+    lastLoad: 2980,
+    diff: 20,
+    rationSize: 45.0,
+    days: 1,
+  };
 
-  // for (const g of createdGroups.filter((g) => g.type === "milking")) {
-  //   await prisma.ration.upsert({
-  //     where: { id: g.id },
-  //     update: {},
-  //     create: {
-  //       id: g.id,
-  //       groupId: g.id,
-  //       userId: user.id,
-  //       ...sampleRation,
-  //       name: `${g.name} Ration`,
-  //     },
-  //   });
-  // }
+  for (let groupId = 1; groupId <= 9; groupId++) {
+    await prisma.ration.upsert({
+      where: {
+        id: groupId, // assuming ration.id = groupId
+      },
+      update: {},
+      create: {
+        id: groupId,
+        groupId: groupId,
+        userId: user.id,
+        ...sampleRation,
+        name: `Group ${groupId} Ration`,
+      },
+    });
+  }
 
-  // console.log("Ration added for milking groups");
+  console.log("Ration added for milking groups");
 
   // // 5. INGREDIENTS per group
 

@@ -5,14 +5,14 @@ export default function FarmerDashboard() {
 
   return (
     <>
-      <h2>Farmer List</h2>
-      <table>
+      <h2>Farmers</h2>
+      <table border={1} cellPadding={8}>
         <thead>
           <tr>
             <th>Farmer</th>
             <th>Place</th>
             <th>District</th>
-            <th>Animals</th>
+            <th>No of Animals</th>
             <th>View</th>
           </tr>
         </thead>

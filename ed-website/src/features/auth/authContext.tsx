@@ -1,17 +1,10 @@
-import { createContext, useContext, useState } from "react";
-
-type Role = "farmer" | "official" | null;
-
-interface AuthContextType {
-  role: Role;
-  login: (role: Role) => void;
-  logout: () => void;
-}
+import { createContext, useState } from "react";
+import type { AuthContextType, UserRole } from "./auth.types";
 
 const AuthContext = createContext<AuthContextType>(null!);
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [role, setRole] = useState<Role>(null);
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [role, setRole] = useState<UserRole>(null);
 
   return (
     <AuthContext.Provider
@@ -24,6 +17,5 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => useContext(AuthContext);
+}
+export { AuthContext };

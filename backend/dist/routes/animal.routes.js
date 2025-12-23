@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const animal_controller_1 = require("../controllers/animal.controller");
+const auth_1 = require("../middleware/auth");
+const router = (0, express_1.Router)();
+router.post("/", auth_1.requireAuth, animal_controller_1.addAnimal);
+router.get("/", auth_1.requireAuth, animal_controller_1.getAnimals);
+router.get("/:animalNumber", auth_1.requireAuth, animal_controller_1.getAnimalDetails);
+router.put("/update-details", auth_1.requireAuth, animal_controller_1.updateAnimalDetails);
+exports.default = router;

@@ -14,6 +14,7 @@ export const saveLeftover = async (req: Request, res: Response) => {
       data: {
         groupId: Number(groupId),
         leftoverKg: Number(leftoverKg),
+        userId: Number(userId),
       },
     });
 
@@ -24,7 +25,7 @@ export const saveLeftover = async (req: Request, res: Response) => {
   }
 };
 
-// 📌 Get leftover history for a group
+//  Get leftover history for a group
 export const getLeftoverHistory = async (req: Request, res: Response) => {
   try {
     const groupId = Number(req.params.groupId);
