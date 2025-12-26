@@ -33,6 +33,10 @@ import GroupWise from "../screens/Reports/GroupWise";
 // import RationMixAccuracy from "../screens/Reports/RationMixAccuracy";
 // import PrintHerdInfo from "../screens/Reports/PrintHerdInfo";
 import Display from "../screens/Display/DisplayScreen";
+import LoginScreen from "../screens/Auth/LoginScreen";
+import LeftoverGroup from "../screens/Group/LeftoverGroup";
+import RationGroup from "../screens/Group/RationGroup";
+import MilkingGroup from "../screens/Group/MilkingGroup";
 
 const Stack = createNativeStackNavigator();
 
@@ -53,6 +57,8 @@ export default function AppNavigator() {
         component={DashboardScreen}
         options={{ title: "Dashboard" }}
       />
+      <Stack.Screen name="LoginScreen" component={LoginScreen} />
+
       <Stack.Screen
         name="ProfileScreen"
         component={ProfileScreen}
@@ -148,8 +154,23 @@ export default function AppNavigator() {
         component={Display}
         options={{ title: "Display" }}
       />
+      <Stack.Screen
+        name="LeftoverGroup"
+        component={LeftoverGroup}
+        options={{ title: "Leftover" }}
+      />
       <Stack.Screen name="Leftover" component={LeftoverScreen} />
+      <Stack.Screen
+        name="RationGroup"
+        component={RationGroup}
+        options={{ title: "Ration" }}
+      />
       <Stack.Screen name="Ration" component={RationScreen} />
+      <Stack.Screen
+        name="MilkGroup"
+        component={MilkingGroup}
+        options={{ title: "MilkProduction" }}
+      />
       <Stack.Screen name="MilkProduction" component={MilkProductionScreen} />
     </Stack.Navigator>
   );

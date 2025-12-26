@@ -1,23 +1,32 @@
 import { Routes, Route } from "react-router-dom";
-import Login from "../Pages/AnimalNutrition/Login";
-import FarmerDashboard from "../Pages/AnimalNutrition/FarmerDashboard";
-import OfficialDashboard from "../Pages/AnimalNutrition/OfficialDashboard";
-import FarmerView from "../Pages/AnimalNutrition/FarmerView";
-import { ProtectedRoute } from "./ProtectedRoute";
+import FarmerDashboard from "../Pages/Farmer/FarmerDashboard";
+import AdminDashboard from "../Pages/Admin/AdminDashboard";
+import FarmerView from "../Pages/Farmer/FarmerView";
+import ProtectedRoute from "./ProtectedRoute";
+import Register from "../Pages/Authentication/Register";
+import Login from "../Pages/Authentication/Login";
+import HerdInfo from "../Pages/Farmer/HerdInfo/HerdInfo";
+import MilkingGroups from "../Pages/Farmer/HerdInfo/MilkingGroup";
+import AnimalDetails from "../Pages/Farmer/HerdInfo/AnimalDetails";
 
 export default function AppRoutes() {
   return (
     <Routes>
-      <Route path="/animal-nutrition/login" element={<Login />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
 
+      {/* ADMIN ROUTES */}
+      <Route element={<ProtectedRoute role="admin" />}>
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+      </Route>
+
+      {/* FARMER ROUTES */}
       <Route element={<ProtectedRoute role="farmer" />}>
         <Route path="/farmer/dashboard" element={<FarmerDashboard />} />
-        <Route path="/farmer/:id" element={<FarmerView />} />
       </Route>
-
-      <Route element={<ProtectedRoute role="official" />}>
-        <Route path="/official/dashboard" element={<OfficialDashboard />} />
-      </Route>
+      <Route path="/farmer/herd" element={<HerdInfo />} />
+      <Route path="/farmer/herd/milking" element={<MilkingGroups />} />
+      <Route path="/farmer/animals/:groupId" element={<AnimalDetails />} />
     </Routes>
   );
 }

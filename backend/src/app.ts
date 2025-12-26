@@ -9,14 +9,24 @@ import milkRoutes from "./routes/milk.routes";
 import ingredientRoutes from "./routes/ingredient.routes";
 import analyticsRoutes from "./routes/analytics.routes";
 import reportRoutes from "./routes/report.routes";
+import { profile } from "console";
+import profileRoutes from "./routes/profile.routes";
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(express.json());
 
 app.get("/", (_req, res) => res.send({ status: "ok" }));
 
 app.use("/api/auth", authRoutes);
+app.use("/api/profile", profileRoutes);
 app.use("/api/animals", animalRoutes);
 app.use("/api/ration", rationRoutes);
 

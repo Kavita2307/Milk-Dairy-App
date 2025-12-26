@@ -8,6 +8,7 @@ import {
   ScrollView,
   Animated,
   Keyboard,
+  Alert,
 } from "react-native";
 import { API } from "../../../api/api";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -130,7 +131,7 @@ export default function AnimalDetailsScreen() {
         details: payload,
       });
 
-      alert("Animal details saved");
+      Alert.alert("Animal details saved");
 
       setDetails(payload); // keep showing saved details
       resetForm(); //  CLEAR inputs
@@ -138,7 +139,7 @@ export default function AnimalDetailsScreen() {
       Keyboard.dismiss(); // optional UX improvement
       return nav.goBack();
     } catch (err) {
-      alert("Failed to save animal details");
+      Alert.alert("Failed to save animal details");
     }
   };
 

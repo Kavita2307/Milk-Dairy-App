@@ -18,7 +18,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "transparent",
         "foregroundImage": "./assets/images/logo.jpeg"
       },
       "versionCode": 1,
@@ -27,17 +27,16 @@
       "package": "com.kavita2307.frontend"
     },
     "web": {
-      "output": "single",
       "favicon": "./assets/images/logo.jpeg"
     },
     "plugins": [
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash_screen.png",
+          "image": "./assets/images/splashScreen.jpeg",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "transparent",
           "dark": {
             "backgroundColor": "#000000"
           }

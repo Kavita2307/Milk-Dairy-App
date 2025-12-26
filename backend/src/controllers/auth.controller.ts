@@ -7,52 +7,124 @@ const SALT_ROUNDS = 10;
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { email, password, name } = req.body;
-    const existing = await prisma.user.findUnique({ where: { email } });
+    const { name, mobile, password, email } = req.body;
+    const role = "farmer";
+    if (!name || !mobile || !password) {
+      return res.status(400).json({
+        error: "Name, mobile and password are required",
+      });
+    }
+    const existing = await prisma.user.findUnique({ where: { mobile } });
     if (existing)
-      return res.status(400).json({ error: "Email already registered" });
+      return res.status(400).json({ error: "Mobile already registered" });
     console.log("come to backend");
-    console.log("backend email: ", email, password, name);
-    const hash = await bcrypt.hash(password, SALT_ROUNDS);
+    if (email) {
+      const emailExists = await prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (emailExists) {
+        return res.status(400).json({ error: "Email already registered" });
+      }
+    }
+    console.log("backend email: ", email, password, name, mobile);
+    // const hash = await bcrypt.hash(password, SALT_ROUNDS);
     const user = await prisma.user.create({
-      data: { email, password: hash, name },
+      data: {
+        name,
+        mobile,
+        email: email || null,
+        password,
+      },
     });
 
-    const token = signJwt({ userId: user.id, email: user.email });
-    res.json({
-      user: { id: user.id, email: user.email, name: user.name },
-      token,
+    // const token = signJwt({ userId: user.id, mobile: user.mobile });
+    // res.json({
+    //   user: {
+    //     id: user.id,
+    //     email: user.email,
+    //     name: user.name,
+    //     mobile: user.mobile,
+    //     role: user.role,
+    //   },
+    //   token,
+    // });
+    res.status(201).json({
+      message: "Registration successful",
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Registration failed" });
   }
+  //   return res.status(201).json({
+  //     message: "Registration successful",
+  //   });
+  // } catch (err: any) {
+  //   if (err.code === "P2002") {
+  //     return res.status(400).json({
+  //       error: "Mobile or email already exists",
+  //     });
+  //   }
+
+  //   return res.status(500).json({ error: "Server error" });
+  // }
 };
 
 export const login = async (req: Request, res: Response) => {
   console.log("inside login of auth controller");
   try {
-    const { email, password } = req.body;
-    console.log("login backend email: ", email, password);
-    const user = await prisma.user.findUnique({ where: { email } });
+    const { username, password } = req.body;
+    console.log("login backend : ", username, password);
+    // const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [{ email: username }, { mobile: username }],
+      },
+    });
+
+    if (!user) {
+      return res.status(400).json({ error: "Invalid credentials" });
+    }
     console.log("user: ", user);
-    if (!user) return res.status(401).json({ error: "Invalid credentials" });
-    const ok = (await password) === user.password;
-    // const ok = await bcrypt.compare(password, user.password);
+    //const ok = await bcrypt.compare(password, user.password);
+    const ok = password === user.password;
     console.log("ok: ", ok);
     if (!ok) return res.status(401).json({ error: "Invalid credentials" });
 
     const token = signJwt({ userId: user.id, email: user.email });
     console.log("token: ", token);
     res.json({
-      user: { id: user.id, email: user.email, name: user.name },
+      success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      },
       token,
       userId: user.id,
     });
     console.log("login successfully......");
     // return user.id;
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Login failed" });
+    console.error("LOGIN ERROR:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Login failed",
+    });
+  }
+};
+export const logout = async (req: Request, res: Response) => {
+  try {
+    // JWT is stateless – nothing to destroy on server
+    return res.status(200).json({
+      success: true,
+      message: "Logged out successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "Logout failed",
+    });
   }
 };

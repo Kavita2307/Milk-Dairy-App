@@ -1,0 +1,44 @@
+.farmer-container {
+  display: flex;
+  height: 100vh;
+}
+
+/* LEFT SIDEBAR */
+.farmer-sidebar {
+  width: 200px;
+  background: #082a5c;
+  color: white;
+  padding-top: 20px;
+}
+
+.menu-icon {
+  color: orange;
+  font-size: 20px;
+  padding: 10px 20px;
+}
+
+/* MENU ITEMS */
+.menu-item {
+  display: block;
+  padding: 12px 20px;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.menu-item:hover {
+  background: #0b3b7a;
+}
+
+/* ACTIVE MENU */
+.menu-item.active {
+  background: #ff7a18;
+  color: white;
+}
+
+/* RIGHT CONTENT */
+.farmer-content {
+  flex: 1;
+  background: #ffffff;
+  padding: 20px;
+}

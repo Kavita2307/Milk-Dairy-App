@@ -1,18 +1,24 @@
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
+
 const prisma = new PrismaClient();
+const SALT_ROUNDS = 10;
 
 async function main() {
   console.log("Seeding database...");
 
   // 1. USER
 
+  const hashedPassword = await bcrypt.hash("admin@1234", SALT_ROUNDS);
   const user = await prisma.user.upsert({
-    where: { email: "admin@gmail.com" },
+    where: { mobile: "1234567890" },
     update: {},
     create: {
       name: "Admin",
+      mobile: "1234567890",
       email: "admin@gmail.com",
       password: "admin@1234",
+      role: "admin",
     },
   });
 

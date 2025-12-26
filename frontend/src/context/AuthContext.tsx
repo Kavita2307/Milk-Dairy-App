@@ -2,13 +2,25 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API } from "../api/api";
 
-type User = { id: number; email: string; name?: string } | null;
+type User = {
+  id: number;
+  name: string;
+  mobile: string;
+  email?: string;
+  address?: string;
+  pincode?: string;
+} | null;
 
 type AuthContextType = {
   user: User;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, name?: string) => Promise<void>;
+  register: (
+    password: string,
+    name: string,
+    mobile: string,
+    email?: string
+  ) => Promise<void>;
   logout: () => Promise<void>;
 };
 
@@ -40,19 +52,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     })();
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (username: string, password: string) => {
     console.log("inside login of auth context");
-    const res = await API.post("/auth/login", { email, password });
+    console.log("login called with:", username, password);
+    const res = await API.post("/auth/login", { username, password });
     await AsyncStorage.setItem("token", res.data.token);
     await AsyncStorage.setItem("user", JSON.stringify(res.data.user));
     setUser(res.data.user);
   };
 
-  const register = async (email: string, password: string, name?: string) => {
-    const res = await API.post("/auth/register", { email, password, name });
-    await AsyncStorage.setItem("token", res.data.token);
-    await AsyncStorage.setItem("user", JSON.stringify(res.data.user));
-    setUser(res.data.user);
+  const register = async (
+    name: string,
+    mobile: string,
+    password: string,
+    email?: string
+  ) => {
+    const res = await API.post("/auth/register", {
+      name,
+      mobile,
+      password,
+      email,
+    });
+    // await AsyncStorage.setItem("token", res.data.token);
+    // await AsyncStorage.setItem("user", JSON.stringify(res.data.user));
+    // setUser(res.data.user);
   };
 
   const logout = async () => {

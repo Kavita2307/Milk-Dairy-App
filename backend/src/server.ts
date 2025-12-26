@@ -8,13 +8,20 @@ import leftoverRoutes from "./routes/leftover.routes";
 import milkRoutes from "./routes/milk.routes";
 import analyticsRoutes from "./routes/analytics.routes";
 import reportRoutes from "./routes/report.routes";
+import profileRoutes from "./routes/profile.routes";
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/profile", profileRoutes);
 app.use("/api/animals", animalRoutes);
 app.use("/api/ingredients", ingredientRoutes);
 app.use("/api/ration", rationRoutes);

@@ -106,11 +106,19 @@ userId Int
 
 model User {
   id       Int     @id @default(autoincrement())
-  name     String?
-  email    String  @unique
-  password String
-
+  name     String
+  mobile   String  @unique
+  email    String? @unique 
+  password  String 
+  createdAt DateTime @default(now())
+  role     Role   @default(farmer)
+  address   String?   
+  pincode   String? 
   animals     Animal[]
   Ration      Ration[]
   ingredients Ingredient[]
+}
+enum Role {
+  farmer
+  admin
 }

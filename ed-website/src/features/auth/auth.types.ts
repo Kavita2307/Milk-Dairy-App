@@ -1,4 +1,3 @@
-// src/context/auth.types.ts
 export type UserRole = "farmer" | "official" | null;
 
 export interface AuthContextType {

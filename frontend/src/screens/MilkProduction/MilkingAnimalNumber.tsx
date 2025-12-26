@@ -13,7 +13,7 @@ import { API } from "../../api/api";
 export default function MilkingAnimalNumber() {
   const nav = useNavigation<any>();
   const route = useRoute<any>();
-  const { groupId, userId } = route.params;
+  const { groupId, userId, groupTitle, shift } = route.params;
 
   const [animals, setAnimals] = useState<any[]>([]);
   const [showForm, setShowForm] = useState(false);
@@ -43,10 +43,11 @@ export default function MilkingAnimalNumber() {
               key={item.id}
               style={styles.groupRow}
               onPress={() => {
-                nav.navigate("ProductionShift", {
+                nav.navigate("MilkProduction", {
                   animalNumber: item.animalNumber,
                   groupId,
                   userId,
+                  shift,
                 });
               }}
             >
