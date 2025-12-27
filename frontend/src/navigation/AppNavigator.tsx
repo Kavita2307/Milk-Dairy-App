@@ -37,6 +37,7 @@ import LoginScreen from "../screens/Auth/LoginScreen";
 import LeftoverGroup from "../screens/Group/LeftoverGroup";
 import RationGroup from "../screens/Group/RationGroup";
 import MilkingGroup from "../screens/Group/MilkingGroup";
+import UpdateNonMilkAnimalInfo from "../screens/HerdInfo/NonMilkAnimal/UpdateNonMilkAnimalInfo";
 
 const Stack = createNativeStackNavigator();
 
@@ -98,7 +99,7 @@ export default function AppNavigator() {
       />
       <Stack.Screen
         name="UpdateNonMilkAnimalInfo"
-        component={NonMilkAnimalInfoScreen}
+        component={UpdateNonMilkAnimalInfo}
       />
       <Stack.Screen name="ProductionShift" component={ProductionShiftScreen} />
       <Stack.Screen

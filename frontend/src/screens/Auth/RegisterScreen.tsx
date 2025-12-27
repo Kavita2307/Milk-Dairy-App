@@ -85,12 +85,34 @@ export default function RegisterScreen() {
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const mobileRegex = /^\d{10}$/;
 
   const submit = async () => {
     Keyboard.dismiss();
 
     if (!name || !mobile || !password) {
       Alert.alert("Missing fields", "Please fill all fields");
+      return;
+    }
+    if (!mobileRegex.test(mobile)) {
+      Alert.alert(
+        "Invalid Mobile Number",
+        "Mobile number must be exactly 10 digits"
+      );
+      return;
+    }
+
+    if (email && !emailRegex.test(email)) {
+      Alert.alert("Invalid Email", "Please enter a valid email address");
+      return;
+    }
+
+    if (password.length < 8) {
+      Alert.alert(
+        "Weak Password",
+        "Password must be at least 8 characters long"
+      );
       return;
     }
 
@@ -127,8 +149,9 @@ export default function RegisterScreen() {
         <TextInput
           placeholder="Mobile Number"
           value={mobile}
-          onChangeText={setMobile}
-          keyboardType="phone-pad"
+          onChangeText={(text) => setMobile(text.replace(/[^0-9]/g, ""))}
+          keyboardType="number-pad"
+          maxLength={10}
           style={styles.input}
         />
 

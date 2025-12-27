@@ -18,7 +18,22 @@ export const register = async (req: Request, res: Response) => {
     if (existing)
       return res.status(400).json({ error: "Mobile already registered" });
     console.log("come to backend");
+    if (!password || password.length < 8) {
+      return res.status(400).json({
+        error: "Password must be at least 8 characters long",
+      });
+    }
+    if (!/^\d{10}$/.test(mobile)) {
+      return res.status(400).json({
+        error: "Mobile number must be exactly 10 digits",
+      });
+    }
     if (email) {
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return res.status(400).json({
+          error: "Invalid email address",
+        });
+      }
       const emailExists = await prisma.user.findUnique({
         where: { email },
       });

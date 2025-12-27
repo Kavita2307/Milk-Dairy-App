@@ -320,13 +320,17 @@ export default function MilkProductionScreen() {
   const route = useRoute<any>();
   const { groupId, userId, shift, animalNumber } = route.params;
 
+  const [milkKg, setMilkKg] = useState("0");
   const [milkLit, setMilkLit] = useState("0");
   const [useLoadCell, setUseLoadCell] = useState(false);
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const slideAnim = new Animated.Value(100);
-
+  const MILK_DENSITY = 1.03; // kg per litre
+  const kgToLitres = (kg: number) => {
+    return Number((kg / MILK_DENSITY).toFixed(2));
+  };
   useEffect(() => {
     nav.setOptions({
       title: `${shift}: Animal #${animalNumber}`,
@@ -361,42 +365,46 @@ export default function MilkProductionScreen() {
     };
   }, [animalNumber]);
 
-  // ✅ SAVE MILK (MANUAL + LOAD CELL)
+  // SAVE MILK (MANUAL + LOAD CELL)
   const saveMilk = async () => {
     Keyboard.dismiss();
 
     try {
-      let finalMilk = Number(milkLit);
+      let finalLitres = Number(milkLit);
 
-      // 🔥 Load cell → read ONCE on Save
+      // Load cell → read ONCE on Save
       if (useLoadCell) {
         const data = await readLoadCell();
 
-        if (!data || data.weight === undefined || data.weight === null) {
+        if (!data || data.weight === null) {
           alert("Weighing machine not connected");
           return;
         }
 
-        finalMilk = Number(data.weight);
+        const weightKg = Number(data.weight);
 
-        if (isNaN(finalMilk)) {
+        if (isNaN(weightKg) || weightKg <= 0) {
           alert("Invalid milk weight from load cell");
           return;
         }
 
-        finalMilk = Number(finalMilk.toFixed(2));
-        setMilkLit(finalMilk.toString());
+        const litres = kgToLitres(weightKg);
+
+        setMilkKg(weightKg.toFixed(2));
+        setMilkLit(litres.toString());
+
+        finalLitres = litres;
       }
 
-      // ❌ Prevent saving 0 or negative milk
-      if (finalMilk <= 0) {
+      // Prevent saving 0 or negative milk
+      if (finalLitres <= 0) {
         alert("Milk must be greater than 0");
         return;
       }
 
       await API.post("/milk", {
         groupId,
-        milkLit: finalMilk,
+        milkLit: finalLitres,
         shift,
         animalNumber,
         userId: Number(userId),
@@ -433,7 +441,7 @@ export default function MilkProductionScreen() {
             <Text style={styles.label}>Milk from Load Cell</Text>
 
             <View style={styles.displayBox}>
-              <Text style={styles.displayText}>{milkLit} L</Text>
+              <Text style={styles.displayText}>{milkKg} kg</Text>
             </View>
 
             <Text style={styles.hintText}>
@@ -450,7 +458,7 @@ export default function MilkProductionScreen() {
               value={milkLit}
               onChangeText={setMilkLit}
               keyboardType="numeric"
-              placeholder="Enter milk quantity"
+              placeholder="Enter milk (litres)"
             />
 
             <TouchableOpacity
@@ -550,6 +558,13 @@ const styles = StyleSheet.create({
   displayText: {
     fontSize: 36,
     fontWeight: "700",
+  },
+  litreText: {
+    textAlign: "center",
+    marginTop: 8,
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#2563EB",
   },
 
   hintText: {

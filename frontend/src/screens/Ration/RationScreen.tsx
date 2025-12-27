@@ -71,43 +71,6 @@ export default function RationScreen() {
         </View>
       </View>
 
-      {/* Load Info */}
-      <View style={styles.loadCard}>
-        <View style={styles.loadRow}>
-          <Text style={styles.loadLabel}>This Load</Text>
-          <Text style={styles.loadValue}>{ration.thisLoad}</Text>
-        </View>
-
-        <View style={styles.loadRow}>
-          <Text style={styles.loadLabel}>Last Load</Text>
-          <Text style={styles.loadValue}>{ration.lastLoad}</Text>
-        </View>
-
-        <View style={styles.loadRow}>
-          <Text style={styles.loadLabel}>Diff</Text>
-          <Text style={styles.loadValue}>{ration.diff}</Text>
-        </View>
-      </View>
-
-      {/* Ration Size & Days */}
-      <View style={styles.bottomInfoCard}>
-        <View style={styles.iconRow}>
-          <MaterialCommunityIcons
-            name="percent-outline"
-            size={20}
-            color="#0EA5E9"
-          />
-          <Text style={styles.bottomText}>Ration Size</Text>
-          <Text style={styles.bottomValue}>{ration.rationSize}</Text>
-        </View>
-
-        <View style={styles.iconRow}>
-          <Feather name="calendar" size={20} color="#0EA5E9" />
-          <Text style={styles.bottomText}>Days</Text>
-          <Text style={styles.bottomValue}>{ration.days}</Text>
-        </View>
-      </View>
-
       {/* Ingredients Section */}
       <View style={styles.headerRow}>
         <View style={styles.headerLeft}>

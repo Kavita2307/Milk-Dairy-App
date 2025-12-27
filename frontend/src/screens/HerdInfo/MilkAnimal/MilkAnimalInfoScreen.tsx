@@ -14,9 +14,11 @@ import { API } from "../../../api/api";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Platform, Pressable } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { Picker } from "@react-native-picker/picker";
 
 export default function AnimalDetailsScreen() {
   const [animalNumber, setAnimalNumber] = useState("");
+  const [breed, setBreed] = useState("");
   const [age, setAge] = useState("");
   const [weight, setWeight] = useState("");
   const [lactationNo, setLactationNo] = useState("");
@@ -80,6 +82,7 @@ export default function AnimalDetailsScreen() {
 
   const resetForm = () => {
     setAnimalNumber("");
+    setBreed("");
     setAge("");
     setWeight("");
     setLactationNo("");
@@ -102,6 +105,7 @@ export default function AnimalDetailsScreen() {
 
   const save = async () => {
     const payload = {
+      breed,
       ageMonths: age,
       bodyWeightKg: weight,
       lactationNo,
@@ -158,6 +162,25 @@ export default function AnimalDetailsScreen() {
 
         {/* ================= BASIC INFO ================= */}
         <Text style={styles.sectionTitle}>Basic Information</Text>
+        <Text style={styles.label}>Breed</Text>
+
+        <View style={styles.pickerWrapper}>
+          <Picker
+            selectedValue={breed}
+            onValueChange={(value) => setBreed(value)}
+          >
+            <Picker.Item label="Select Breed" value="" />
+            <Picker.Item label="HF" value="HF" />
+            <Picker.Item label="Jersey" value="Jersey" />
+            <Picker.Item label="Crossbred" value="Crossbred" />
+            <Picker.Item label="Desi" value="Desi" />
+            <Picker.Item
+              label="Buffalo (High Milk)"
+              value="Buffalo High Milk"
+            />
+            <Picker.Item label="Buffalo (Low Milk)" value="Buffalo Low Milk" />
+          </Picker>
+        </View>
 
         <Text style={styles.label}>Age (Months)</Text>
         <TextInput
@@ -188,12 +211,18 @@ export default function AnimalDetailsScreen() {
 
         <Text style={styles.label}>Date of Calving</Text>
 
-        <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+        {/* <TouchableOpacity onPress={() => setShowDatePicker(true)}> */}
+        <TouchableOpacity
+          onPress={() => {
+            Keyboard.dismiss();
+            setShowDatePicker(true);
+          }}
+        >
           <TextInput
             value={dateOfCalving}
             placeholder="Select Date of Calving"
-            editable={false} // keyboard will NOT open
-            pointerEvents="none" // clicks go to TouchableOpacity
+            editable={false}
+            pointerEvents="none"
             style={styles.input}
           />
         </TouchableOpacity>
@@ -319,30 +348,46 @@ export default function AnimalDetailsScreen() {
         </Animated.View>
       )}
       {showDatePicker && (
-        <View style={styles.datePickerBox}>
-          <DateTimePicker
-            value={tempDate}
-            mode="date"
-            display="spinner" // best UX for manual selection
-            onChange={(_, selectedDate) => {
-              if (selectedDate) {
-                setTempDate(selectedDate); // TEMP only, NOT saved yet
-              }
-            }}
-          />
+        <View style={styles.datePickerOverlay}>
+          <View style={styles.datePickerBox}>
+            <DateTimePicker
+              value={tempDate}
+              mode="date"
+              display={Platform.OS === "ios" ? "spinner" : "default"}
+              onChange={(event, selectedDate) => {
+                // Cancel / dismissed
+                if (event.type === "dismissed") {
+                  setShowDatePicker(false);
+                  return;
+                }
 
-          {/* DONE BUTTON */}
-          <TouchableOpacity
-            style={styles.doneBtn}
-            onPress={() => {
-              const formatted = tempDate.toISOString().split("T")[0];
+                if (selectedDate) {
+                  setTempDate(selectedDate);
 
-              setDateOfCalving(formatted); // SAVE date
-              setShowDatePicker(false); // CLOSE picker
-            }}
-          >
-            <Text style={styles.doneText}>Done</Text>
-          </TouchableOpacity>
+                  // ✅ ANDROID: save immediately
+                  if (Platform.OS === "android") {
+                    const formatted = selectedDate.toISOString().split("T")[0];
+                    setDateOfCalving(formatted);
+                    setShowDatePicker(false);
+                  }
+                }
+              }}
+            />
+
+            {/* ✅ iOS ONLY DONE BUTTON */}
+            {Platform.OS === "ios" && (
+              <TouchableOpacity
+                style={styles.doneBtn}
+                onPress={() => {
+                  const formatted = tempDate.toISOString().split("T")[0];
+                  setDateOfCalving(formatted);
+                  setShowDatePicker(false);
+                }}
+              >
+                <Text style={styles.doneText}>Done</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
       )}
     </>
@@ -365,6 +410,13 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     fontWeight: "600",
     color: "#374151",
+  },
+  pickerWrapper: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: 12,
+    marginBottom: 16,
   },
   input: {
     backgroundColor: "#fff",
@@ -437,13 +489,6 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "700",
   },
-  datePickerBox: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 10,
-    marginBottom: 16,
-    elevation: 4,
-  },
 
   doneBtn: {
     backgroundColor: "#2563EB",
@@ -456,5 +501,19 @@ const styles = StyleSheet.create({
     color: "#fff",
     textAlign: "center",
     fontWeight: "700",
+  },
+  datePickerOverlay: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.3)",
+    padding: 10,
+  },
+
+  datePickerBox: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 10,
   },
 });
