@@ -9,6 +9,7 @@ import milkRoutes from "./routes/milk.routes";
 import analyticsRoutes from "./routes/analytics.routes";
 import reportRoutes from "./routes/report.routes";
 import profileRoutes from "./routes/profile.routes";
+import mixRoutes from "./routes/mix.routes";
 
 const app = express();
 
@@ -25,6 +26,8 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/animals", animalRoutes);
 app.use("/api/ingredients", ingredientRoutes);
 app.use("/api/ration", rationRoutes);
+app.use("/api/mix", mixRoutes);
+
 app.use("/api/leftover", leftoverRoutes);
 app.use("/api/milk", milkRoutes);
 app.use("/api/analytics", analyticsRoutes);

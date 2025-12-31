@@ -2,10 +2,11 @@
 // import { useNavigate } from "react-router-dom";
 // import { AuthContext } from "../../features/auth/authContext";
 // import { setAuth } from "../../features/auth/auth.utils";
+// import "../../styles/auth.css";
 
 // const API = import.meta.env.VITE_API_BASE_URL;
 
-// export default function LoginModal({ onClose }: { onClose: () => void }) {
+// export default function Login() {
 //   const [email, setEmail] = useState("");
 //   const [password, setPassword] = useState("");
 //   const [error, setError] = useState("");
@@ -24,53 +25,63 @@
 //       });
 
 //       const data = await res.json();
-//       console.log("data: ", data);
-//       if (!res.ok) {
-//         setError(data.message || data.error || "Login failed");
-//         return;
-//       }
-//       if (!data.user || !data.token) {
-//         setError("Invalid credentials");
+
+//       if (!res.ok || !data.user || !data.token) {
+//         setError(data.message || "Invalid credentials");
 //         return;
 //       }
 
-//       // STORE JWT + USER
 //       setAuth(data.token, data.user);
 //       setUser(data.user);
 
-//       // ROLE BASED REDIRECT
 //       if (data.user.role === "farmer") {
-//         navigate("/farmer/dashboard");
-//       } else if (data.user.role === "admin") {
-//         navigate("/admin/dashboard");
+//         navigate("/farmer/dashboard", { replace: true });
+//       } else {
+//         navigate("/admin/dashboard", { replace: true });
 //       }
-
-//       onClose();
-//     } catch (err: unknown) {
-//       console.error("LOGIN FETCH ERROR:", err);
+//     } catch {
 //       setError("Cannot connect to server");
 //     }
 //   };
 
 //   return (
-//     <div className="modal">
-//       <h2>Login</h2>
+//     <div className="auth-page">
+//       <div className="auth-card">
+//         <button className="close-btn" onClick={() => navigate("/")}>
+//           ✕
+//         </button>
 
-//       <input
-//         value={email}
-//         onChange={(e) => setEmail(e.target.value)}
-//         placeholder="Email"
-//       />
-//       <input
-//         type="password"
-//         value={password}
-//         onChange={(e) => setPassword(e.target.value)}
-//         placeholder="Password"
-//       />
+//         <h2>Welcome Back</h2>
+//         <p className="subtitle">Login to ED Ellite Dairymen</p>
 
-//       {error && <p style={{ color: "red" }}>{error}</p>}
+//         <input
+//           className="auth-input"
+//           placeholder="Email"
+//           value={email}
+//           onChange={(e) => setEmail(e.target.value)}
+//         />
 
-//       <button onClick={handleLogin}>Login</button>
+//         <input
+//           className="auth-input"
+//           type="password"
+//           placeholder="Password"
+//           value={password}
+//           onChange={(e) => setPassword(e.target.value)}
+//         />
+
+//         {error && <p className="error">{error}</p>}
+
+//         <button className="primary-btn" onClick={handleLogin}>
+//           Login
+//         </button>
+
+//         <div className="divider">OR</div>
+
+//         {/* ✅ SIMPLE ROUTE NAVIGATION */}
+//         <button className="secondary-btn" onClick={() => navigate("/register")}>
+//           Create New Account
+//         </button>
+//       </div>
 //     </div>
 //   );
 // }
@@ -83,7 +94,7 @@ import "../../styles/auth.css";
 const API = import.meta.env.VITE_API_BASE_URL;
 
 export default function Login() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
@@ -93,11 +104,16 @@ export default function Login() {
   const handleLogin = async () => {
     setError("");
 
+    if (!username.trim() || !password.trim()) {
+      setError("Username and password are required");
+      return;
+    }
+
     try {
       const res = await fetch(`${API}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, password }),
       });
 
       const data = await res.json();
@@ -132,9 +148,9 @@ export default function Login() {
 
         <input
           className="auth-input"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email or Mobile Number"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
         />
 
         <input
@@ -153,7 +169,6 @@ export default function Login() {
 
         <div className="divider">OR</div>
 
-        {/* ✅ SIMPLE ROUTE NAVIGATION */}
         <button className="secondary-btn" onClick={() => navigate("/register")}>
           Create New Account
         </button>

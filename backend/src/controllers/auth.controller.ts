@@ -120,7 +120,7 @@ export const login = async (req: Request, res: Response) => {
       userId: user.id,
     });
     console.log("login successfully......");
-    // return user.id;
+    return user.id;
   } catch (err) {
     console.error("LOGIN ERROR:", err);
     return res.status(500).json({

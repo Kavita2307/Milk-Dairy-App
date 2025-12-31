@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const auth_1 = require("../middleware/auth");
+const mix_controller_1 = require("../controllers/mix.controller");
+const router = (0, express_1.Router)();
+router.post("/", auth_1.requireAuth, mix_controller_1.saveMixLoad);
+router.get("/mix-summary/:groupId", auth_1.requireAuth, mix_controller_1.finalMixSummary);
+router.get("/summary", auth_1.requireAuth, mix_controller_1.mixSummary);
+exports.default = router;

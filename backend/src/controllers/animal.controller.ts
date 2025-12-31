@@ -43,8 +43,6 @@ export const getAnimalDetails = async (
   req: Request & { user?: any },
   res: Response
 ) => {
-  const { animalNumber } = req.params;
-
   const animal = await prisma.animal.findFirst({
     where: { animalNumber: req.params.animalNumber },
   });

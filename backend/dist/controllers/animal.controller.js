@@ -41,7 +41,6 @@ const getAnimals = async (req, res) => {
 };
 exports.getAnimals = getAnimals;
 const getAnimalDetails = async (req, res) => {
-    const { animalNumber } = req.params;
     const animal = await client_1.default.animal.findFirst({
         where: { animalNumber: req.params.animalNumber },
     });

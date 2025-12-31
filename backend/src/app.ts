@@ -11,6 +11,7 @@ import analyticsRoutes from "./routes/analytics.routes";
 import reportRoutes from "./routes/report.routes";
 import { profile } from "console";
 import profileRoutes from "./routes/profile.routes";
+import mixRoutes from "./routes/mix.routes";
 
 const app = express();
 app.use(
@@ -31,6 +32,8 @@ app.use("/api/animals", animalRoutes);
 app.use("/api/ration", rationRoutes);
 
 app.use("/api/leftover", leftoverRoutes);
+app.use("/api/mix", mixRoutes);
+
 app.use("/api/milk", milkRoutes);
 app.use("/api/ingredients", ingredientRoutes);
 app.use("/api/analytics", analyticsRoutes);

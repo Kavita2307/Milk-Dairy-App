@@ -1,3 +1,89 @@
+// import { useState } from "react";
+// import { useNavigate } from "react-router-dom";
+// import "../../styles/auth.css";
+
+// const API = import.meta.env.VITE_API_BASE_URL;
+
+// export default function Register() {
+//   const [name, setName] = useState("");
+//   const [email, setEmail] = useState("");
+//   const [password, setPassword] = useState("");
+//   const [error, setError] = useState("");
+//   const [success, setSuccess] = useState("");
+
+//   const navigate = useNavigate();
+
+//   const handleRegister = async () => {
+//     setError("");
+//     setSuccess("");
+
+//     try {
+//       const res = await fetch(`${API}/api/auth/register`, {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ name, email, password }),
+//       });
+
+//       const data = await res.json();
+
+//       if (!res.ok) {
+//         setError(data.error || "Registration failed");
+//         return;
+//       }
+
+//       setSuccess("Account created successfully!");
+//       setTimeout(() => navigate("/login"), 1500);
+//     } catch {
+//       setError("Cannot connect to server");
+//     }
+//   };
+
+//   return (
+//     <div className="auth-page">
+//       <div className="auth-card">
+//         <button className="close-btn" onClick={() => navigate("/")}>
+//           ✕
+//         </button>
+
+//         <h2>Create Account 🚀</h2>
+//         <p className="subtitle">Join ED Ellite Dairymen</p>
+
+//         <input
+//           className="auth-input"
+//           placeholder="Full Name"
+//           value={name}
+//           onChange={(e) => setName(e.target.value)}
+//         />
+
+//         <input
+//           className="auth-input"
+//           placeholder="Email"
+//           value={email}
+//           onChange={(e) => setEmail(e.target.value)}
+//         />
+
+//         <input
+//           className="auth-input"
+//           type="password"
+//           placeholder="Password"
+//           value={password}
+//           onChange={(e) => setPassword(e.target.value)}
+//         />
+
+//         {error && <p className="error">{error}</p>}
+//         {success && <p className="success">{success}</p>}
+
+//         <button className="primary-btn" onClick={handleRegister}>
+//           Register
+//         </button>
+
+//         <p className="link-text" onClick={() => navigate("/login")}>
+//           Already have an account? Login
+//         </p>
+//       </div>
+//     </div>
+//   );
+// }
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/auth.css";
@@ -7,21 +93,44 @@ const API = import.meta.env.VITE_API_BASE_URL;
 export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
+
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
   const navigate = useNavigate();
 
+  const validate = () => {
+    if (!name.trim()) return "Name is required";
+    if (!mobile.trim()) return "Mobile number is required";
+    if (!/^[6-9]\d{9}$/.test(mobile))
+      return "Enter valid 10-digit mobile number";
+    if (!password.trim()) return "Password is required";
+    if (password.length < 6) return "Password must be at least 6 characters";
+    return "";
+  };
+
   const handleRegister = async () => {
     setError("");
     setSuccess("");
+
+    const validationError = validate();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
 
     try {
       const res = await fetch(`${API}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({
+          name,
+          email,
+          mobile,
+          password,
+        }),
       });
 
       const data = await res.json();
@@ -50,22 +159,30 @@ export default function Register() {
 
         <input
           className="auth-input"
-          placeholder="Full Name"
+          placeholder="Full Name *"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
 
         <input
           className="auth-input"
-          placeholder="Email"
+          placeholder="Email (optional)"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
 
         <input
           className="auth-input"
+          placeholder="Mobile Number *"
+          value={mobile}
+          onChange={(e) => setMobile(e.target.value)}
+          maxLength={10}
+        />
+
+        <input
+          className="auth-input"
           type="password"
-          placeholder="Password"
+          placeholder="Password *"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />

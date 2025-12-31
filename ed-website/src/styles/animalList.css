@@ -1,0 +1,102 @@
+.animal-list-page {
+  padding: 10px;
+}
+
+/* HEADER */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.page-header h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* ADD BUTTON */
+.add-btn {
+  background: #10b981;
+  color: white;
+  padding: 14px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+.add-btn:hover {
+  background: #059669;
+}
+
+/* EMPTY STATE */
+.empty-box {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.empty-icon {
+  font-size: 60px;
+  opacity: 0.4;
+}
+
+.empty-box h3 {
+  margin-top: 12px;
+  font-size: 18px;
+  color: #334155;
+}
+
+.empty-box p {
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* LIST */
+.animal-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.animal-card {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 18px;
+  border-radius: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.animal-card:hover {
+  background: #f8fafc;
+}
+
+/* ICON */
+.animal-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 24px;
+  background: #eff6ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-right: 14px;
+}
+
+/* TEXT */
+.animal-text {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* ARROW */
+.arrow {
+  font-size: 22px;
+  color: #94a3b8;
+}

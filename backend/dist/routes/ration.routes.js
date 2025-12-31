@@ -1,15 +1,17 @@
 "use strict";
-// import { Router } from "express";
-// import {
-//   getRationByGroup,
-//   updateRation,
-//   addIngredient,
-//   getIngredients,
-// } from "../controllers/ration.controller";
-// import { requireAuth } from "../middleware/auth";
-// const router = Router();
-// router.get("/:groupId", requireAuth, getRationByGroup);
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const ration_controller_1 = require("../controllers/ration.controller");
+const auth_1 = require("../middleware/auth");
+const router = (0, express_1.Router)();
+router.get("/:groupId", auth_1.requireAuth, ration_controller_1.getRationByGroup);
 // router.put("/update", requireAuth, updateRation);
 // router.post("/ingredient/add", requireAuth, addIngredient);
 // router.get("/ingredient/:groupId", requireAuth, getIngredients);
-// export default router;
+router.post("/", auth_1.requireAuth, ration_controller_1.createRation);
+router.get("/history/:groupId", auth_1.requireAuth, ration_controller_1.getRationHistory);
+router.get("/ingredients/:userId", auth_1.requireAuth, ration_controller_1.listIngredients);
+router.post("/", auth_1.requireAuth, ration_controller_1.upsertRation);
+router.put("/ingredient/:id", auth_1.requireAuth, ration_controller_1.updateRationIngredient);
+router.delete("/ingredient/:id", auth_1.requireAuth, ration_controller_1.deleteRationIngredient);
+exports.default = router;

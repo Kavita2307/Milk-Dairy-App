@@ -22,13 +22,13 @@
 import { createContext, useEffect, useState } from "react";
 import { getUser, clearAuth } from "./auth.utils";
 import { useNavigate } from "react-router-dom";
+import type { AuthContextType, User } from "./auth.types";
 
-const AuthContext = createContext<unknown>(null);
+const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const navigate = useNavigate();
-
   // Load user from localStorage on refresh
   useEffect(() => {
     const storedUser = getUser();
