@@ -1,0 +1,111 @@
+.leftover-page {
+  padding: 30px;
+  background: #f3f4f6;
+  min-height: 100%;
+}
+
+/* HEADER */
+.leftover-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #6b7280;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* SWITCH */
+.switch-btn {
+  background: #0ea5e9;
+  color: white;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  width: 100%;
+  font-weight: 700;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+/* BOX */
+.box {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid #d1d5db;
+  margin-bottom: 20px;
+}
+
+.box h4 {
+  margin-bottom: 12px;
+}
+
+/* INPUT */
+.weight-input {
+  width: 100%;
+  padding: 14px;
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+}
+
+/* CLEAR */
+.clear-btn {
+  margin-top: 12px;
+  background: #ef4444;
+  color: white;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  width: 100%;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* LOAD CELL DISPLAY */
+.display-box {
+  padding: 24px;
+  background: #e5e7eb;
+  border-radius: 14px;
+  text-align: center;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.display-box.stable {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.hint {
+  text-align: center;
+  color: #6b7280;
+  margin-top: 8px;
+}
+
+/* SAVE */
+.save-btn {
+  background: #2563eb;
+  color: white;
+  padding: 16px;
+  border-radius: 14px;
+  border: none;
+  width: 100%;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

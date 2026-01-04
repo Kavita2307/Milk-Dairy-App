@@ -9,12 +9,16 @@ export default function FarmerSidebar() {
         Herd Info
       </NavLink>
 
-      <NavLink to="/farmer/milking-group" className="menu-item">
-        Milking Group
+      <NavLink to="/farmer/ration" className="menu-item">
+        Ration
       </NavLink>
 
-      <NavLink to="/farmer/non-milking-group" className="menu-item">
-        Non Milking Group
+      <NavLink to="/farmer/milk" className="menu-item">
+        Milk Production{" "}
+      </NavLink>
+
+      <NavLink to="/farmer/leftover" className="menu-item">
+        Leftover
       </NavLink>
 
       <NavLink to="/farmer/ingredient-store" className="menu-item">
@@ -23,6 +27,10 @@ export default function FarmerSidebar() {
 
       <NavLink to="/farmer/reports" className="menu-item">
         Reports
+      </NavLink>
+
+      <NavLink to="/farmer/display" className="menu-item">
+        Display
       </NavLink>
     </div>
   );

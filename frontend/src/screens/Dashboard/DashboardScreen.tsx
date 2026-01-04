@@ -199,6 +199,13 @@ const menuItems: {
     route: "Display",
     color: "#9333EA",
   },
+  {
+    id: "9",
+    title: "configurations",
+    icon: "monitor-dashboard",
+    route: "configurations",
+    color: "#F59E0B",
+  },
 ];
 
 export default function DashboardScreen() {

@@ -1,0 +1,63 @@
+.admin-page {
+  padding: 30px;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.tabs button {
+  padding: 10px 16px;
+  margin-left: 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.tabs .active {
+  background: #2563eb;
+  color: white;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.approve {
+  background: #16a34a;
+  color: white;
+}
+
+.reject {
+  background: #dc2626;
+  color: white;
+}
+
+.view {
+  background: #2563eb;
+  color: white;
+}
+
+.admin-view-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fef3c7;
+  padding: 14px 18px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.back-admin-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}

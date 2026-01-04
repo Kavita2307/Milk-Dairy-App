@@ -1,0 +1,135 @@
+.reports-page {
+  padding: 30px;
+  background: #f3f4f6;
+  min-height: 100%;
+}
+
+.reports-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 24px;
+}
+
+/* CARD */
+.report-card {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  padding: 20px;
+  margin-bottom: 14px;
+  border-radius: 16px;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+}
+
+.report-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* ICON */
+.report-card .icon {
+  width: 42px;
+  color: #0284c7;
+}
+
+/* TITLE */
+.report-card .title {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* ARROW */
+.report-card .arrow {
+  color: #0284c7;
+}
+.reports-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.filter-bar input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+}
+
+.summary-card {
+  background: #ecfeff;
+  padding: 20px;
+  border-radius: 14px;
+  margin-bottom: 20px;
+}
+
+.summary-card h3 {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.table-card {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+th {
+  font-weight: 700;
+  background: #f9fafb;
+}
+
+.muted {
+  color: #6b7280;
+}
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.action-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.action-bar button {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.chart-card {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  margin-bottom: 20px;
+}

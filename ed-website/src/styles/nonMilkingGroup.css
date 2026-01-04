@@ -1,63 +1,126 @@
-.group-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 per row */
-  gap: 32px;
-  margin-top: 32px;
+/* ===============================
+   PAGE LAYOUT
+================================ */
+.group-container {
+  padding: 30px;
+  width: 100%;
 }
 
-/* CARD */
-.group-card {
-  padding: 36px 32px;
-  min-height: 200px; /* ⬆ bigger cards */
-  border-radius: 20px;
+/* ===============================
+   HEADER
+================================ */
+.herd-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.page-title {
+  font-size: 26px;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+/* ===============================
+   BACK BUTTON
+================================ */
+.back-btn {
+  background: #f3f4f6;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 14px;
+}
+
+.back-btn:hover {
+  background: #e5e7eb;
+}
+
+/* ===============================
+   GRID – 3 PER ROW
+================================ */
+.group-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* ✅ 3 cards */
+  gap: 32px;
+}
+
+/* ===============================
+   CARD
+================================ */
+.group-card {
+  background: white;
+  border-radius: 18px;
+  padding: 45px 35px;
+  min-height: 240px;
+  cursor: pointer;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  align-items: center;
+
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.1);
 }
 
 .group-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 22px 45px rgba(0, 0, 0, 0.15);
 }
 
-/* ICON */
+/* ===============================
+   ICON + TEXT
+================================ */
 .group-icon {
+  font-size: 56px;
   margin-bottom: 18px;
-  color: #0f172a;
 }
 
-/* TITLE */
 .group-card h3 {
-  margin-bottom: 10px;
-  font-size: 24px; /* ⬆ bigger title */
-  font-weight: 700;
-  color: #111827;
+  font-size: 22px;
+  margin-bottom: 6px;
 }
 
-/* SUBTITLE */
 .group-card p {
-  font-size: 17px; /* ⬆ bigger text */
-  color: #374151;
-  line-height: 1.6;
-}
-
-/* PAGE SUBTITLE */
-.subtitle {
-  margin-top: 10px;
   font-size: 16px;
   color: #6b7280;
 }
 
+/* ===============================
+   COLOR VARIANTS
+================================ */
+.group-card.green {
+  border-top: 6px solid #16a34a;
+}
+
+.group-card.blue {
+  border-top: 6px solid #0284c7;
+}
+
+.group-card.yellow {
+  border-top: 6px solid #f59e0b;
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
 @media (max-width: 1024px) {
   .group-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr); /* tablet */
   }
 }
 
 @media (max-width: 640px) {
   .group-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* mobile */
   }
 }

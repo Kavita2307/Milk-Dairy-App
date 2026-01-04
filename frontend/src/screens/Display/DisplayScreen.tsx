@@ -15,37 +15,46 @@ export default function WeighingMachineScreen() {
   const [stable, setStable] = useState(false);
   const [loading, setLoading] = useState(false);
   const [tareWeight, setTareWeight] = useState<number>(0);
+  const isPollingRef = useRef(false);
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // LOAD WEIGHT
 
+  // const loadWeight = async () => {
+  //   try {
+  //     const data = await readLoadCell();
+
+  //     // Weight from ESP32 is in KG
+  //     setWeight(data.weight);
+  //     setStable(data.stable);
+  //   } catch {
+  //     alert("Weighing machine not connected");
+  //   }
+  // };
   const loadWeight = async () => {
     try {
       const data = await readLoadCell();
 
-      // Only accept stable weight
-      if (!data.stable) {
-        alert("Milk is still measuring… Please wait");
-        return;
-      }
-
-      // Weight from ESP32 is in KG
       setWeight(data.weight);
       setStable(data.stable);
     } catch {
-      alert("Weighing machine not connected");
+      // SILENT FAIL (no alert)
+      setStable(false);
     }
   };
 
   // AUTO REFRESH (500ms)
 
   useEffect(() => {
+    if (isPollingRef.current) return;
+    isPollingRef.current = true;
     loadWeight();
 
     intervalRef.current = setInterval(loadWeight, 500);
 
     return () => {
+      isPollingRef.current = false;
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
@@ -64,14 +73,12 @@ export default function WeighingMachineScreen() {
       setTareWeight(weight);
 
       Alert.alert("Success", "Scale tared successfully");
-    } catch (error) {
-      Alert.alert("Error", "Failed to tare scale");
+    } catch {
+      Alert.alert("Error", "Weighing machine not connected");
     } finally {
       setLoading(false);
     }
   };
-
-  const netWeight = Math.max(weight - tareWeight, 0);
 
   return (
     <View style={styles.container}>
@@ -81,9 +88,6 @@ export default function WeighingMachineScreen() {
       <View style={styles.weightCard}>
         <Text style={styles.label}> Weight</Text>
         <Text style={styles.weightText}>{weight.toFixed(2)} kg</Text>
-
-        {/* <Text style={styles.label}>Net Weight</Text>
-        <Text style={styles.netWeightText}>{netWeight.toFixed(2)} kg</Text> */}
 
         <Text
           style={[styles.status, { color: stable ? "#16a34a" : "#dc2626" }]}

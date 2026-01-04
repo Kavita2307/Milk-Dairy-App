@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { apiFetch } from "../../../app/fetcher";
-import "../../../styles/animalList.css";
-import { AuthContext } from "../../../features/auth/authContext";
+import { apiFetch } from "@/app/fetcher";
+import { AuthContext } from "@/features/auth/authContext";
+import FarmerSidebar from "../FarmerSidebar";
 
 export default function AnimalList() {
   const { groupId } = useParams();
@@ -58,65 +58,81 @@ export default function AnimalList() {
   };
 
   const isMilking = Number(groupId) < 4;
-
   return (
-    <div className="animal-list-page">
-      {/* HEADER */}
-      <div className="page-header">
-        <h2>{groupTitle || `Group ${groupId}`} – Animals</h2>
+    <div className="farmer-container">
+      {/* LEFT SIDEBAR */}
+      <FarmerSidebar />
 
-        {/* ADD NEW ANIMAL */}
-        <button
-          className="add-btn"
-          onClick={() => {
-            if (isMilking) {
-              navigate(`/farmer/milking/${groupId}/add`);
-            } else {
-              navigate(`/farmer/non-milking/${groupId}/add`);
-            }
-          }}
-        >
-          ➕ Add New Animal
-        </button>
-      </div>
+      <div className="page">
+        {/* TOP BAR */}
+        <div className="animal-topbar">
+          <button className="btn btn-secondary" onClick={() => navigate(-1)}>
+            ← Back
+          </button>
 
-      {/* EMPTY STATE */}
-      {!loading && animals.length === 0 && (
-        <div className="empty-box">
-          <div className="empty-icon">🐄</div>
-          <h3>No animals added</h3>
-          <p>Click “Add New Animal” to get started</p>
-        </div>
-      )}
+          <div className="animal-menubar">
+            <span className="menu-title">
+              {groupTitle || `Group ${groupId}`} – Animals
+            </span>
 
-      {/* ANIMAL LIST */}
-      {!loading && animals.length > 0 && (
-        <div className="animal-cards">
-          {animals.map((item) => (
-            <div
-              key={item.id}
-              className="animal-card"
+            <button
+              className="add-btn"
               onClick={() => {
                 if (isMilking) {
-                  navigate(
-                    `/farmer/milking/${groupId}/edit/${item.animalNumber}`
-                  );
+                  navigate(`/farmer/milking/${groupId}/add`);
                 } else {
-                  navigate(
-                    `/farmer/non-milking/${groupId}/edit/${item.animalNumber}`
-                  );
+                  navigate(`/farmer/non-milking/${groupId}/add`);
                 }
               }}
             >
-              <div className="animal-icon">🐄</div>
-
-              <div className="animal-text">Animal #{item.animalNumber}</div>
-
-              <div className="arrow">›</div>
-            </div>
-          ))}
+              ➕ Add New Animal
+            </button>
+          </div>
         </div>
-      )}
+
+        {/* EMPTY STATE */}
+        {!loading && animals.length === 0 && (
+          <div className="empty-box">
+            <div className="empty-icon">🐄</div>
+            <h3>No animals added</h3>
+            <p>Click “Add New Animal” to get started</p>
+          </div>
+        )}
+
+        {/* ANIMAL LIST */}
+        {!loading && animals.length > 0 && (
+          <div className="animal-cards">
+            {animals.map((item) => (
+              <div
+                key={item.id}
+                className="animal-card"
+                onClick={() => {
+                  if (isMilking) {
+                    navigate(
+                      `/farmer/milking/${groupId}/edit/${item.animalNumber}`
+                    );
+                  } else {
+                    navigate(
+                      `/farmer/non-milking/${groupId}/edit/${item.animalNumber}`
+                    );
+                  }
+                }}
+              >
+                <div className="animal-icon">🐄</div>
+
+                <div className="animal-text">
+                  <h4>Animal #{item.animalNumber}</h4>
+                  <span className="animal-sub">
+                    Click to view / update details
+                  </span>
+                </div>
+
+                <div className="arrow">›</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

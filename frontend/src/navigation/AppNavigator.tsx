@@ -39,6 +39,7 @@ import RationGroup from "../screens/Group/RationGroup";
 import MilkingGroup from "../screens/Group/MilkingGroup";
 import UpdateNonMilkAnimalInfo from "../screens/HerdInfo/NonMilkAnimal/UpdateNonMilkAnimalInfo";
 import MixPrecisionScreen from "../screens/Ration/MixPrecisionScreen";
+import ConnectCheck from "../screens/Display/ConnectCheck";
 
 const Stack = createNativeStackNavigator();
 
@@ -179,6 +180,11 @@ export default function AppNavigator() {
         options={{ title: "MilkProduction" }}
       />
       <Stack.Screen name="MilkProduction" component={MilkProductionScreen} />
+      <Stack.Screen
+        name="configurations"
+        component={ConnectCheck}
+        options={{ title: "configurations" }}
+      />
     </Stack.Navigator>
   );
 }

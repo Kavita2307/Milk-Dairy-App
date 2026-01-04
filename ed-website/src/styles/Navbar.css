@@ -1,60 +1,151 @@
+/* ===== NAVBAR BASE ===== */
 .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 40px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #eee;
-  font-family: Arial, sans-serif;
+
+  padding: 12px 32px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+
+  border-bottom: 1px solid #e5e7eb;
 }
 
-/* Logo */
-.navbar__logo img {
-  height: 45px;
+/* ===== LEFT ===== */
+.navbar__left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
 }
 
-/* Menu */
+.navbar__logo {
+  height: 70px;
+  width: 150px;
+  border-radius: 50%;
+}
+
+/* ===== MENU ===== */
 .navbar__menu {
   display: flex;
-  gap: 28px;
-  align-items: center;
+  gap: 24px;
 }
 
 .navbar__menu a {
   text-decoration: none;
-  color: #111;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 700;
+  color: #374151;
   position: relative;
 }
 
-.navbar__menu a:hover {
-  color: #0b2c4a;
+.navbar__menu a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 0%;
+  height: 2px;
+  background: #16a34a;
+  transition: width 0.25s ease;
 }
 
-/* Active (About Us highlighted) */
+.navbar__menu a:hover::after,
+.navbar__menu a.active::after {
+  width: 100%;
+}
+
 .navbar__menu a.active {
-  color: #1a73e8;
-  font-weight: 600;
+  color: #16a34a;
 }
 
-/* Disabled (ED Milk - Coming Soon) */
-.navbar__menu a.disabled {
-  pointer-events: none;
-  color: #999;
+/* ===== RIGHT ===== */
+.navbar__right {
+  display: flex;
+  align-items: center;
 }
 
-/* Auth Button */
-.navbar__auth .login-btn {
-  background-color: transparent;
-  border: 1px solid #0b2c4a;
-  color: #0b2c4a;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
+/* LOGIN BUTTON */
+.login-btn {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: none;
+  background: #16a34a;
+  color: white;
+  font-size: 14px;
   font-weight: 500;
+  cursor: pointer;
 }
 
-.navbar__auth .login-btn:hover {
-  background-color: #0b2c4a;
-  color: #ffffff;
+.login-btn:hover {
+  background: #15803d;
+}
+
+/* ===== USER MENU ===== */
+.user-menu {
+  position: relative;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  background: #16a34a;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* DROPDOWN */
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: 52px;
+  width: 200px;
+
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  padding: 12px;
+}
+
+.user-menu:hover .dropdown {
+  display: block;
+}
+
+.user-name {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.user-role {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 10px;
+}
+
+.dropdown button {
+  width: 100%;
+  padding: 8px;
+  margin-top: 6px;
+  border: none;
+  border-radius: 8px;
+  background: #f3f4f6;
+  cursor: pointer;
+}
+
+.dropdown button:hover {
+  background: #e5e7eb;
+}
+
+.logout-btn {
+  background: #fee2e2 !important;
+  color: #b91c1c;
 }

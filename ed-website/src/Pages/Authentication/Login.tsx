@@ -87,9 +87,9 @@
 // }
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../../features/auth/authContext";
-import { setAuth } from "../../features/auth/auth.utils";
-import "../../styles/auth.css";
+import { AuthContext } from "@/features/auth/authContext";
+import { setAuth } from "@/features/auth/auth.utils";
+import "@/styles/auth.css";
 
 const API = import.meta.env.VITE_API_BASE_URL;
 
@@ -99,7 +99,8 @@ export default function Login() {
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
-  const { setUser } = useContext(AuthContext);
+  const authContext = useContext(AuthContext);
+  const { setUser } = authContext || { setUser: () => {} };
 
   const handleLogin = async () => {
     setError("");

@@ -73,7 +73,7 @@
 //   );
 // }
 import { useNavigate } from "react-router-dom";
-import "../../../../styles/nonMilkingGroup.css";
+import "@/styles/nonMilkingGroup.css";
 
 const nonMilkingGroups = [
   { id: 4, title: "Starter Calf", extrainfo: "0–2 months", bg: "#DCFCE7" },

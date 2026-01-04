@@ -1,24 +1,3 @@
-// import { createContext, useState } from "react";
-// import type { AuthContextType, UserRole } from "./auth.types";
-
-// const AuthContext = createContext<AuthContextType>(null!);
-
-// export function AuthProvider({ children }: { children: React.ReactNode }) {
-//   const [role, setRole] = useState<UserRole>(null);
-
-//   return (
-//     <AuthContext.Provider
-//       value={{
-//         role,
-//         login: setRole,
-//         logout: () => setRole(null),
-//       }}
-//     >
-//       {children}
-//     </AuthContext.Provider>
-//   );
-// }
-// export { AuthContext };
 import { createContext, useEffect, useState } from "react";
 import { getUser, clearAuth } from "./auth.utils";
 import { useNavigate } from "react-router-dom";

@@ -1,0 +1,13 @@
+input,
+select,
+textarea {
+  padding: 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  font-size: var(--text-sm);
+  width: 100%;
+}
+
+textarea {
+  min-height: 90px;
+}

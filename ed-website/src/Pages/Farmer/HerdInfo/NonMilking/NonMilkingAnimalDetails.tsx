@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { apiFetch } from "../../../../app/fetcher";
-import "../../../../styles/details.css";
-import { AuthContext } from "../../../../features/auth/authContext";
+import { apiFetch } from "@/app/fetcher";
+import "@/styles/details.css";
+import { AuthContext } from "@/features/auth/authContext";
 
 const breeds = [
   "Holstein Friesian",
@@ -16,7 +16,8 @@ const breeds = [
 export default function NonMilkingAnimalDetails() {
   const { groupId, animalNumber } = useParams();
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
+  const authContext = useContext(AuthContext);
+  const user = authContext?.user;
 
   const isEdit = Boolean(animalNumber);
 
@@ -106,14 +107,15 @@ export default function NonMilkingAnimalDetails() {
   useEffect(() => {
     if (isEdit) loadAnimal();
   }, [animalNumber]);
+
   return (
-    <div className="animal-form">
+    <div className="page">
       {/* HEADER */}
-      <div className="animal-header">
-        <button className="back-btn" onClick={() => navigate(-1)}>
+      <div className="page-header">
+        <button className="btn btn-secondary" onClick={() => navigate(-1)}>
           ← Back
         </button>
-        <h2>
+        <h2 className="page-title">
           {isEdit ? "Update Non-Milking Animal" : "Add Non-Milking Animal"}
         </h2>{" "}
       </div>

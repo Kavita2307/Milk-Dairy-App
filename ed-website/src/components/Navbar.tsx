@@ -1,45 +1,138 @@
-import { Link, useNavigate } from "react-router-dom";
-import "../styles/Navbar.css";
-import logo from "../assets/logo.jpeg";
-import { useContext } from "react";
-import { AuthContext } from "../features/auth/authContext";
+// import { NavLink, useNavigate } from "react-router-dom";
+// import "@/styles/Navbar.css";
+// import logo from "../assets/logo.jpeg";
+// import { useContext } from "react";
+// import { AuthContext } from "../features/auth/authContext";
+
+// export default function Navbar() {
+//   const navigate = useNavigate();
+//   const auth = useContext(AuthContext);
+
+//   if (!auth) return null;
+//   const { user, logout } = auth;
+
+//   return (
+//     <header className="navbar">
+//       {/* LEFT: LOGO */}
+//       <div className="navbar__left" onClick={() => navigate("/")}>
+//         <img src={logo} alt="ED Ellite Dairymen" className="navbar__logo" />
+//       </div>
+
+//       {/* CENTER: MENU */}
+//       <nav className="navbar__menu">
+//         <NavLink to="/about-us">About Us</NavLink>
+//         <NavLink to="/animal-nutrition">Animal Nutrition</NavLink>
+//         <NavLink to="/ed-milk">ED Milk</NavLink>
+//         <NavLink to="/our-products">Our Products</NavLink>
+//         <NavLink to="/livestock-lore">Livestock Lore</NavLink>
+//         <NavLink to="/contact-us">Contact Us</NavLink>
+//       </nav>
+
+//       {/* RIGHT: AUTH */}
+//       <div className="navbar__right">
+//         {user ? (
+//           <div className="user-menu">
+//             <div className="avatar">{user.name?.charAt(0)?.toUpperCase()}</div>
+
+//             <div className="dropdown">
+//               <p className="user-name">{user.name}</p>
+//               <p className="user-role">{user.role}</p>
+
+//               {user.role === "farmer" && (
+//                 <button onClick={() => navigate("/farmer/dashboard")}>
+//                   Dashboard
+//                 </button>
+//               )}
+
+//               <button className="logout-btn" onClick={logout}>
+//                 Logout
+//               </button>
+//             </div>
+//           </div>
+//         ) : (
+//           <button className="login-btn" onClick={() => navigate("/login")}>
+//             Login / Sign Up
+//           </button>
+//         )}
+//       </div>
+//     </header>
+//   );
+// }
+import { NavLink, useNavigate } from "react-router-dom";
+import "@/styles/Navbar.css";
+import logo from "@/assets/logo.jpeg";
+import { useContext, useState } from "react";
+import { AuthContext } from "@/features/auth/authContext";
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const auth = useContext(AuthContext);
+  const [open, setOpen] = useState(false);
 
-  const { user, logout } = useContext(AuthContext);
+  if (!auth) return null;
+  const { user, logout } = auth;
 
   return (
-    <>
-      <header className="navbar">
-        {/* Left: Logo */}
-        <div className="navbar__logo">
-          <img src={logo} alt="ED Ellite Dairymen" />
-        </div>
+    <header className="navbar">
+      {/* LEFT: LOGO */}
+      <div className="navbar__left" onClick={() => navigate("/")}>
+        <img src={logo} alt="ED Ellite Dairymen" className="navbar__logo" />
+      </div>
 
-        {/* Center: Navigation */}
-        <nav className="navbar__menu">
-          <Link to="/about-us" className="active">
-            About Us
-          </Link>
-          <Link to="/animal-nutrition">Animal Nutrition</Link>
-          <Link to="/ed-milk" className="disabled">
-            ED Milk
-          </Link>
-          <Link to="/our-products">Our Products</Link>
-          <Link to="/livestock-lore">Livestock Lore</Link>
-          <Link to="/contact-us">Contact Us</Link>
-        </nav>
+      {/* CENTER: MENU */}
+      <nav className="navbar__menu">
+        <NavLink to="/about-us">About Us</NavLink>
+        <NavLink to="/animal-nutrition">Animal Nutrition</NavLink>
+        <NavLink to="/ed-milk">ED Milk</NavLink>
+        <NavLink to="/our-products">Our Products</NavLink>
+        <NavLink to="/livestock-lore">Livestock Lore</NavLink>
+        <NavLink to="/contact-us">Contact Us</NavLink>
+      </nav>
 
-        {/* <button onClick={() => setOpen(true)}>Login / Sign Up</button> */}
-
-        {/* {open && <LoginModal onClose={() => setOpen(false)} />} */}
+      {/* RIGHT: AUTH */}
+      <div className="navbar__right">
         {user ? (
-          <button onClick={logout}>Logout</button>
+          <div className="user-menu">
+            {/* AVATAR (CLICK) */}
+            <div className="avatar" onClick={() => setOpen((prev) => !prev)}>
+              {user.name?.charAt(0)?.toUpperCase()}
+            </div>
+
+            {/* DROPDOWN */}
+            {open && (
+              <div className="dropdown">
+                <p className="user-name">{user.name}</p>
+                <p className="user-role">{user.role}</p>
+
+                {user.role === "farmer" && (
+                  <button
+                    onClick={() => {
+                      navigate("/farmer/dashboard");
+                      setOpen(false);
+                    }}
+                  >
+                    Dashboard
+                  </button>
+                )}
+
+                <button
+                  className="logout-btn"
+                  onClick={() => {
+                    logout();
+                    setOpen(false);
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
         ) : (
-          <button onClick={() => navigate("/login")}>Login / Sign Up</button>
+          <button className="login-btn" onClick={() => navigate("/login")}>
+            Login / Sign Up
+          </button>
         )}
-      </header>
-    </>
+      </div>
+    </header>
   );
 }

@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const auth_1 = require("../middleware/auth");
+const admin_controller_1 = require("../controllers/admin.controller");
+const router = (0, express_1.Router)();
+router.get("/farmers", auth_1.requireAuth, admin_controller_1.getFarmers);
+router.post("/farmer/approve", auth_1.requireAuth, admin_controller_1.updateFarmerStatus);
+router.get("/farmer/:id", auth_1.requireAuth, admin_controller_1.getFarmerById);
+router.post("/ration", auth_1.requireAuth, admin_controller_1.upsertAdminRation);
+router.get("/ration/:groupId", auth_1.requireAuth, admin_controller_1.getAdminRation);
+exports.default = router;

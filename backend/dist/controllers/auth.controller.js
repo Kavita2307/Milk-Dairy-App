@@ -10,6 +10,7 @@ const SALT_ROUNDS = 10;
 const register = async (req, res) => {
     try {
         const { name, mobile, password, email } = req.body;
+        console.log("register backend : ", name, mobile, password, email);
         const role = "farmer";
         if (!name || !mobile || !password) {
             return res.status(400).json({
@@ -105,6 +106,12 @@ const login = async (req, res) => {
         console.log("ok: ", ok);
         if (!ok)
             return res.status(401).json({ error: "Invalid credentials" });
+        // AFTER user is found & password matched
+        if (user.role === "farmer" && !user.isApproved) {
+            return res.status(403).json({
+                message: "Your account is not approved by admin yet",
+            });
+        }
         const token = (0, jwt_1.signJwt)({ userId: user.id, email: user.email });
         console.log("token: ", token);
         res.json({

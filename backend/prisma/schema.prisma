@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Animal {
   id           Int      @id @default(autoincrement())
   animalNumber String
@@ -17,7 +16,7 @@ model Animal {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  user  User  @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 }
 
 model Ration {
@@ -26,7 +25,7 @@ model Ration {
   groupId Int
   userId  Int
 
-  user  User  @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 
   name       String
   no         Int
@@ -47,8 +46,7 @@ model Leftover {
   groupId    Int
   date       DateTime @default(now())
   leftoverKg Float
-  userId Int
-
+  userId     Int
 }
 
 model Milk {
@@ -59,16 +57,15 @@ model Milk {
   milkLit      Float
   animalNumber String
   date         DateTime @default(now())
-userId Int
-
+  userId       Int
 }
 
 model Ingredient {
   id Int @id @default(autoincrement())
 
-  name String @unique        // Feed, Silage, Wheat straw
-  details Json?              // price, dryMatter etc.
-  currentStock Float @default(0) // Available stock (kg)
+  name         String @unique // Feed, Silage, Wheat straw
+  details      Json? // price, dryMatter etc.
+  currentStock Float  @default(0) // Available stock (kg)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -81,11 +78,11 @@ model Ingredient {
 }
 
 model StockEntry {
-  id Int @id @default(autoincrement())
-user Int
+  id           Int     @id @default(autoincrement())
+  user         Int
   ingredientId Int
-  quantity Float        // kg
-  note String?
+  quantity     Float // kg
+  note         String?
 
   createdAt DateTime @default(now())
 
@@ -93,32 +90,54 @@ user Int
 }
 
 model Consumption {
-  id  Int @id @default(autoincrement())
-  groupId Int
+  id           Int     @id @default(autoincrement())
+  groupId      Int
   ingredientId Int
-  quantity Float        // kg used
-  note String?
+  quantity     Float // kg used
+  note         String?
 
   createdAt DateTime @default(now())
 
-  ingredient { name, details }
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  name     String
-  mobile   String  @unique
-  email    String? @unique 
-  password  String 
-  createdAt DateTime @default(now())
-  role     Role   @default(farmer)
-  address   String?   
-  pincode   String? 
+  id          Int          @id @default(autoincrement())
+  name        String
+  mobile      String       @unique
+  email       String?      @unique
+  password    String
+  createdAt   DateTime     @default(now())
+  role        Role         @default(farmer)
+  isApproved  Boolean      @default(false)
+  address     String?
+  pincode     String?
   animals     Animal[]
   Ration      Ration[]
   ingredients Ingredient[]
 }
+
 enum Role {
   farmer
   admin
+}
+
+model AdminRation {
+  id          Int      @id @default(autoincrement())
+  groupId     Int // 1,2,3
+  days        Int
+  kgPerAnimal Float
+  createdAt   DateTime @default(now())
+
+  ingredients AdminRationIngredient[]
+}
+
+model AdminRationIngredient {
+  id         Int    @id @default(autoincrement())
+  rationId   Int
+  name       String
+  quantityKg Float
+  dmPercent  Float
+
+  ration AdminRation @relation(fields: [rationId], references: [id])
 }

@@ -20,6 +20,7 @@ async function main() {
             email: "admin@gmail.com",
             password: "admin@1234",
             role: "admin",
+            isApproved: true,
         },
     });
     console.log("User:", user.email);

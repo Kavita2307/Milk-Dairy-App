@@ -1,0 +1,55 @@
+.group-page {
+  padding: 30px;
+}
+
+.group-list {
+  margin-top: 20px;
+}
+
+.group-card {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 18px;
+  border-radius: 16px;
+  margin-bottom: 14px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  transition: transform 0.15s ease;
+}
+
+.group-card:hover {
+  transform: translateY(-3px);
+}
+
+.icon-box {
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+  font-size: 22px;
+}
+
+.group-text {
+  flex: 1;
+}
+
+.group-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.group-info {
+  font-size: 14px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.chevron {
+  font-size: 28px;
+  color: #94a3b8;
+}
