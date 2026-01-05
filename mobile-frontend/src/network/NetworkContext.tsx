@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import NetInfo from "@react-native-community/netinfo";
 import { readLoadCell } from "../api/loadCell";
+import { NetworkPolicy } from "../network/NetworkPolicy";
 
 type NetworkContextType = {
   internetOnline: boolean;
@@ -13,6 +14,30 @@ const NetworkContext = createContext<NetworkContextType>({
 });
 
 export const useNetwork = () => useContext(NetworkContext);
+
+export async function resolveNetwork(policy: NetworkPolicy) {
+  const state = await NetInfo.fetch();
+
+  if (!state.isConnected) {
+    return { canSend: false };
+  }
+
+  if (policy === NetworkPolicy.WIFI_FIRST) {
+    return {
+      canSend: true,
+      preferred: state.type === "wifi" ? "WIFI" : "CELLULAR_FALLBACK",
+    };
+  }
+
+  if (policy === NetworkPolicy.MOBILE_FIRST) {
+    return {
+      canSend: true,
+      preferred: state.type === "cellular" ? "CELLULAR" : "WIFI_FALLBACK",
+    };
+  }
+
+  return { canSend: false };
+}
 
 export function NetworkProvider({ children }: { children: React.ReactNode }) {
   const [internetOnline, setInternetOnline] = useState(false);

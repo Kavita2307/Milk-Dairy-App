@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAdminRation = exports.upsertAdminRation = exports.getFarmerById = exports.updateFarmerStatus = exports.getFarmers = void 0;
+exports.getAnimalCountByGroup = exports.getAdminRation = exports.upsertAdminRation = exports.getFarmerById = exports.updateFarmerStatus = exports.getFarmers = void 0;
 const client_1 = __importDefault(require("../prisma/client"));
 const getFarmers = async (req, res) => {
     const { approved } = req.query;
@@ -77,3 +77,16 @@ const getAdminRation = async (req, res) => {
     res.json(ration);
 };
 exports.getAdminRation = getAdminRation;
+const getAnimalCountByGroup = async (req, res) => {
+    try {
+        const groupId = Number(req.params.groupId);
+        const count = await client_1.default.animal.count({
+            where: { groupId },
+        });
+        res.json({ count });
+    }
+    catch (error) {
+        res.status(500).json({ error: "Failed to fetch animal count" });
+    }
+};
+exports.getAnimalCountByGroup = getAnimalCountByGroup;

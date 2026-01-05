@@ -39,3 +39,12 @@ interface CowWiseMilkReport {
   rows: CowMilkRow[];
   avg7Day: number;
 }
+export interface SelectedIngredient {
+  ingredientId: number;
+  name: string;
+  qtyPerAnimal: number;
+  qtyForGroup: number;
+  plannedKg: number;
+  actualKg: number;
+  accuracy: number;
+}

@@ -83,3 +83,17 @@ export const getAdminRation = async (req: Request, res: Response) => {
 
   res.json(ration);
 };
+
+export const getAnimalCountByGroup = async (req: Request, res: Response) => {
+  try {
+    const groupId = Number(req.params.groupId);
+
+    const count = await prisma.animal.count({
+      where: { groupId },
+    });
+
+    res.json({ count });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch animal count" });
+  }
+};

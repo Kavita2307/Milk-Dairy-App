@@ -132,6 +132,61 @@ CREATE TABLE `AdminRationIngredient` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable
+CREATE TABLE `RationPlan` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `date` DATETIME(3) NOT NULL,
+    `createdBy` INTEGER NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    UNIQUE INDEX `RationPlan_date_key`(`date`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `RationGroup` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `rationPlanId` INTEGER NOT NULL,
+    `groupId` INTEGER NOT NULL,
+    `animalCount` INTEGER NOT NULL,
+    `rationPercentage` DOUBLE NOT NULL,
+    `plannedTmrQty` DOUBLE NOT NULL,
+    `offeredTmrQty` DOUBLE NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `feedCompleted` BOOLEAN NOT NULL DEFAULT false,
+    `fedAt` DATETIME(3) NULL,
+
+    UNIQUE INDEX `RationGroup_rationPlanId_groupId_key`(`rationPlanId`, `groupId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `RationIngredient` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `rationGroupId` INTEGER NOT NULL,
+    `ingredientId` INTEGER NOT NULL,
+    `qtyPerAnimal` DOUBLE NOT NULL,
+    `totalQty` DOUBLE NOT NULL,
+    `dmPercent` DOUBLE NOT NULL,
+    `dmKg` DOUBLE NOT NULL,
+    `mixTimeMinutes` INTEGER NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `RationMixLog` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `rationIngredientId` INTEGER NOT NULL,
+    `plannedQty` DOUBLE NOT NULL,
+    `actualQty` DOUBLE NOT NULL,
+    `accuracyPercent` DOUBLE NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- AddForeignKey
 ALTER TABLE `Animal` ADD CONSTRAINT `Animal_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -149,3 +204,15 @@ ALTER TABLE `Consumption` ADD CONSTRAINT `Consumption_ingredientId_fkey` FOREIGN
 
 -- AddForeignKey
 ALTER TABLE `AdminRationIngredient` ADD CONSTRAINT `AdminRationIngredient_rationId_fkey` FOREIGN KEY (`rationId`) REFERENCES `AdminRation`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `RationGroup` ADD CONSTRAINT `RationGroup_rationPlanId_fkey` FOREIGN KEY (`rationPlanId`) REFERENCES `RationPlan`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `RationIngredient` ADD CONSTRAINT `RationIngredient_rationGroupId_fkey` FOREIGN KEY (`rationGroupId`) REFERENCES `RationGroup`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `RationIngredient` ADD CONSTRAINT `RationIngredient_ingredientId_fkey` FOREIGN KEY (`ingredientId`) REFERENCES `Ingredient`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `RationMixLog` ADD CONSTRAINT `RationMixLog_rationIngredientId_fkey` FOREIGN KEY (`rationIngredientId`) REFERENCES `RationIngredient`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

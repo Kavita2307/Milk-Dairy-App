@@ -121,8 +121,11 @@ export const login = async (req: Request, res: Response) => {
       user: {
         id: user.id,
         email: user.email,
+        mobile: user.mobile,
         name: user.name,
         role: user.role,
+        address: user.address,
+        pincode: user.pincode,
       },
       token,
       userId: user.id,

@@ -20,7 +20,7 @@ import MilkingGroupScreen from "../screens/MilkingGroup/MilkingGroup";
 import ProductionShiftScreen from "../screens/MilkProduction/ProductionShift";
 import NonMilkingGroupScreen from "../screens/Non-MilkingGroup/Non-MilkingGroup";
 import NonMilkGroupInfoScreen from "../screens/Non-MilkingGroup/Non-MilkGroupInfo";
-import ProfileScreen from "./ProfileScreen";
+import ProfileScreen from "../screens/Profile/ProfileScreen";
 import InventoryScreen from "../screens/Ingredients/InventoryScreen";
 import AddIngredientScreen from "../screens/Ingredients/AddIngredientScreen";
 import IngredientDetailScreen from "../screens/Ingredients/IngredientDetailScreen";
@@ -38,8 +38,9 @@ import LeftoverGroup from "../screens/Group/LeftoverGroup";
 import RationGroup from "../screens/Group/RationGroup";
 import MilkingGroup from "../screens/Group/MilkingGroup";
 import UpdateNonMilkAnimalInfo from "../screens/HerdInfo/NonMilkAnimal/UpdateNonMilkAnimalInfo";
-import MixPrecisionScreen from "../screens/Ration/MixPrecisionScreen";
-import ConnectCheck from "../screens/Display/ConnectCheck";
+import RationIngredientScreen from "../screens/Ration/RationIngredientScreen";
+import PrepareTmrScreen from "../screens/Ration/PrepareTmrScreen";
+import MixAccuracyScreen from "../screens/Ration/MixAccuracyScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -170,21 +171,17 @@ export default function AppNavigator() {
       />
       <Stack.Screen name="Ration" component={RationScreen} />
       <Stack.Screen
-        name="MixPrecision"
-        component={MixPrecisionScreen}
-        options={{ title: "Mix Precision" }}
+        name="RationIngredientScreen"
+        component={RationIngredientScreen}
       />
+      <Stack.Screen name="PrepareTmrScreen" component={PrepareTmrScreen} />
+      <Stack.Screen name="MixAccuracyScreen" component={MixAccuracyScreen} />
       <Stack.Screen
         name="MilkGroup"
         component={MilkingGroup}
         options={{ title: "MilkProduction" }}
       />
       <Stack.Screen name="MilkProduction" component={MilkProductionScreen} />
-      <Stack.Screen
-        name="configurations"
-        component={ConnectCheck}
-        options={{ title: "configurations" }}
-      />
     </Stack.Navigator>
   );
 }

@@ -64,17 +64,10 @@ const menuItems: {
   },
   {
     id: "8",
-    title: "Display",
+    title: "Weight Display",
     icon: "monitor-dashboard",
     route: "Display",
     color: "#9333EA",
-  },
-  {
-    id: "9",
-    title: "Configurations",
-    icon: "monitor-dashboard",
-    route: "configurations",
-    color: "#000000",
   },
 ];
 

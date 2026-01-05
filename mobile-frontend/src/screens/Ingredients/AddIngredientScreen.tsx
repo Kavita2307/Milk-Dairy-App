@@ -3,12 +3,11 @@ import {
   View,
   TextInput,
   Text,
-  Button,
   TouchableOpacity,
   ScrollView,
   StyleSheet,
-  Animated,
-  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { API } from "../../api/api";
@@ -21,39 +20,9 @@ export default function AddIngredientScreen({ navigation }: any) {
   const [stock, setStock] = useState("");
 
   const nav = useNavigation();
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
-  const slideAnim = new Animated.Value(100); // hidden initially
 
   useEffect(() => {
     nav.setOptions({ title: `Ingredient's Details` });
-    const show = Keyboard.addListener("keyboardDidShow", (e) => {
-      setKeyboardVisible(true);
-      setKeyboardHeight(e.endCoordinates.height);
-
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }).start();
-    });
-
-    const hide = Keyboard.addListener("keyboardDidHide", () => {
-      setKeyboardVisible(false);
-
-      Animated.timing(slideAnim, {
-        toValue: 100,
-        duration: 200,
-        useNativeDriver: true,
-      }).start();
-
-      setKeyboardHeight(0);
-    });
-
-    return () => {
-      show.remove();
-      hide.remove();
-    };
   }, []);
   const submit = async () => {
     if (!name.trim()) {
@@ -72,7 +41,10 @@ export default function AddIngredientScreen({ navigation }: any) {
   };
 
   return (
-    <>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "android" ? "padding" : "padding"}
+    >
       <ScrollView style={styles.container}>
         <Text style={styles.title}>Add Ingredients Details</Text>
 
@@ -115,27 +87,7 @@ export default function AddIngredientScreen({ navigation }: any) {
           <Text style={styles.saveBtnText}>Save</Text>
         </TouchableOpacity>
       </ScrollView>
-
-      {/* ---------- FLOATING RIGHT ARROW BUTTON ---------- */}
-      {keyboardVisible && (
-        <Animated.View
-          style={[
-            styles.arrowContainer,
-            {
-              bottom: keyboardHeight + 0, // <-- FIXED
-              transform: [{ translateY: slideAnim }],
-            },
-          ]}
-        >
-          <TouchableOpacity
-            style={styles.arrowButton}
-            onPress={() => Keyboard.dismiss()}
-          >
-            <Text style={styles.arrowText}>→</Text>
-          </TouchableOpacity>
-        </Animated.View>
-      )}
-    </>
+    </KeyboardAvoidingView>
   );
 }
 const styles = StyleSheet.create({
@@ -176,27 +128,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 16,
   },
-  // ---------- FLOATING ARROW ----------
-  arrowContainer: {
-    position: "absolute",
-    right: 20,
-  },
-  arrowButton: {
-    backgroundColor: "#0EA5E9",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 30,
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-  },
-  arrowText: {
-    color: "#fff",
-    fontSize: 22,
-    fontWeight: "700",
-  },
+
   datePickerBox: {
     backgroundColor: "#fff",
     borderRadius: 12,

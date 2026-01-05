@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useAuth } from "../context/AuthContext";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNetwork } from "../context/NetworkContext";
+import { useNetwork } from "../network/NetworkContext";
 
 export default function AppHeader({ title }: { title: string }) {
   const { logout } = useAuth();

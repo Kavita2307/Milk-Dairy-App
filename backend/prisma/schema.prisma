@@ -73,8 +73,9 @@ model Ingredient {
   userId Int
   user   User @relation(fields: [userId], references: [id])
 
-  stockEntries StockEntry[]
-  consumptions Consumption[]
+  stockEntries      StockEntry[]
+  consumptions      Consumption[]
+  rationIngredients RationIngredient[]
 }
 
 model StockEntry {
@@ -140,4 +141,69 @@ model AdminRationIngredient {
   dmPercent  Float
 
   ration AdminRation @relation(fields: [rationId], references: [id])
+}
+
+model RationPlan {
+  id        Int      @id @default(autoincrement())
+  date      DateTime
+  createdBy Int
+  createdAt DateTime @default(now())
+
+  groups RationGroup[]
+
+  @@unique([date])
+}
+
+model RationGroup {
+  id           Int @id @default(autoincrement())
+  rationPlanId Int
+  groupId      Int // High / Medium / Low
+  animalCount  Int
+
+  rationPercentage Float // e.g. 50%
+  plannedTmrQty    Float // planned total TMR
+  offeredTmrQty    Float // after % calculation
+
+  createdAt DateTime @default(now())
+
+  rationPlan  RationPlan         @relation(fields: [rationPlanId], references: [id])
+  ingredients RationIngredient[]
+
+  feedCompleted Boolean   @default(false)
+  fedAt         DateTime?
+
+  @@unique([rationPlanId, groupId])
+}
+
+model RationIngredient {
+  id            Int @id @default(autoincrement())
+  rationGroupId Int
+  ingredientId  Int
+
+  qtyPerAnimal Float
+  totalQty     Float // qtyPerAnimal * animalCount
+  dmPercent    Float
+  dmKg         Float
+
+  mixTimeMinutes Int
+
+  createdAt DateTime @default(now())
+
+  rationGroup RationGroup @relation(fields: [rationGroupId], references: [id])
+  ingredient  Ingredient  @relation(fields: [ingredientId], references: [id])
+
+  mixLogs RationMixLog[]
+}
+
+model RationMixLog {
+  id                 Int @id @default(autoincrement())
+  rationIngredientId Int
+
+  plannedQty      Float
+  actualQty       Float
+  accuracyPercent Float
+
+  createdAt DateTime @default(now())
+
+  rationIngredient RationIngredient @relation(fields: [rationIngredientId], references: [id])
 }

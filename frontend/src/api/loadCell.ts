@@ -18,3 +18,13 @@ export async function readLoadCell(): Promise<LoadCellResponse> {
 
   return res.json();
 }
+// TARE SCALE
+export async function tareLoadCell(): Promise<void> {
+  const res = await fetch(`${LOAD_CELL_URL}/api/tare`, {
+    method: "POST",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to tare load cell");
+  }
+}
