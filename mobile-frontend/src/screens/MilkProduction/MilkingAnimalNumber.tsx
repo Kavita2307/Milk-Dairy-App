@@ -6,9 +6,14 @@ import {
   FlatList,
   StyleSheet,
   TextInput,
+  Alert,
 } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { API } from "../../api/api";
+import { SCREEN_NETWORK_MAP } from "@/src/network/ScreenNetworkMap";
+import { resolveNetwork } from "@/src/network/NetworkManager";
+
+const SCREEN_NAME = "MilkingAnimalNumber";
 
 export default function MilkingAnimalNumber() {
   const nav = useNavigation<any>();
@@ -20,7 +25,18 @@ export default function MilkingAnimalNumber() {
   const [animalNumber, setAnimalNumber] = useState("");
 
   // Fetch animals for this group
-  const loadAnimals = () => {
+  const loadAnimals = async () => {
+    const policy = SCREEN_NETWORK_MAP[SCREEN_NAME]; // undefined → MOBILE_FIRST
+    const decision = await resolveNetwork(policy);
+
+    if (!decision.canSend) {
+      Alert.alert(
+        "Network Error",
+        decision.reason || "Please enable mobile data"
+      );
+      return;
+    }
+
     API.get("/animals").then((res) => {
       setAnimals(res.data.filter((a: any) => a.groupId === groupId));
     });

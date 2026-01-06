@@ -10,6 +10,10 @@ import {
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { API } from "../../api/api";
 import { readLoadCell } from "../../api/loadCell";
+import { SCREEN_NETWORK_MAP } from "@/src/network/ScreenNetworkMap";
+import { resolveNetwork } from "@/src/network/NetworkManager";
+
+const SCREEN_NAME = "PrepareTmrScreen";
 
 export default function PrepareTmrScreen() {
   const nav = useNavigation<any>();
@@ -18,7 +22,7 @@ export default function PrepareTmrScreen() {
   // ------------------------
   // PARAMS
   // ------------------------
-  const { rationGroupId } = route.params;
+  const { rationGroupId, userId, groupId } = route.params;
 
   // ------------------------
   // STATE
@@ -46,6 +50,17 @@ export default function PrepareTmrScreen() {
   }, []);
 
   const fetchIngredients = async () => {
+    const policy = SCREEN_NETWORK_MAP[SCREEN_NAME]; // undefined → MOBILE_FIRST
+    const decision = await resolveNetwork(policy);
+
+    if (!decision.canSend) {
+      Alert.alert(
+        "Network Error",
+        decision.reason || "Please enable mobile data"
+      );
+      return;
+    }
+
     try {
       const res = await API.get(`/ration/group/${rationGroupId}/ingredients`);
       setIngredients(res.data);
@@ -86,6 +101,17 @@ export default function PrepareTmrScreen() {
   // SAVE CURRENT INGREDIENT
   // ------------------------
   const saveAndNext = async () => {
+    const policy = SCREEN_NETWORK_MAP[SCREEN_NAME]; // undefined → MOBILE_FIRST
+    const decision = await resolveNetwork(policy);
+
+    if (!decision.canSend) {
+      Alert.alert(
+        "Network Error",
+        decision.reason || "Please enable mobile data"
+      );
+      return;
+    }
+
     try {
       setLoading(true);
 
@@ -93,6 +119,8 @@ export default function PrepareTmrScreen() {
         rationIngredientId: currentIngredient.id,
         plannedQty,
         actualQty: currentWeight,
+        userId,
+        groupId,
       });
 
       setCurrentWeight(0);

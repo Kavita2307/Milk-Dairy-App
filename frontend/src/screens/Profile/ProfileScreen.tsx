@@ -186,6 +186,10 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import { API } from "../../api/api";
 import { EditableRow } from "./EditableRow";
+import { SCREEN_NETWORK_MAP } from "@/src/network/ScreenNetworkMap";
+import { resolveNetwork } from "@/src/network/NetworkManager";
+
+const SCREEN_NAME = "ProfileScreen";
 
 export default function ProfileScreen() {
   const { user } = useAuth();

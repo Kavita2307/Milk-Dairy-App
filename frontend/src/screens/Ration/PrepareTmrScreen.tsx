@@ -10,6 +10,10 @@ import {
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { API } from "../../api/api";
 import { readLoadCell } from "../../api/loadCell";
+import { SCREEN_NETWORK_MAP } from "@/src/network/ScreenNetworkMap";
+import { resolveNetwork } from "@/src/network/NetworkManager";
+
+const SCREEN_NAME = "PrepareTmrScreen";
 
 export default function PrepareTmrScreen() {
   const nav = useNavigation<any>();
@@ -18,7 +22,7 @@ export default function PrepareTmrScreen() {
   // ------------------------
   // PARAMS
   // ------------------------
-  const { rationGroupId } = route.params;
+  const { rationGroupId, userId, groupId } = route.params;
 
   // ------------------------
   // STATE
@@ -93,6 +97,8 @@ export default function PrepareTmrScreen() {
         rationIngredientId: currentIngredient.id,
         plannedQty,
         actualQty: currentWeight,
+        userId,
+        groupId,
       });
 
       setCurrentWeight(0);

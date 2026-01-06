@@ -9,14 +9,19 @@ import {
   Keyboard,
   Platform,
   KeyboardAvoidingView,
+  Alert,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useRoute } from "@react-navigation/native";
 import { API } from "../../../api/api";
 import { Picker } from "@react-native-picker/picker";
+import { SCREEN_NETWORK_MAP } from "@/src/network/ScreenNetworkMap";
+import { resolveNetwork } from "@/src/network/NetworkManager";
 
 type Section = "basic" | "pedigree" | "health" | null;
 type PickerType = "birth" | "deworm" | null;
+
+const SCREEN_NAME = "UpdateAnimalDetailsScreen";
 
 export default function UpdateNonMilkAnimalInfo() {
   const route = useRoute<any>();
@@ -75,6 +80,16 @@ export default function UpdateNonMilkAnimalInfo() {
 
     if (section === "pedigree") payload = { pedigree: editData.pedigree };
     if (section === "health") payload = { health: editData.health };
+    const policy = SCREEN_NETWORK_MAP[SCREEN_NAME]; // undefined → MOBILE_FIRST
+    const decision = await resolveNetwork(policy);
+
+    if (!decision.canSend) {
+      Alert.alert(
+        "Network Error",
+        decision.reason || "Please enable mobile data"
+      );
+      return;
+    }
 
     await API.put("/animals/update-details", {
       animalNumber,

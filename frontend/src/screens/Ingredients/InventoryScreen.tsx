@@ -6,11 +6,17 @@ import {
   Button,
   StyleSheet,
   TouchableOpacity,
+  ScrollView,
+  Alert,
 } from "react-native";
 import { useEffect, useState } from "react";
 import { API } from "../../api/api";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
+import { SCREEN_NETWORK_MAP } from "@/src/network/ScreenNetworkMap";
+import { resolveNetwork } from "@/src/network/NetworkManager";
+
+const SCREEN_NAME = "InventoryScreen";
 
 export default function InventoryScreen({ navigation }: any) {
   const [items, setItems] = useState<any[]>([]);
@@ -26,38 +32,45 @@ export default function InventoryScreen({ navigation }: any) {
   }, [nav]);
 
   return (
-    <View style={{ padding: 16 }}>
-      <TouchableOpacity
-        onPress={() => nav.navigate("AddIngredient")}
-        style={styles.addButton}
-      >
-        <Text style={styles.addButtonText}>+ Add Ingredient</Text>
-      </TouchableOpacity>
-      <FlatList
-        data={items}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <>
-            <View>
-              <TouchableOpacity
-                key={item.id}
-                style={styles.groupRow}
-                onPress={() => {
-                  nav.navigate("IngredientDetail", {
-                    ingredientId: item.id,
-                  });
-                }}
-              >
-                <Text style={styles.itemText}>{item.name}</Text>
-              </TouchableOpacity>
-            </View>
-          </>
-        )}
-      />
-    </View>
+    <ScrollView style={styles.container}>
+      <View style={{ padding: 16 }}>
+        <TouchableOpacity
+          onPress={() => nav.navigate("AddIngredient")}
+          style={styles.addButton}
+        >
+          <Text style={styles.addButtonText}>+ Add Ingredient</Text>
+        </TouchableOpacity>
+        <FlatList
+          data={items}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <>
+              <View>
+                <TouchableOpacity
+                  key={item.id}
+                  style={styles.groupRow}
+                  onPress={() => {
+                    nav.navigate("IngredientDetail", {
+                      ingredientId: item.id,
+                    });
+                  }}
+                >
+                  <Text style={styles.itemText}>{item.name}</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
+        />
+      </View>
+    </ScrollView>
   );
 }
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: "#F3F4F6",
+  },
   addButton: {
     backgroundColor: "#10B981",
     padding: 16,

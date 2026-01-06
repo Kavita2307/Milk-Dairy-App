@@ -9,14 +9,17 @@ import {
   Keyboard,
   Platform,
   KeyboardAvoidingView,
+  Alert,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { API } from "../../../api/api";
 import { Picker } from "@react-native-picker/picker";
+import { SCREEN_NETWORK_MAP } from "@/src/network/ScreenNetworkMap";
+import { resolveNetwork } from "@/src/network/NetworkManager";
 
 type Section = "basic" | "pedigree" | "health" | null;
-
+const SCREEN_NAME = "UpdateAnimalDetailsScreen";
 export default function AnimalDetailsScreen() {
   const route = useRoute<any>();
   const nav = useNavigation<any>();

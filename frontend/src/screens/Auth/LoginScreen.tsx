@@ -145,14 +145,37 @@ import {
 } from "react-native";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigation } from "@react-navigation/native";
+import { resolveNetwork } from "../../network/NetworkManager";
+import { SCREEN_NETWORK_MAP } from "../../network/ScreenNetworkMap";
 
 export default function LoginScreen() {
+  const SCREEN_NAME = "LoginScreen";
+
   const { login } = useAuth();
   const navigation = useNavigation<any>();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  // const submit = async () => {
+  //   Keyboard.dismiss();
+
+  //   if (!username || !password) {
+  //     Alert.alert(
+  //       "Missing fields",
+  //       "Please enter email or mobile number and password"
+  //     );
+  //     return;
+  //   }
+
+  //   try {
+  //     console.log("login called with:", username, password);
+  //     await login(username, password);
+  //     Alert.alert("Success...!!!", "Logged in successfully!");
+  //   } catch (err: any) {
+  //     Alert.alert("Login failed", err.response?.data?.error || err.message);
+  //   }
+  // };
   const submit = async () => {
     Keyboard.dismiss();
 
@@ -164,6 +187,9 @@ export default function LoginScreen() {
       return;
     }
 
+    // ✅ NETWORK CHECK (MOBILE FIRST BY DEFAULT)
+
+    // ✅ LOGIN
     try {
       console.log("login called with:", username, password);
       await login(username, password);

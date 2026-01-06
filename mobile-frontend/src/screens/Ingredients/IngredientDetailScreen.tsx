@@ -7,9 +7,14 @@ import {
   Button,
   StyleSheet,
   ScrollView,
+  Alert,
 } from "react-native";
 import { API } from "../../api/api";
 import { useRoute, useNavigation } from "@react-navigation/native";
+import { SCREEN_NETWORK_MAP } from "@/src/network/ScreenNetworkMap";
+import { resolveNetwork } from "@/src/network/NetworkManager";
+
+const SCREEN_NAME = "IngredientDetailScreen";
 
 export default function IngredientDetailScreen() {
   const route = useRoute<any>();
@@ -19,6 +24,17 @@ export default function IngredientDetailScreen() {
   const [quantity, setQuantity] = useState("");
 
   const loadData = async () => {
+    const policy = SCREEN_NETWORK_MAP[SCREEN_NAME]; // undefined → MOBILE_FIRST
+    const decision = await resolveNetwork(policy);
+
+    if (!decision.canSend) {
+      Alert.alert(
+        "Network Error",
+        decision.reason || "Please enable mobile data"
+      );
+      return;
+    }
+
     const data = await API.get(`/ingredients/${ingredientId}`).then(
       (res) => res.data
     );

@@ -184,11 +184,15 @@ import {
   TouchableOpacity,
   FlatList,
   StyleSheet,
+  Alert,
 } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { API } from "../../api/api";
+import { SCREEN_NETWORK_MAP } from "@/src/network/ScreenNetworkMap";
+import { resolveNetwork } from "@/src/network/NetworkManager";
 
+const SCREEN_NAME = "AnimalNumbersScreen";
 export default function AnimalNumbersScreen() {
   const nav = useNavigation<any>();
   const route = useRoute<any>();

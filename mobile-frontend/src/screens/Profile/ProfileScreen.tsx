@@ -186,6 +186,10 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import { API } from "../../api/api";
 import { EditableRow } from "./EditableRow";
+import { SCREEN_NETWORK_MAP } from "@/src/network/ScreenNetworkMap";
+import { resolveNetwork } from "@/src/network/NetworkManager";
+
+const SCREEN_NAME = "ProfileScreen";
 
 export default function ProfileScreen() {
   const { user } = useAuth();
@@ -207,6 +211,17 @@ export default function ProfileScreen() {
   // SAVE PROFILE
   // --------------------
   const saveProfile = async () => {
+    const policy = SCREEN_NETWORK_MAP[SCREEN_NAME]; // undefined → MOBILE_FIRST
+    const decision = await resolveNetwork(policy);
+
+    if (!decision.canSend) {
+      Alert.alert(
+        "Network Error",
+        decision.reason || "Please enable mobile data"
+      );
+      return;
+    }
+
     try {
       await API.put("/profile", {
         userId: String(user?.id),

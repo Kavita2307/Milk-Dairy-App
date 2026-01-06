@@ -166,6 +166,10 @@ import {
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { API } from "../../api/api";
+import { SCREEN_NETWORK_MAP } from "@/src/network/ScreenNetworkMap";
+import { resolveNetwork } from "@/src/network/NetworkManager";
+
+const SCREEN_NAME = "RationGroupSetupScreen";
 
 export default function RationGroupSetupScreen() {
   const nav = useNavigation<any>();
@@ -175,7 +179,7 @@ export default function RationGroupSetupScreen() {
   // PARAMS FROM PREVIOUS TAB
   // ------------------------
   const { groupId, groupName, date, userId } = route.params;
-
+  console.log(route.params);
   // ------------------------
   // STATE
   // ------------------------
@@ -219,6 +223,7 @@ export default function RationGroupSetupScreen() {
         date,
         createdBy: userId,
       });
+      console.log(res.data);
       setRationPlanId(res.data.id);
     } catch {
       Alert.alert("Error", "Failed to create ration plan");
@@ -237,17 +242,20 @@ export default function RationGroupSetupScreen() {
       const res = await API.post("/ration/group", {
         rationPlanId,
         groupId,
+        userId,
         animalCount,
         rationPercentage,
         plannedTmrQty,
       });
-
+      console.log(res.data);
       Alert.alert("Success", "Ration group saved");
 
       nav.navigate("RationIngredientScreen", {
         rationGroupId: res.data.id,
         groupName,
         animalCount,
+        userId,
+        groupId,
       });
     } catch {
       Alert.alert("Error", "Failed to save ration group");

@@ -7,17 +7,33 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
 import { useEffect, useState } from "react";
 import { API } from "../../api/api";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
+import { SCREEN_NETWORK_MAP } from "@/src/network/ScreenNetworkMap";
+import { resolveNetwork } from "@/src/network/NetworkManager";
+
+const SCREEN_NAME = "InventoryScreen";
 
 export default function InventoryScreen({ navigation }: any) {
   const [items, setItems] = useState<any[]>([]);
   const nav = useNavigation<any>();
 
   const load = async () => {
+    const policy = SCREEN_NETWORK_MAP[SCREEN_NAME]; // undefined → MOBILE_FIRST
+    const decision = await resolveNetwork(policy);
+
+    if (!decision.canSend) {
+      Alert.alert(
+        "Network Error",
+        decision.reason || "Please enable mobile data"
+      );
+      return;
+    }
+
     const res = await API.get("/ingredients");
     setItems(res.data);
   };

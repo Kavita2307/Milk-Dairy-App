@@ -159,7 +159,7 @@ export const createRationPlan = async (req: Request, res: Response) => {
     const { date, createdBy } = req.body;
 
     const plan = await prisma.rationPlan.upsert({
-      where: { date: new Date(date) },
+      where: { date_createdBy: { date: new Date(date), createdBy } },
       update: {},
       create: {
         date: new Date(date),
@@ -180,15 +180,17 @@ export const saveRationGroup = async (req: Request, res: Response) => {
       animalCount,
       rationPercentage,
       plannedTmrQty,
+      userId,
     } = req.body;
 
     const offeredTmrQty = plannedTmrQty * (rationPercentage / 100);
 
     const group = await prisma.rationGroup.upsert({
       where: {
-        rationPlanId_groupId: {
+        rationPlanId_groupId_userId: {
           rationPlanId,
           groupId,
+          userId,
         },
       },
       update: {
@@ -200,6 +202,7 @@ export const saveRationGroup = async (req: Request, res: Response) => {
       create: {
         rationPlanId,
         groupId,
+        userId,
         animalCount,
         rationPercentage,
         plannedTmrQty,
@@ -221,6 +224,8 @@ export const addRationIngredient = async (req: Request, res: Response) => {
       animalCount,
       dmPercent,
       mixTimeMinutes,
+      userId,
+      groupId,
     } = req.body;
 
     const totalQty = qtyPerAnimal * animalCount;
@@ -230,6 +235,8 @@ export const addRationIngredient = async (req: Request, res: Response) => {
       data: {
         rationGroupId,
         ingredientId,
+        userId,
+        groupId,
         qtyPerAnimal,
         totalQty,
         dmPercent,
@@ -262,13 +269,16 @@ export const getGroupIngredients = async (req: Request, res: Response) => {
 };
 export const saveMixLog = async (req: Request, res: Response) => {
   try {
-    const { rationIngredientId, plannedQty, actualQty } = req.body;
+    const { rationIngredientId, plannedQty, actualQty, userId, groupId } =
+      req.body;
 
     const accuracyPercent = (actualQty / plannedQty) * 100;
 
     const log = await prisma.rationMixLog.create({
       data: {
         rationIngredientId,
+        userId,
+        groupId,
         plannedQty,
         actualQty,
         accuracyPercent,

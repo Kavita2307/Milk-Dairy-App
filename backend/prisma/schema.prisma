@@ -151,20 +151,21 @@ model RationPlan {
 
   groups RationGroup[]
 
-  @@unique([date])
+ @@unique([date, createdBy])
 }
 
 model RationGroup {
   id           Int @id @default(autoincrement())
   rationPlanId Int
-  groupId      Int // High / Medium / Low
+  groupId      Int 
+  userId       Int
   animalCount  Int
 
   rationPercentage Float // e.g. 50%
   plannedTmrQty    Float // planned total TMR
   offeredTmrQty    Float // after % calculation
 
-  createdAt DateTime @default(now())
+  createdAt     DateTime @default(now())
 
   rationPlan  RationPlan         @relation(fields: [rationPlanId], references: [id])
   ingredients RationIngredient[]
@@ -172,13 +173,16 @@ model RationGroup {
   feedCompleted Boolean   @default(false)
   fedAt         DateTime?
 
-  @@unique([rationPlanId, groupId])
+  @@unique([rationPlanId, groupId,userId])
 }
 
 model RationIngredient {
   id            Int @id @default(autoincrement())
   rationGroupId Int
   ingredientId  Int
+
+  userId      Int
+  groupId     Int
 
   qtyPerAnimal Float
   totalQty     Float // qtyPerAnimal * animalCount
@@ -198,12 +202,14 @@ model RationIngredient {
 model RationMixLog {
   id                 Int @id @default(autoincrement())
   rationIngredientId Int
+  userId      Int
+  groupId     Int
 
   plannedQty      Float
   actualQty       Float
   accuracyPercent Float
 
-  createdAt DateTime @default(now())
+  createdAt     DateTime @default(now())
 
   rationIngredient RationIngredient @relation(fields: [rationIngredientId], references: [id])
 }

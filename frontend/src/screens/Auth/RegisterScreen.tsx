@@ -76,6 +76,10 @@ import {
 } from "react-native";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigation } from "@react-navigation/native";
+import { SCREEN_NETWORK_MAP } from "@/src/network/ScreenNetworkMap";
+import { resolveNetwork } from "@/src/network/NetworkManager";
+
+const SCREEN_NAME = "RegisterScreen";
 
 export default function RegisterScreen() {
   const { register } = useAuth();

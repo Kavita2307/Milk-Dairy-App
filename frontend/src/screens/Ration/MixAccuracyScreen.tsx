@@ -10,6 +10,10 @@ import {
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { API } from "../../api/api";
+import { SCREEN_NETWORK_MAP } from "@/src/network/ScreenNetworkMap";
+import { resolveNetwork } from "@/src/network/NetworkManager";
+
+const SCREEN_NAME = "MixAccuracyScreen";
 
 export default function MixAccuracyScreen() {
   const nav = useNavigation<any>();
@@ -18,7 +22,7 @@ export default function MixAccuracyScreen() {
   // ------------------------
   // PARAMS
   // ------------------------
-  const { rationGroupId } = route.params;
+  const { rationGroupId, userId, groupId } = route.params;
 
   // ------------------------
   // STATE

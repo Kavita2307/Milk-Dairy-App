@@ -139,7 +139,7 @@ CREATE TABLE `RationPlan` (
     `createdBy` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    UNIQUE INDEX `RationPlan_date_key`(`date`),
+    UNIQUE INDEX `RationPlan_date_createdBy_key`(`date`, `createdBy`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -148,6 +148,7 @@ CREATE TABLE `RationGroup` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `rationPlanId` INTEGER NOT NULL,
     `groupId` INTEGER NOT NULL,
+    `userId` INTEGER NOT NULL,
     `animalCount` INTEGER NOT NULL,
     `rationPercentage` DOUBLE NOT NULL,
     `plannedTmrQty` DOUBLE NOT NULL,
@@ -156,7 +157,7 @@ CREATE TABLE `RationGroup` (
     `feedCompleted` BOOLEAN NOT NULL DEFAULT false,
     `fedAt` DATETIME(3) NULL,
 
-    UNIQUE INDEX `RationGroup_rationPlanId_groupId_key`(`rationPlanId`, `groupId`),
+    UNIQUE INDEX `RationGroup_rationPlanId_groupId_userId_key`(`rationPlanId`, `groupId`, `userId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -165,6 +166,8 @@ CREATE TABLE `RationIngredient` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `rationGroupId` INTEGER NOT NULL,
     `ingredientId` INTEGER NOT NULL,
+    `userId` INTEGER NOT NULL,
+    `groupId` INTEGER NOT NULL,
     `qtyPerAnimal` DOUBLE NOT NULL,
     `totalQty` DOUBLE NOT NULL,
     `dmPercent` DOUBLE NOT NULL,
@@ -179,6 +182,8 @@ CREATE TABLE `RationIngredient` (
 CREATE TABLE `RationMixLog` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `rationIngredientId` INTEGER NOT NULL,
+    `userId` INTEGER NOT NULL,
+    `groupId` INTEGER NOT NULL,
     `plannedQty` DOUBLE NOT NULL,
     `actualQty` DOUBLE NOT NULL,
     `accuracyPercent` DOUBLE NOT NULL,

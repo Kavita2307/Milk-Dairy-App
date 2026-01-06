@@ -14,6 +14,10 @@ import {
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { API } from "../../api/api";
+import { SCREEN_NETWORK_MAP } from "@/src/network/ScreenNetworkMap";
+import { resolveNetwork } from "@/src/network/NetworkManager";
+
+const SCREEN_NAME = "RationIngredientScreen";
 
 export default function RationIngredientScreen() {
   const nav = useNavigation<any>();
@@ -22,7 +26,8 @@ export default function RationIngredientScreen() {
   // ------------------------
   // PARAMS FROM STEP 1
   // ------------------------
-  const { rationGroupId, groupName, animalCount } = route.params;
+  const { rationGroupId, groupName, animalCount, userId, groupId } =
+    route.params;
 
   // ------------------------
   // STATE
@@ -38,10 +43,20 @@ export default function RationIngredientScreen() {
   // CALCULATIONS
   // ------------------------
   const totalQty = Number(qtyPerAnimal) * Number(animalCount);
+  const getDryMatter = (ingredient: any): number => {
+    if (!ingredient?.detail) return 0;
 
-  const dmKg = selectedIngredient
-    ? totalQty * (selectedIngredient.dmPercent / 100)
-    : 0;
+    // detail might be string or object
+    const detail =
+      typeof ingredient.detail === "string"
+        ? JSON.parse(ingredient.detail)
+        : ingredient.detail;
+
+    return Number(detail.dryMatter || 0);
+  };
+  const dmPercent = selectedIngredient ? getDryMatter(selectedIngredient) : 0;
+
+  const dmKg = totalQty * (dmPercent / 100);
 
   // ------------------------
   // LOAD INGREDIENT STORE
@@ -52,6 +67,17 @@ export default function RationIngredientScreen() {
   }, []);
 
   const fetchIngredients = async () => {
+    const policy = SCREEN_NETWORK_MAP[SCREEN_NAME]; // undefined → MOBILE_FIRST
+    const decision = await resolveNetwork(policy);
+
+    if (!decision.canSend) {
+      Alert.alert(
+        "Network Error",
+        decision.reason || "Please enable mobile data"
+      );
+      return;
+    }
+
     try {
       const res = await API.get("/ingredients");
       setIngredients(res.data);
@@ -68,32 +94,36 @@ export default function RationIngredientScreen() {
       Alert.alert("Select ingredient");
       return;
     }
+    const policy = SCREEN_NETWORK_MAP[SCREEN_NAME]; // undefined → MOBILE_FIRST
+    const decision = await resolveNetwork(policy);
 
-    if (Number(qtyPerAnimal) <= 0) {
-      Alert.alert("Enter valid quantity per animal");
+    if (!decision.canSend) {
+      Alert.alert(
+        "Network Error",
+        decision.reason || "Please enable mobile data"
+      );
       return;
     }
 
     try {
       setLoading(true);
 
-      const res = await API.post("/ration/ingredient", {
+      await API.post("/ration/ingredient", {
         rationGroupId,
         ingredientId: selectedIngredient.id,
+        userId,
+        groupId,
         qtyPerAnimal: Number(qtyPerAnimal),
         animalCount: Number(animalCount),
-        dmPercent: Number(selectedIngredient.dm),
+        dmPercent: getDryMatter(selectedIngredient),
         mixTimeMinutes: Number(mixTime),
       });
-      console.log(res.data);
-      setAddedIngredients([...addedIngredients, res.data]);
 
-      // reset input
       setQtyPerAnimal("0");
       setMixTime("0");
       setSelectedIngredient(null);
     } catch {
-      Alert.alert("Error", "Failed to add ingredient");
+      Alert.alert("Failed to add ingredient");
     } finally {
       setLoading(false);
     }
@@ -192,6 +222,8 @@ export default function RationIngredientScreen() {
             onPress={() =>
               nav.navigate("PrepareTmrScreen", {
                 rationGroupId,
+                userId,
+                groupId,
               })
             }
           >

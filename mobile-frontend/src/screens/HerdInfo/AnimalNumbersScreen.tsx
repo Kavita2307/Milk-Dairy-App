@@ -184,11 +184,15 @@ import {
   TouchableOpacity,
   FlatList,
   StyleSheet,
+  Alert,
 } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { API } from "../../api/api";
+import { SCREEN_NETWORK_MAP } from "@/src/network/ScreenNetworkMap";
+import { resolveNetwork } from "@/src/network/NetworkManager";
 
+const SCREEN_NAME = "AnimalNumbersScreen";
 export default function AnimalNumbersScreen() {
   const nav = useNavigation<any>();
   const route = useRoute<any>();
@@ -202,6 +206,17 @@ export default function AnimalNumbersScreen() {
   }, [groupId]);
 
   const loadAnimals = async () => {
+    const policy = SCREEN_NETWORK_MAP[SCREEN_NAME]; // undefined → MOBILE_FIRST
+    const decision = await resolveNetwork(policy);
+
+    if (!decision.canSend) {
+      Alert.alert(
+        "Network Error",
+        decision.reason || "Please enable mobile data"
+      );
+      return;
+    }
+
     const res = await API.get("/animals");
     setAnimals(res.data.filter((a: any) => a.groupId === groupId));
   };

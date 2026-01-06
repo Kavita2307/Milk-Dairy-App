@@ -1,26 +1,32 @@
 import NetInfo from "@react-native-community/netinfo";
 import { NetworkPolicy } from "./NetworkPolicy";
 
-export async function resolveNetwork(policy: NetworkPolicy) {
+export async function resolveNetwork(
+  policy: NetworkPolicy = NetworkPolicy.MOBILE_FIRST // ✅ DEFAULT
+) {
   const state = await NetInfo.fetch();
 
-  if (!state.isConnected) {
-    return { canSend: false, reason: "OFFLINE" };
+  if (!state.isConnected || !state.isInternetReachable) {
+    return { canSend: false, reason: "No internet connection" };
   }
 
+  // 🔵 WIFI FIRST (load cell screens)
   if (policy === NetworkPolicy.WIFI_FIRST) {
     if (state.type === "wifi") {
       return { canSend: true, using: "WIFI" };
     }
-    return { canSend: true, using: "CELLULAR_FALLBACK" };
+
+    // allow mobile fallback
+    return { canSend: true, using: "MOBILE_FALLBACK" };
   }
 
-  if (policy === NetworkPolicy.MOBILE_FIRST) {
-    if (state.type === "cellular") {
-      return { canSend: true, using: "CELLULAR" };
-    }
-    return { canSend: true, using: "WIFI_FALLBACK" };
+  // 🟢 MOBILE FIRST (DEFAULT for entire app)
+  if (state.type === "cellular") {
+    return { canSend: true, using: "MOBILE" };
   }
 
-  return { canSend: false };
+  return {
+    canSend: false,
+    reason: "Please enable mobile data",
+  };
 }

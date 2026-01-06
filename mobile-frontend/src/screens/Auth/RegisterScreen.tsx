@@ -76,6 +76,10 @@ import {
 } from "react-native";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigation } from "@react-navigation/native";
+import { SCREEN_NETWORK_MAP } from "@/src/network/ScreenNetworkMap";
+import { resolveNetwork } from "@/src/network/NetworkManager";
+
+const SCREEN_NAME = "RegisterScreen";
 
 export default function RegisterScreen() {
   const { register } = useAuth();
@@ -112,6 +116,17 @@ export default function RegisterScreen() {
       Alert.alert(
         "Weak Password",
         "Password must be at least 8 characters long"
+      );
+      return;
+    }
+
+    const policy = SCREEN_NETWORK_MAP[SCREEN_NAME]; // undefined → MOBILE_FIRST
+    const decision = await resolveNetwork(policy);
+
+    if (!decision.canSend) {
+      Alert.alert(
+        "Network Error",
+        decision.reason || "Please enable mobile data"
       );
       return;
     }

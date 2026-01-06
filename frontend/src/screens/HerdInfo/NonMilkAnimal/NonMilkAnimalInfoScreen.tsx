@@ -15,7 +15,10 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { API } from "../../../api/api";
 import { Picker } from "@react-native-picker/picker";
+import { SCREEN_NETWORK_MAP } from "@/src/network/ScreenNetworkMap";
+import { resolveNetwork } from "@/src/network/NetworkManager";
 
+const SCREEN_NAME = "NonMilkAnimalDetailsScreen";
 export default function NonMilkAnimalDetailsScreen() {
   const [animalNumber, setAnimalNumber] = useState("");
 

@@ -8,10 +8,15 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { API } from "../../api/api";
 import { useNavigation } from "@react-navigation/native";
+import { SCREEN_NETWORK_MAP } from "@/src/network/ScreenNetworkMap";
+import { resolveNetwork } from "@/src/network/NetworkManager";
+
+const SCREEN_NAME = "AddIngredientScreen";
 
 export default function AddIngredientScreen({ navigation }: any) {
   const [name, setName] = useState("");
@@ -29,6 +34,17 @@ export default function AddIngredientScreen({ navigation }: any) {
       alert("Enter a valid ingredient name");
       return;
     }
+    const policy = SCREEN_NETWORK_MAP[SCREEN_NAME]; // undefined → MOBILE_FIRST
+    const decision = await resolveNetwork(policy);
+
+    if (!decision.canSend) {
+      Alert.alert(
+        "Network Error",
+        decision.reason || "Please enable mobile data"
+      );
+      return;
+    }
+
     await API.post("/ingredients", {
       name,
       price: Number(price),

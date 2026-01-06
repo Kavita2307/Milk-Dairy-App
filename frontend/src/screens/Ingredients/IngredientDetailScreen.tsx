@@ -7,9 +7,14 @@ import {
   Button,
   StyleSheet,
   ScrollView,
+  Alert,
 } from "react-native";
 import { API } from "../../api/api";
 import { useRoute, useNavigation } from "@react-navigation/native";
+import { SCREEN_NETWORK_MAP } from "@/src/network/ScreenNetworkMap";
+import { resolveNetwork } from "@/src/network/NetworkManager";
+
+const SCREEN_NAME = "IngredientDetailScreen";
 
 export default function IngredientDetailScreen() {
   const route = useRoute<any>();
