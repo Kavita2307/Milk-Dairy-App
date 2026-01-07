@@ -23,17 +23,6 @@ export default function InventoryScreen({ navigation }: any) {
   const nav = useNavigation<any>();
 
   const load = async () => {
-    const policy = SCREEN_NETWORK_MAP[SCREEN_NAME]; // undefined → MOBILE_FIRST
-    const decision = await resolveNetwork(policy);
-
-    if (!decision.canSend) {
-      Alert.alert(
-        "Network Error",
-        decision.reason || "Please enable mobile data"
-      );
-      return;
-    }
-
     const res = await API.get("/ingredients");
     setItems(res.data);
   };

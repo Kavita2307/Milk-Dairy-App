@@ -1,159 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../prisma/client";
 
-// export const createRation = async (req: Request, res: Response) => {
-//   const { userId, groupId, name, no, kg, rationSize, days } = req.body;
-
-//   const total = no * kg;
-
-//   const ration = await prisma.ration.create({
-//     data: {
-//       userId,
-//       groupId,
-//       name,
-//       no,
-//       kg,
-//       total,
-//       rationSize,
-//       days,
-//       thisLoad: 0,
-//       lastLoad: 0,
-//       diff: 0,
-//     },
-//   });
-
-//   res.json(ration);
-// };
-
-// export const listIngredients = async (req: Request, res: Response) => {
-//   const { userId } = req.params;
-
-//   const ingredients = await prisma.ingredient.findMany({
-//     where: { userId: Number(userId) },
-//   });
-
-//   res.json(ingredients);
-// };
-// export const upsertRation = async (req: Request, res: Response) => {
-//   const { userId, groupId, name, no, kg, rationSize, days } = req.body;
-
-//   const total = Number(no) * Number(kg);
-
-//   const ration = await prisma.ration.upsert({
-//     where: {
-//       id: undefined, // Replace with the actual unique field or composite key from your schema
-//     },
-//     update: {
-//       name,
-//       no,
-//       kg,
-//       total,
-//       rationSize,
-//       days,
-//     },
-//     create: {
-//       userId,
-//       groupId,
-//       name,
-//       no,
-//       kg,
-//       total,
-//       rationSize,
-//       days,
-//       thisLoad: 0,
-//       lastLoad: 0,
-//       diff: 0,
-//     },
-//   });
-
-//   res.json(ration);
-// };
-
-// /**
-//  * GET /ration/history/:groupId
-//  */
-// export const getRationHistory = async (req: Request, res: Response) => {
-//   try {
-//     const groupId = Number(req.params.groupId);
-//     const userId = Number(req.query.userId);
-
-//     const history = await prisma.ration.findMany({
-//       where: { groupId, userId },
-//       orderBy: { createdAt: "desc" },
-//       take: 7,
-//       select: {
-//         total: true,
-//         createdAt: true,
-//       },
-//     });
-
-//     res.json({ history });
-//   } catch (error) {
-//     console.error("ration history error:", error);
-//     res.status(500).json({ error: "Server error" });
-//   }
-// };
-// /**
-//  * GET RATION + INGREDIENTS
-//  */
-// export const getRationByGroup = async (req: Request, res: Response) => {
-//   const groupId = Number(req.params.groupId);
-
-//   const ration = await prisma.ration.findFirst({
-//     where: { groupId },
-//   });
-
-//   const ingredients = await prisma.consumption.findMany({
-//     where: { ingredient: { userId: ration?.userId } },
-//     include: {
-//       ingredient: true,
-//     },
-//   });
-
-//   const mapped = ingredients.map((c) => ({
-//     consumptionId: c.id,
-//     ingredientId: c.ingredientId,
-//     name: c.ingredient.name,
-//     quantity: c.quantity,
-//     dm: (c.ingredient.details as any)?.dm ?? 0,
-//   }));
-
-//   res.json({
-//     ration,
-//     ingredients: mapped,
-//   });
-// };
-
-// /**
-//  * UPDATE INGREDIENT (PER ANIMAL KG)
-//  */
-// export const updateRationIngredient = async (req: Request, res: Response) => {
-//   const id = Number(req.params.id);
-//   const { kg } = req.body;
-
-//   if (!id || isNaN(kg)) {
-//     return res.status(400).json({ error: "Invalid input" });
-//   }
-
-//   const updated = await prisma.consumption.update({
-//     where: { id },
-//     data: { quantity: Number(kg) },
-//   });
-
-//   res.json({ message: "Updated", data: updated });
-// };
-
-// /**
-//  * DELETE INGREDIENT FROM RATION
-//  */
-// export const deleteRationIngredient = async (req: Request, res: Response) => {
-//   const id = Number(req.params.id);
-
-//   await prisma.consumption.delete({ where: { id } });
-
-//   res.json({ message: "Deleted" });
-// };
-
 export const createRationPlan = async (req: Request, res: Response) => {
   try {
     const { date, createdBy } = req.body;
@@ -215,41 +62,41 @@ export const saveRationGroup = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Failed to save ration group" });
   }
 };
-export const addRationIngredient = async (req: Request, res: Response) => {
-  try {
-    const {
-      rationGroupId,
-      ingredientId,
-      qtyPerAnimal,
-      animalCount,
-      dmPercent,
-      mixTimeMinutes,
-      userId,
-      groupId,
-    } = req.body;
+// export const addRationIngredient = async (req: Request, res: Response) => {
+//   try {
+//     const {
+//       rationGroupId,
+//       ingredientId,
+//       qtyPerAnimal,
+//       animalCount,
+//       dmPercent,
+//       mixTimeMinutes,
+//       userId,
+//       groupId,
+//     } = req.body;
 
-    const totalQty = qtyPerAnimal * animalCount;
-    const dmKg = totalQty * (dmPercent / 100);
+//     const totalQty = qtyPerAnimal * animalCount;
+//     const dmKg = totalQty * (dmPercent / 100);
 
-    const ingredient = await prisma.rationIngredient.create({
-      data: {
-        rationGroupId,
-        ingredientId,
-        userId,
-        groupId,
-        qtyPerAnimal,
-        totalQty,
-        dmPercent,
-        dmKg,
-        mixTimeMinutes,
-      },
-    });
+//     const ingredient = await prisma.rationIngredient.create({
+//       data: {
+//         rationGroupId,
+//         ingredientId,
+//         userId,
+//         groupId,
+//         qtyPerAnimal,
+//         totalQty,
+//         dmPercent,
+//         dmKg,
+//         mixTimeMinutes,
+//       },
+//     });
 
-    res.json(ingredient);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to add ingredient" });
-  }
-};
+//     res.json(ingredient);
+//   } catch (error) {
+//     res.status(500).json({ error: "Failed to add ingredient" });
+//   }
+// };
 export const getGroupIngredients = async (req: Request, res: Response) => {
   try {
     const groupId = Number(req.params.groupId);
@@ -267,56 +114,299 @@ export const getGroupIngredients = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Failed to fetch ingredients" });
   }
 };
+// export const saveMixLog = async (req: Request, res: Response) => {
+//   try {
+//     const { rationIngredientId, plannedQty, actualQty, userId, groupId } =
+//       req.body;
+
+//     const accuracyPercent = (actualQty / plannedQty) * 100;
+
+//     const log = await prisma.rationMixLog.create({
+//       data: {
+//         rationIngredientId,
+//         userId,
+//         groupId,
+//         plannedQty,
+//         actualQty,
+//         accuracyPercent,
+//       },
+//     });
+
+//     res.json(log);
+//   } catch (error) {
+//     res.status(500).json({ error: "Failed to save mix log" });
+//   }
+// };
+// export const feedTmr = async (req: Request, res: Response) => {
+//   try {
+//     const id = Number(req.params.id);
+
+//     const group = await prisma.rationGroup.update({
+//       where: { id },
+//       data: {
+//         feedCompleted: true,
+//         fedAt: new Date(),
+//       },
+//     });
+
+//     res.json(group);
+//   } catch (error) {
+//     res.status(500).json({ error: "Failed to feed TMR" });
+//   }
+// };
+// export const getMixAccuracy = async (req: Request, res: Response) => {
+//   try {
+//     const groupId = Number(req.params.groupId);
+
+//     const data = await prisma.rationMixLog.findMany({
+//       where: {
+//         rationIngredient: {
+//           rationGroupId: groupId,
+//         },
+//       },
+//       include: {
+//         rationIngredient: {
+//           include: { ingredient: true },
+//         },
+//       },
+//     });
+
+//     res.json(data);
+//   } catch (error) {
+//     res.status(500).json({ error: "Failed to fetch mix accuracy" });
+//   }
+// };
+
+/**
+ * CREATE RATION GROUP (PPT – Step 1)
+ */
+export const createRationGroup = async (req: Request, res: Response) => {
+  try {
+    const {
+      groupId,
+      userId,
+      date,
+      animalCount,
+      rationPercentage,
+      plannedTmrQty,
+      offeredTmrQty,
+    } = req.body;
+
+    // 1️⃣ Create ration plan for the date
+    const rationPlan = await prisma.rationPlan.create({
+      data: {
+        date: new Date(date),
+        createdBy: userId,
+      },
+    });
+
+    // 2️⃣ Create ration group
+    const rationGroup = await prisma.rationGroup.create({
+      data: {
+        rationPlanId: rationPlan.id,
+        groupId,
+        animalCount,
+        rationPercentage,
+        plannedTmrQty,
+        offeredTmrQty,
+        createdBy: userId,
+        status: "DRAFT",
+      },
+    });
+
+    return res.status(201).json(rationGroup);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Failed to create ration group" });
+  }
+};
+
+/**
+ * UPDATE RATION GROUP (MODIFY – PPT)
+ */
+export const updateRationGroup = async (req: Request, res: Response) => {
+  try {
+    const rationGroupId = Number(req.params.id);
+
+    const {
+      animalCount,
+      rationPercentage,
+      plannedTmrQty,
+      offeredTmrQty,
+      leftoverQty,
+    } = req.body;
+
+    const rationGroup = await prisma.rationGroup.update({
+      where: { id: rationGroupId },
+      data: {
+        animalCount,
+        rationPercentage,
+        plannedTmrQty,
+        offeredTmrQty,
+        leftoverQty,
+      },
+    });
+
+    return res.json(rationGroup);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Failed to update ration group" });
+  }
+};
+
+/**
+ * GET SINGLE RATION GROUP (EDIT MODE)
+ */
+export const getRationGroupById = async (req: Request, res: Response) => {
+  try {
+    const rationGroupId = Number(req.params.id);
+
+    const rationGroup = await prisma.rationGroup.findUnique({
+      where: { id: rationGroupId },
+    });
+
+    if (!rationGroup) {
+      return res.status(404).json({ message: "Ration group not found" });
+    }
+
+    return res.json(rationGroup);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Failed to fetch ration group" });
+  }
+};
+
+/**
+ * FEED TMR (FINAL STEP – PPT)
+ */
+export const feedTmr = async (req: Request, res: Response) => {
+  try {
+    const rationGroupId = Number(req.params.id);
+    const { leftoverQty } = req.body;
+
+    const rationGroup = await prisma.rationGroup.update({
+      where: { id: rationGroupId },
+      data: {
+        status: "FED",
+        leftoverQty,
+      },
+    });
+
+    return res.json({ message: "TMR fed successfully", rationGroup });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Failed to feed TMR" });
+  }
+};
+
+/**
+ * ADD INGREDIENT TO RATION GROUP
+ */
+export const addRationIngredient = async (req: Request, res: Response) => {
+  try {
+    const {
+      rationGroupId,
+      ingredientId,
+      qtyPerAnimal,
+      animalCount,
+      totalQty,
+      dmPercent,
+      mixTimeMinutes,
+    } = req.body;
+
+    const ingredient = await prisma.rationIngredient.create({
+      data: {
+        rationGroupId,
+        ingredientId,
+        qtyPerAnimal,
+        animalCount,
+        totalQty,
+        dmPercent,
+        mixTimeMinutes,
+      },
+    });
+
+    res.status(201).json(ingredient);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to add ingredient" });
+  }
+};
+
+/**
+ * GET INGREDIENTS BY RATION GROUP
+ */
+export const getIngredientsByGroup = async (req: Request, res: Response) => {
+  try {
+    const rationGroupId = Number(req.params.rationGroupId);
+
+    const ingredients = await prisma.rationIngredient.findMany({
+      where: { rationGroupId },
+      include: { ingredient: true },
+    });
+
+    res.json(ingredients);
+  } catch {
+    res.status(500).json({ message: "Failed to fetch ingredients" });
+  }
+};
+
+/**
+ * UPDATE INGREDIENT (MODIFY)
+ */
+export const updateRationIngredient = async (req: Request, res: Response) => {
+  try {
+    const id = Number(req.params.id);
+
+    const ingredient = await prisma.rationIngredient.update({
+      where: { id },
+      data: req.body,
+    });
+
+    res.json(ingredient);
+  } catch {
+    res.status(500).json({ message: "Failed to update ingredient" });
+  }
+};
+/**
+ * SAVE MIX LOG (PER INGREDIENT)
+ */
 export const saveMixLog = async (req: Request, res: Response) => {
   try {
-    const { rationIngredientId, plannedQty, actualQty, userId, groupId } =
-      req.body;
+    const {
+      rationGroupId,
+      rationIngredientId,
+      plannedQty,
+      actualQty,
+      accuracyPercent,
+    } = req.body;
 
-    const accuracyPercent = (actualQty / plannedQty) * 100;
-
-    const log = await prisma.rationMixLog.create({
+    const mixLog = await prisma.mixLog.create({
       data: {
+        rationGroupId,
         rationIngredientId,
-        userId,
-        groupId,
         plannedQty,
         actualQty,
         accuracyPercent,
       },
     });
 
-    res.json(log);
+    res.status(201).json(mixLog);
   } catch (error) {
-    res.status(500).json({ error: "Failed to save mix log" });
+    console.error(error);
+    res.status(500).json({ message: "Failed to save mix log" });
   }
 };
-export const feedTmr = async (req: Request, res: Response) => {
-  try {
-    const id = Number(req.params.id);
 
-    const group = await prisma.rationGroup.update({
-      where: { id },
-      data: {
-        feedCompleted: true,
-        fedAt: new Date(),
-      },
-    });
-
-    res.json(group);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to feed TMR" });
-  }
-};
+/**
+ * GET MIX ACCURACY (FINAL SCREEN)
+ */
 export const getMixAccuracy = async (req: Request, res: Response) => {
   try {
-    const groupId = Number(req.params.groupId);
+    const rationGroupId = Number(req.params.rationGroupId);
 
-    const data = await prisma.rationMixLog.findMany({
-      where: {
-        rationIngredient: {
-          rationGroupId: groupId,
-        },
-      },
+    const logs = await prisma.mixLog.findMany({
+      where: { rationGroupId },
       include: {
         rationIngredient: {
           include: { ingredient: true },
@@ -324,8 +414,38 @@ export const getMixAccuracy = async (req: Request, res: Response) => {
       },
     });
 
-    res.json(data);
+    res.json(logs);
+  } catch {
+    res.status(500).json({ message: "Failed to fetch mix accuracy" });
+  }
+};
+
+/**
+ * GET MIX ACCURACY BY RATION GROUP
+ * PPT:
+ * - Planned vs Actual
+ * - Accuracy %
+ * - Used for reports
+ */
+export const getMixAccuracyByGroup = async (req: Request, res: Response) => {
+  try {
+    const rationGroupId = Number(req.params.rationGroupId);
+
+    const logs = await prisma.mixLog.findMany({
+      where: { rationGroupId },
+      include: {
+        rationIngredient: {
+          include: {
+            ingredient: true,
+          },
+        },
+      },
+      orderBy: { id: "asc" },
+    });
+
+    res.json(logs);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch mix accuracy" });
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch mix accuracy" });
   }
 };

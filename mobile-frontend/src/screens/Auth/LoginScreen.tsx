@@ -188,16 +188,6 @@ export default function LoginScreen() {
     }
 
     // ✅ NETWORK CHECK (MOBILE FIRST BY DEFAULT)
-    const policy = SCREEN_NETWORK_MAP[SCREEN_NAME]; // undefined → MOBILE_FIRST
-    const decision = await resolveNetwork(policy);
-
-    if (!decision.canSend) {
-      Alert.alert(
-        "Network Error",
-        decision.reason || "Please enable mobile data"
-      );
-      return;
-    }
 
     // ✅ LOGIN
     try {

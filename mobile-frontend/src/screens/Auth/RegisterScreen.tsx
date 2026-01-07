@@ -120,17 +120,6 @@ export default function RegisterScreen() {
       return;
     }
 
-    const policy = SCREEN_NETWORK_MAP[SCREEN_NAME]; // undefined → MOBILE_FIRST
-    const decision = await resolveNetwork(policy);
-
-    if (!decision.canSend) {
-      Alert.alert(
-        "Network Error",
-        decision.reason || "Please enable mobile data"
-      );
-      return;
-    }
-
     try {
       console.log("register called with:", name, mobile, password, email);
       await register(name, mobile, password, email);

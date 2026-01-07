@@ -26,17 +26,6 @@ export default function MilkingAnimalNumber() {
 
   // Fetch animals for this group
   const loadAnimals = async () => {
-    const policy = SCREEN_NETWORK_MAP[SCREEN_NAME]; // undefined → MOBILE_FIRST
-    const decision = await resolveNetwork(policy);
-
-    if (!decision.canSend) {
-      Alert.alert(
-        "Network Error",
-        decision.reason || "Please enable mobile data"
-      );
-      return;
-    }
-
     API.get("/animals").then((res) => {
       setAnimals(res.data.filter((a: any) => a.groupId === groupId));
     });

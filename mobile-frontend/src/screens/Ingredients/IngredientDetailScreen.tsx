@@ -24,17 +24,6 @@ export default function IngredientDetailScreen() {
   const [quantity, setQuantity] = useState("");
 
   const loadData = async () => {
-    const policy = SCREEN_NETWORK_MAP[SCREEN_NAME]; // undefined → MOBILE_FIRST
-    const decision = await resolveNetwork(policy);
-
-    if (!decision.canSend) {
-      Alert.alert(
-        "Network Error",
-        decision.reason || "Please enable mobile data"
-      );
-      return;
-    }
-
     const data = await API.get(`/ingredients/${ingredientId}`).then(
       (res) => res.data
     );

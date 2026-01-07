@@ -80,16 +80,6 @@ export default function UpdateNonMilkAnimalInfo() {
 
     if (section === "pedigree") payload = { pedigree: editData.pedigree };
     if (section === "health") payload = { health: editData.health };
-    const policy = SCREEN_NETWORK_MAP[SCREEN_NAME]; // undefined → MOBILE_FIRST
-    const decision = await resolveNetwork(policy);
-
-    if (!decision.canSend) {
-      Alert.alert(
-        "Network Error",
-        decision.reason || "Please enable mobile data"
-      );
-      return;
-    }
 
     await API.put("/animals/update-details", {
       animalNumber,

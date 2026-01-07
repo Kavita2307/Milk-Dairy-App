@@ -14,7 +14,6 @@ const milk_routes_1 = __importDefault(require("./routes/milk.routes"));
 const analytics_routes_1 = __importDefault(require("./routes/analytics.routes"));
 const report_routes_1 = __importDefault(require("./routes/report.routes"));
 const profile_routes_1 = __importDefault(require("./routes/profile.routes"));
-const mix_routes_1 = __importDefault(require("./routes/mix.routes"));
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
     origin: "http://localhost:5173",
@@ -26,7 +25,6 @@ app.use("/api/profile", profile_routes_1.default);
 app.use("/api/animals", animal_routes_1.default);
 app.use("/api/ingredients", ingredient_routes_1.default);
 app.use("/api/ration", ration_routes_1.default);
-app.use("/api/mix", mix_routes_1.default);
 app.use("/api/leftover", leftover_routes_1.default);
 app.use("/api/milk", milk_routes_1.default);
 app.use("/api/analytics", analytics_routes_1.default);

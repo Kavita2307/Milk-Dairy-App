@@ -106,16 +106,6 @@ export default function NonMilkAnimalDetailsScreen() {
         otherConditions,
       },
     };
-    const policy = SCREEN_NETWORK_MAP[SCREEN_NAME]; // undefined → MOBILE_FIRST
-    const decision = await resolveNetwork(policy);
-
-    if (!decision.canSend) {
-      Alert.alert(
-        "Network Error",
-        decision.reason || "Please enable mobile data"
-      );
-      return;
-    }
 
     try {
       console.log("Saving animal details:", animalNumber, payload);

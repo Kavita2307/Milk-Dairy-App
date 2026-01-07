@@ -76,3 +76,17 @@ export const updateAnimalDetails = async (req: Request, res: Response) => {
 
   res.json(updated);
 };
+export const getAnimalCountByGroup = async (req: Request, res: Response) => {
+  try {
+    const groupId = Number(req.params.groupId);
+
+    const count = await prisma.animal.count({
+      where: { groupId },
+    });
+
+    return res.json({ count });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Failed to fetch animal count" });
+  }
+};

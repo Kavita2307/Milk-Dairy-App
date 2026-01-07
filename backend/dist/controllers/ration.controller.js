@@ -3,142 +3,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMixAccuracy = exports.feedTmr = exports.saveMixLog = exports.getGroupIngredients = exports.addRationIngredient = exports.saveRationGroup = exports.createRationPlan = void 0;
+exports.getMixAccuracyByGroup = exports.getMixAccuracy = exports.saveMixLog = exports.updateRationIngredient = exports.getIngredientsByGroup = exports.addRationIngredient = exports.feedTmr = exports.getRationGroupById = exports.updateRationGroup = exports.createRationGroup = exports.getGroupIngredients = exports.saveRationGroup = exports.createRationPlan = void 0;
 const client_1 = __importDefault(require("../prisma/client"));
-// export const createRation = async (req: Request, res: Response) => {
-//   const { userId, groupId, name, no, kg, rationSize, days } = req.body;
-//   const total = no * kg;
-//   const ration = await prisma.ration.create({
-//     data: {
-//       userId,
-//       groupId,
-//       name,
-//       no,
-//       kg,
-//       total,
-//       rationSize,
-//       days,
-//       thisLoad: 0,
-//       lastLoad: 0,
-//       diff: 0,
-//     },
-//   });
-//   res.json(ration);
-// };
-// export const listIngredients = async (req: Request, res: Response) => {
-//   const { userId } = req.params;
-//   const ingredients = await prisma.ingredient.findMany({
-//     where: { userId: Number(userId) },
-//   });
-//   res.json(ingredients);
-// };
-// export const upsertRation = async (req: Request, res: Response) => {
-//   const { userId, groupId, name, no, kg, rationSize, days } = req.body;
-//   const total = Number(no) * Number(kg);
-//   const ration = await prisma.ration.upsert({
-//     where: {
-//       id: undefined, // Replace with the actual unique field or composite key from your schema
-//     },
-//     update: {
-//       name,
-//       no,
-//       kg,
-//       total,
-//       rationSize,
-//       days,
-//     },
-//     create: {
-//       userId,
-//       groupId,
-//       name,
-//       no,
-//       kg,
-//       total,
-//       rationSize,
-//       days,
-//       thisLoad: 0,
-//       lastLoad: 0,
-//       diff: 0,
-//     },
-//   });
-//   res.json(ration);
-// };
-// /**
-//  * GET /ration/history/:groupId
-//  */
-// export const getRationHistory = async (req: Request, res: Response) => {
-//   try {
-//     const groupId = Number(req.params.groupId);
-//     const userId = Number(req.query.userId);
-//     const history = await prisma.ration.findMany({
-//       where: { groupId, userId },
-//       orderBy: { createdAt: "desc" },
-//       take: 7,
-//       select: {
-//         total: true,
-//         createdAt: true,
-//       },
-//     });
-//     res.json({ history });
-//   } catch (error) {
-//     console.error("ration history error:", error);
-//     res.status(500).json({ error: "Server error" });
-//   }
-// };
-// /**
-//  * GET RATION + INGREDIENTS
-//  */
-// export const getRationByGroup = async (req: Request, res: Response) => {
-//   const groupId = Number(req.params.groupId);
-//   const ration = await prisma.ration.findFirst({
-//     where: { groupId },
-//   });
-//   const ingredients = await prisma.consumption.findMany({
-//     where: { ingredient: { userId: ration?.userId } },
-//     include: {
-//       ingredient: true,
-//     },
-//   });
-//   const mapped = ingredients.map((c) => ({
-//     consumptionId: c.id,
-//     ingredientId: c.ingredientId,
-//     name: c.ingredient.name,
-//     quantity: c.quantity,
-//     dm: (c.ingredient.details as any)?.dm ?? 0,
-//   }));
-//   res.json({
-//     ration,
-//     ingredients: mapped,
-//   });
-// };
-// /**
-//  * UPDATE INGREDIENT (PER ANIMAL KG)
-//  */
-// export const updateRationIngredient = async (req: Request, res: Response) => {
-//   const id = Number(req.params.id);
-//   const { kg } = req.body;
-//   if (!id || isNaN(kg)) {
-//     return res.status(400).json({ error: "Invalid input" });
-//   }
-//   const updated = await prisma.consumption.update({
-//     where: { id },
-//     data: { quantity: Number(kg) },
-//   });
-//   res.json({ message: "Updated", data: updated });
-// };
-// /**
-//  * DELETE INGREDIENT FROM RATION
-//  */
-// export const deleteRationIngredient = async (req: Request, res: Response) => {
-//   const id = Number(req.params.id);
-//   await prisma.consumption.delete({ where: { id } });
-//   res.json({ message: "Deleted" });
-// };
 const createRationPlan = async (req, res) => {
     try {
         const { date, createdBy } = req.body;
         const plan = await client_1.default.rationPlan.upsert({
-            where: { date: new Date(date) },
+            where: { date_createdBy: { date: new Date(date), createdBy } },
             update: {},
             create: {
                 date: new Date(date),
@@ -154,13 +25,14 @@ const createRationPlan = async (req, res) => {
 exports.createRationPlan = createRationPlan;
 const saveRationGroup = async (req, res) => {
     try {
-        const { rationPlanId, groupId, animalCount, rationPercentage, plannedTmrQty, } = req.body;
+        const { rationPlanId, groupId, animalCount, rationPercentage, plannedTmrQty, userId, } = req.body;
         const offeredTmrQty = plannedTmrQty * (rationPercentage / 100);
         const group = await client_1.default.rationGroup.upsert({
             where: {
-                rationPlanId_groupId: {
+                rationPlanId_groupId_userId: {
                     rationPlanId,
                     groupId,
+                    userId,
                 },
             },
             update: {
@@ -172,6 +44,7 @@ const saveRationGroup = async (req, res) => {
             create: {
                 rationPlanId,
                 groupId,
+                userId,
                 animalCount,
                 rationPercentage,
                 plannedTmrQty,
@@ -185,29 +58,38 @@ const saveRationGroup = async (req, res) => {
     }
 };
 exports.saveRationGroup = saveRationGroup;
-const addRationIngredient = async (req, res) => {
-    try {
-        const { rationGroupId, ingredientId, qtyPerAnimal, animalCount, dmPercent, mixTimeMinutes, } = req.body;
-        const totalQty = qtyPerAnimal * animalCount;
-        const dmKg = totalQty * (dmPercent / 100);
-        const ingredient = await client_1.default.rationIngredient.create({
-            data: {
-                rationGroupId,
-                ingredientId,
-                qtyPerAnimal,
-                totalQty,
-                dmPercent,
-                dmKg,
-                mixTimeMinutes,
-            },
-        });
-        res.json(ingredient);
-    }
-    catch (error) {
-        res.status(500).json({ error: "Failed to add ingredient" });
-    }
-};
-exports.addRationIngredient = addRationIngredient;
+// export const addRationIngredient = async (req: Request, res: Response) => {
+//   try {
+//     const {
+//       rationGroupId,
+//       ingredientId,
+//       qtyPerAnimal,
+//       animalCount,
+//       dmPercent,
+//       mixTimeMinutes,
+//       userId,
+//       groupId,
+//     } = req.body;
+//     const totalQty = qtyPerAnimal * animalCount;
+//     const dmKg = totalQty * (dmPercent / 100);
+//     const ingredient = await prisma.rationIngredient.create({
+//       data: {
+//         rationGroupId,
+//         ingredientId,
+//         userId,
+//         groupId,
+//         qtyPerAnimal,
+//         totalQty,
+//         dmPercent,
+//         dmKg,
+//         mixTimeMinutes,
+//       },
+//     });
+//     res.json(ingredient);
+//   } catch (error) {
+//     res.status(500).json({ error: "Failed to add ingredient" });
+//   }
+// };
 const getGroupIngredients = async (req, res) => {
     try {
         const groupId = Number(req.params.groupId);
@@ -225,61 +107,291 @@ const getGroupIngredients = async (req, res) => {
     }
 };
 exports.getGroupIngredients = getGroupIngredients;
+// export const saveMixLog = async (req: Request, res: Response) => {
+//   try {
+//     const { rationIngredientId, plannedQty, actualQty, userId, groupId } =
+//       req.body;
+//     const accuracyPercent = (actualQty / plannedQty) * 100;
+//     const log = await prisma.rationMixLog.create({
+//       data: {
+//         rationIngredientId,
+//         userId,
+//         groupId,
+//         plannedQty,
+//         actualQty,
+//         accuracyPercent,
+//       },
+//     });
+//     res.json(log);
+//   } catch (error) {
+//     res.status(500).json({ error: "Failed to save mix log" });
+//   }
+// };
+// export const feedTmr = async (req: Request, res: Response) => {
+//   try {
+//     const id = Number(req.params.id);
+//     const group = await prisma.rationGroup.update({
+//       where: { id },
+//       data: {
+//         feedCompleted: true,
+//         fedAt: new Date(),
+//       },
+//     });
+//     res.json(group);
+//   } catch (error) {
+//     res.status(500).json({ error: "Failed to feed TMR" });
+//   }
+// };
+// export const getMixAccuracy = async (req: Request, res: Response) => {
+//   try {
+//     const groupId = Number(req.params.groupId);
+//     const data = await prisma.rationMixLog.findMany({
+//       where: {
+//         rationIngredient: {
+//           rationGroupId: groupId,
+//         },
+//       },
+//       include: {
+//         rationIngredient: {
+//           include: { ingredient: true },
+//         },
+//       },
+//     });
+//     res.json(data);
+//   } catch (error) {
+//     res.status(500).json({ error: "Failed to fetch mix accuracy" });
+//   }
+// };
+/**
+ * CREATE RATION GROUP (PPT – Step 1)
+ */
+const createRationGroup = async (req, res) => {
+    try {
+        const { groupId, userId, date, animalCount, rationPercentage, plannedTmrQty, offeredTmrQty, } = req.body;
+        // 1️⃣ Create ration plan for the date
+        const rationPlan = await client_1.default.rationPlan.create({
+            data: {
+                date: new Date(date),
+                createdBy: userId,
+            },
+        });
+        // 2️⃣ Create ration group
+        const rationGroup = await client_1.default.rationGroup.create({
+            data: {
+                rationPlanId: rationPlan.id,
+                groupId,
+                animalCount,
+                rationPercentage,
+                plannedTmrQty,
+                offeredTmrQty,
+                createdBy: userId,
+                status: "DRAFT",
+            },
+        });
+        return res.status(201).json(rationGroup);
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Failed to create ration group" });
+    }
+};
+exports.createRationGroup = createRationGroup;
+/**
+ * UPDATE RATION GROUP (MODIFY – PPT)
+ */
+const updateRationGroup = async (req, res) => {
+    try {
+        const rationGroupId = Number(req.params.id);
+        const { animalCount, rationPercentage, plannedTmrQty, offeredTmrQty, leftoverQty, } = req.body;
+        const rationGroup = await client_1.default.rationGroup.update({
+            where: { id: rationGroupId },
+            data: {
+                animalCount,
+                rationPercentage,
+                plannedTmrQty,
+                offeredTmrQty,
+                leftoverQty,
+            },
+        });
+        return res.json(rationGroup);
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Failed to update ration group" });
+    }
+};
+exports.updateRationGroup = updateRationGroup;
+/**
+ * GET SINGLE RATION GROUP (EDIT MODE)
+ */
+const getRationGroupById = async (req, res) => {
+    try {
+        const rationGroupId = Number(req.params.id);
+        const rationGroup = await client_1.default.rationGroup.findUnique({
+            where: { id: rationGroupId },
+        });
+        if (!rationGroup) {
+            return res.status(404).json({ message: "Ration group not found" });
+        }
+        return res.json(rationGroup);
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Failed to fetch ration group" });
+    }
+};
+exports.getRationGroupById = getRationGroupById;
+/**
+ * FEED TMR (FINAL STEP – PPT)
+ */
+const feedTmr = async (req, res) => {
+    try {
+        const rationGroupId = Number(req.params.id);
+        const { leftoverQty } = req.body;
+        const rationGroup = await client_1.default.rationGroup.update({
+            where: { id: rationGroupId },
+            data: {
+                status: "FED",
+                leftoverQty,
+            },
+        });
+        return res.json({ message: "TMR fed successfully", rationGroup });
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Failed to feed TMR" });
+    }
+};
+exports.feedTmr = feedTmr;
+/**
+ * ADD INGREDIENT TO RATION GROUP
+ */
+const addRationIngredient = async (req, res) => {
+    try {
+        const { rationGroupId, ingredientId, qtyPerAnimal, animalCount, totalQty, dmPercent, mixTimeMinutes, } = req.body;
+        const ingredient = await client_1.default.rationIngredient.create({
+            data: {
+                rationGroupId,
+                ingredientId,
+                qtyPerAnimal,
+                animalCount,
+                totalQty,
+                dmPercent,
+                mixTimeMinutes,
+            },
+        });
+        res.status(201).json(ingredient);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Failed to add ingredient" });
+    }
+};
+exports.addRationIngredient = addRationIngredient;
+/**
+ * GET INGREDIENTS BY RATION GROUP
+ */
+const getIngredientsByGroup = async (req, res) => {
+    try {
+        const rationGroupId = Number(req.params.rationGroupId);
+        const ingredients = await client_1.default.rationIngredient.findMany({
+            where: { rationGroupId },
+            include: { ingredient: true },
+        });
+        res.json(ingredients);
+    }
+    catch {
+        res.status(500).json({ message: "Failed to fetch ingredients" });
+    }
+};
+exports.getIngredientsByGroup = getIngredientsByGroup;
+/**
+ * UPDATE INGREDIENT (MODIFY)
+ */
+const updateRationIngredient = async (req, res) => {
+    try {
+        const id = Number(req.params.id);
+        const ingredient = await client_1.default.rationIngredient.update({
+            where: { id },
+            data: req.body,
+        });
+        res.json(ingredient);
+    }
+    catch {
+        res.status(500).json({ message: "Failed to update ingredient" });
+    }
+};
+exports.updateRationIngredient = updateRationIngredient;
+/**
+ * SAVE MIX LOG (PER INGREDIENT)
+ */
 const saveMixLog = async (req, res) => {
     try {
-        const { rationIngredientId, plannedQty, actualQty } = req.body;
-        const accuracyPercent = (actualQty / plannedQty) * 100;
-        const log = await client_1.default.rationMixLog.create({
+        const { rationGroupId, rationIngredientId, plannedQty, actualQty, accuracyPercent, } = req.body;
+        const log = await client_1.default.mixLog.create({
             data: {
+                rationGroupId,
                 rationIngredientId,
                 plannedQty,
                 actualQty,
                 accuracyPercent,
             },
         });
-        res.json(log);
+        res.status(201).json(log);
     }
     catch (error) {
-        res.status(500).json({ error: "Failed to save mix log" });
+        console.error(error);
+        res.status(500).json({ message: "Failed to save mix log" });
     }
 };
 exports.saveMixLog = saveMixLog;
-const feedTmr = async (req, res) => {
-    try {
-        const id = Number(req.params.id);
-        const group = await client_1.default.rationGroup.update({
-            where: { id },
-            data: {
-                feedCompleted: true,
-                fedAt: new Date(),
-            },
-        });
-        res.json(group);
-    }
-    catch (error) {
-        res.status(500).json({ error: "Failed to feed TMR" });
-    }
-};
-exports.feedTmr = feedTmr;
+/**
+ * GET MIX ACCURACY (FINAL SCREEN)
+ */
 const getMixAccuracy = async (req, res) => {
     try {
-        const groupId = Number(req.params.groupId);
-        const data = await client_1.default.rationMixLog.findMany({
-            where: {
-                rationIngredient: {
-                    rationGroupId: groupId,
-                },
-            },
+        const rationGroupId = Number(req.params.rationGroupId);
+        const logs = await client_1.default.mixLog.findMany({
+            where: { rationGroupId },
             include: {
                 rationIngredient: {
                     include: { ingredient: true },
                 },
             },
         });
-        res.json(data);
+        res.json(logs);
     }
-    catch (error) {
-        res.status(500).json({ error: "Failed to fetch mix accuracy" });
+    catch {
+        res.status(500).json({ message: "Failed to fetch mix accuracy" });
     }
 };
 exports.getMixAccuracy = getMixAccuracy;
+/**
+ * GET MIX ACCURACY BY RATION GROUP
+ * PPT:
+ * - Planned vs Actual
+ * - Accuracy %
+ * - Used for reports
+ */
+const getMixAccuracyByGroup = async (req, res) => {
+    try {
+        const rationGroupId = Number(req.params.rationGroupId);
+        const logs = await client_1.default.mixLog.findMany({
+            where: { rationGroupId },
+            include: {
+                rationIngredient: {
+                    include: {
+                        ingredient: true,
+                    },
+                },
+            },
+            orderBy: { id: "asc" },
+        });
+        res.json(logs);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Failed to fetch mix accuracy" });
+    }
+};
+exports.getMixAccuracyByGroup = getMixAccuracyByGroup;

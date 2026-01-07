@@ -7,6 +7,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  farmer
+  admin
+}
+
+enum RationStatus {
+  DRAFT
+  FED
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  name       String
+  mobile     String   @unique
+  email      String?  @unique
+  password   String
+  role       Role     @default(farmer)
+  isApproved Boolean  @default(false)
+  address    String?
+  pincode    String?
+  createdAt  DateTime @default(now())
+
+  animals      Animal[]
+  rations      Ration[]
+  ingredients  Ingredient[]
+  stockEntries StockEntry[]
+  consumptions Consumption[]
+  milkRecords  Milk[]
+  leftovers    Leftover[]
+  rationPlans  RationPlan[]
+}
+
 model Animal {
   id           Int      @id @default(autoincrement())
   animalNumber String
@@ -16,7 +48,8 @@ model Animal {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id])
+  user User   @relation(fields: [userId], references: [id])
+  milk Milk[]
 }
 
 model Ration {
@@ -24,8 +57,6 @@ model Ration {
 
   groupId Int
   userId  Int
-
-  user User @relation(fields: [userId], references: [id])
 
   name       String
   no         Int
@@ -38,6 +69,8 @@ model Ration {
   days       Int
 
   createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
 }
 
 model Leftover {
@@ -47,28 +80,31 @@ model Leftover {
   date       DateTime @default(now())
   leftoverKg Float
   userId     Int
+
+  user User @relation(fields: [userId], references: [id])
 }
 
 model Milk {
-  id Int @id @default(autoincrement())
+  id      Int      @id @default(autoincrement())
+  groupId Int
+  shift   String
+  milkLit Float
+  date    DateTime @default(now())
 
-  groupId      Int
-  shift        String // morning / afternoon / evening
-  milkLit      Float
-  animalNumber String
-  date         DateTime @default(now())
-  userId       Int
+  userId   Int
+  animalId Int
+
+  user   User   @relation(fields: [userId], references: [id])
+  animal Animal @relation(fields: [animalId], references: [id])
 }
 
 model Ingredient {
-  id Int @id @default(autoincrement())
-
-  name         String @unique // Feed, Silage, Wheat straw
-  details      Json? // price, dryMatter etc.
-  currentStock Float  @default(0) // Available stock (kg)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           Int      @id @default(autoincrement())
+  name         String   @unique
+  details      Json?
+  currentStock Float    @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   userId Int
   user   User @relation(fields: [userId], references: [id])
@@ -79,53 +115,33 @@ model Ingredient {
 }
 
 model StockEntry {
-  id           Int     @id @default(autoincrement())
-  user         Int
+  id           Int      @id @default(autoincrement())
+  userId       Int
   ingredientId Int
-  quantity     Float // kg
+  quantity     Float
   note         String?
+  createdAt    DateTime @default(now())
 
-  createdAt DateTime @default(now())
-
+  user       User       @relation(fields: [userId], references: [id])
   ingredient Ingredient @relation(fields: [ingredientId], references: [id])
 }
 
 model Consumption {
-  id           Int     @id @default(autoincrement())
+  id           Int      @id @default(autoincrement())
   groupId      Int
   ingredientId Int
-  quantity     Float // kg used
+  quantity     Float
   note         String?
+  createdAt    DateTime @default(now())
 
-  createdAt DateTime @default(now())
-
+  userId     Int
+  user       User       @relation(fields: [userId], references: [id])
   ingredient Ingredient @relation(fields: [ingredientId], references: [id])
-}
-
-model User {
-  id          Int          @id @default(autoincrement())
-  name        String
-  mobile      String       @unique
-  email       String?      @unique
-  password    String
-  createdAt   DateTime     @default(now())
-  role        Role         @default(farmer)
-  isApproved  Boolean      @default(false)
-  address     String?
-  pincode     String?
-  animals     Animal[]
-  Ration      Ration[]
-  ingredients Ingredient[]
-}
-
-enum Role {
-  farmer
-  admin
 }
 
 model AdminRation {
   id          Int      @id @default(autoincrement())
-  groupId     Int // 1,2,3
+  groupId     Int
   days        Int
   kgPerAnimal Float
   createdAt   DateTime @default(now())
@@ -149,67 +165,51 @@ model RationPlan {
   createdBy Int
   createdAt DateTime @default(now())
 
+  user   User          @relation(fields: [createdBy], references: [id])
   groups RationGroup[]
-
- @@unique([date, createdBy])
 }
 
 model RationGroup {
-  id           Int @id @default(autoincrement())
-  rationPlanId Int
-  groupId      Int 
-  userId       Int
-  animalCount  Int
-
-  rationPercentage Float // e.g. 50%
-  plannedTmrQty    Float // planned total TMR
-  offeredTmrQty    Float // after % calculation
-
-  createdAt     DateTime @default(now())
+  id               Int          @id @default(autoincrement())
+  rationPlanId     Int
+  groupId          Int
+  animalCount      Int
+  rationPercentage Float
+  plannedTmrQty    Float
+  offeredTmrQty    Float
+  leftoverQty      Float?
+  status           RationStatus @default(DRAFT)
+  createdBy        Int
+  createdAt        DateTime     @default(now())
 
   rationPlan  RationPlan         @relation(fields: [rationPlanId], references: [id])
   ingredients RationIngredient[]
-
-  feedCompleted Boolean   @default(false)
-  fedAt         DateTime?
-
-  @@unique([rationPlanId, groupId,userId])
+  mixLogs     MixLog[]
 }
 
 model RationIngredient {
-  id            Int @id @default(autoincrement())
-  rationGroupId Int
-  ingredientId  Int
-
-  userId      Int
-  groupId     Int
-
-  qtyPerAnimal Float
-  totalQty     Float // qtyPerAnimal * animalCount
-  dmPercent    Float
-  dmKg         Float
-
+  id             Int   @id @default(autoincrement())
+  rationGroupId  Int
+  ingredientId   Int
+  qtyPerAnimal   Float
+  animalCount    Int
+  totalQty       Float
+  dmPercent      Float
   mixTimeMinutes Int
-
-  createdAt DateTime @default(now())
 
   rationGroup RationGroup @relation(fields: [rationGroupId], references: [id])
   ingredient  Ingredient  @relation(fields: [ingredientId], references: [id])
-
-  mixLogs RationMixLog[]
 }
 
-model RationMixLog {
-  id                 Int @id @default(autoincrement())
+model MixLog {
+  id                 Int     @id @default(autoincrement())
+  rationGroupId      Int
   rationIngredientId Int
-  userId      Int
-  groupId     Int
+  plannedQty         Float
+  actualQty          Float
+  accuracyPercent    Float
 
-  plannedQty      Float
-  actualQty       Float
-  accuracyPercent Float
-
-  createdAt     DateTime @default(now())
-
+  rationGroup      RationGroup      @relation(fields: [rationGroupId], references: [id])
   rationIngredient RationIngredient @relation(fields: [rationIngredientId], references: [id])
 }
+

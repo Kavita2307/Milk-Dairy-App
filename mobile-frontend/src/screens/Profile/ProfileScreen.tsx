@@ -211,17 +211,6 @@ export default function ProfileScreen() {
   // SAVE PROFILE
   // --------------------
   const saveProfile = async () => {
-    const policy = SCREEN_NETWORK_MAP[SCREEN_NAME]; // undefined → MOBILE_FIRST
-    const decision = await resolveNetwork(policy);
-
-    if (!decision.canSend) {
-      Alert.alert(
-        "Network Error",
-        decision.reason || "Please enable mobile data"
-      );
-      return;
-    }
-
     try {
       await API.put("/profile", {
         userId: String(user?.id),

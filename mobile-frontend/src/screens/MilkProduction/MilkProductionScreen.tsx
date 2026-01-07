@@ -302,234 +302,198 @@
 //   },
 //   saveBtnText: { textAlign: "center", color: "#fff", fontWeight: "700" },
 // });
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
   TextInput,
-  KeyboardAvoidingView,
-  Platform,
+  Animated,
+  Keyboard,
+  Alert,
 } from "react-native";
-
 import { useNavigation, useRoute } from "@react-navigation/native";
-
+import NetInfo from "@react-native-community/netinfo";
+import { API } from "../../api/api";
 import { readLoadCell } from "../../api/loadCell";
-import api from "../../api/api";
-
-import { resolveNetwork } from "../../network/NetworkManager";
-import { saveAndQueue } from "../../network/offlineQueue";
-import { SCREEN_NETWORK_MAP } from "../../network/ScreenNetworkMap";
 
 export default function MilkProductionScreen() {
-  const SCREEN_NAME = "MilkProductionScreen";
-
   const nav = useNavigation<any>();
   const route = useRoute<any>();
   const { groupId, userId, shift, animalNumber } = route.params;
 
-  // =========================
-  // STATE
-  // =========================
   const [milkKg, setMilkKg] = useState("0");
   const [milkLit, setMilkLit] = useState("0");
   const [useLoadCell, setUseLoadCell] = useState(false);
+  const [isStable, setIsStable] = useState(false);
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const isPollingRef = useRef(false);
-  const errorShownRef = useRef(false);
 
-  // =========================
-  // LOAD CELL (ANDROID STYLE)
-  // =========================
-  const readWithTimeout = (timeout = 2000) =>
-    Promise.race([
-      readLoadCell(),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("timeout")), timeout)
-      ),
-    ]);
+  const MILK_DENSITY = 1.03;
 
-  const stopPolling = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-    isPollingRef.current = false;
+  const kgToLitres = (kg: number) => Number((kg / MILK_DENSITY).toFixed(2));
+
+  /* =============================
+     NETWORK CHECK (ANDROID LOGIC)
+     ============================= */
+  const checkNetwork = async () => {
+    const state = await NetInfo.fetch();
+
+    const wifiOn = state.type === "wifi" && state.isConnected;
+    const mobileOn =
+      state.isConnected &&
+      state.details &&
+      "cellularGeneration" in state.details;
+
+    return wifiOn && mobileOn;
   };
 
-  const startPollingLoadCell = async () => {
-    if (isPollingRef.current) return;
-    isPollingRef.current = true;
+  /* =============================
+     LOAD CELL POLLING
+     ============================= */
+  const fetchMilkFromLoadCell = async () => {
+    const networkOk = await checkNetwork();
 
-    try {
-      const readOnce = async () => {
-        const data: any = await readWithTimeout();
-        const kg = Number(data.weight.toFixed(2));
-        const litres = Number((kg / 1.03).toFixed(2));
+    if (!networkOk) {
+      Alert.alert(
+        "Network Required",
+        "Please turn ON both Wi-Fi and Mobile Data"
+      );
+      return;
+    }
 
-        setMilkKg(kg.toString());
-        setMilkLit(litres.toString());
+    if (intervalRef.current) return;
 
-        return data;
-      };
+    setIsStable(false);
 
-      const first = await readOnce();
-      if (first.stable) {
-        stopPolling();
-        return;
-      }
+    intervalRef.current = setInterval(async () => {
+      try {
+        const data = await readLoadCell();
 
-      intervalRef.current = setInterval(async () => {
-        try {
-          const d = await readOnce();
-          if (d.stable) stopPolling();
-        } catch {
-          stopPolling();
-          if (!errorShownRef.current) {
-            errorShownRef.current = true;
-            alert("Weighing machine not connected (Wi-Fi required)");
-          }
+        const weightKg = Number(data.weight);
+        if (isNaN(weightKg)) return;
+
+        setMilkKg(weightKg.toFixed(2));
+        setMilkLit(kgToLitres(weightKg).toString());
+
+        if (data.stable) {
+          setIsStable(true);
+          clearInterval(intervalRef.current!);
+          intervalRef.current = null;
         }
-      }, 500);
-    } catch {
-      stopPolling();
-      if (!errorShownRef.current) {
-        errorShownRef.current = true;
-        alert("Weighing machine not connected (Wi-Fi required)");
+      } catch {
+        clearInterval(intervalRef.current!);
+        intervalRef.current = null;
+        Alert.alert("Error", "Weighing machine not connected");
       }
-    }
+    }, 500);
   };
 
-  // =========================
-  // AUTO START / STOP LOAD CELL
-  // =========================
-  useEffect(() => {
-    if (useLoadCell) {
-      errorShownRef.current = false;
-      startPollingLoadCell();
-    } else {
-      stopPolling();
-    }
-
-    return stopPolling;
-  }, [useLoadCell]);
-
-  // =========================
-  // SAVE MILK (UNCHANGED)
-  // =========================
+  /* =============================
+     SAVE MILK
+     ============================= */
   const saveMilk = async () => {
-    if (Number(milkLit) <= 0) {
-      alert("Please enter valid milk quantity");
+    Keyboard.dismiss();
+
+    if (useLoadCell && !isStable) {
+      Alert.alert("Wait", "Please wait until weight is stable");
       return;
     }
 
-    const payload = {
-      groupId,
-      milkLit: Number(milkLit),
-      shift,
-      animalNumber,
-      userId,
-    };
+    const finalLitres = Number(milkLit);
 
-    // 1️⃣ Save offline first (UNCHANGED)
-    await saveAndQueue({
-      endpoint: "/milk",
-      payload,
-    });
-
-    // 2️⃣ Network decision (UNCHANGED)
-    const policy = SCREEN_NETWORK_MAP[SCREEN_NAME];
-    const decision = await resolveNetwork(policy);
-
-    if (!decision.canSend) {
-      alert("Saved offline. Will sync when network is available.");
+    if (finalLitres <= 0) {
+      Alert.alert("Invalid", "Milk must be greater than 0");
       return;
     }
 
-    // 3️⃣ Send to backend (UNCHANGED)
     try {
-      await api.send({
-        endpoint: "/milk",
-        payload,
+      await API.post("/milk", {
+        groupId,
+        milkLit: finalLitres,
+        shift,
+        animalNumber,
+        userId: Number(userId),
       });
 
-      alert("Milk Saved Successfully");
-      setMilkKg("0");
-      setMilkLit("0");
-    } catch {
-      alert("Saved offline. Will sync automatically.");
+      Alert.alert("Success", "Milk saved successfully");
+      nav.goBack();
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "Error saving milk data");
     }
   };
 
-  // =========================
-  // NAV TITLE
-  // =========================
+  /* =============================
+     CLEANUP
+     ============================= */
   useEffect(() => {
     nav.setOptions({
       title: `${shift}: Animal #${animalNumber}`,
     });
 
-    return stopPolling;
-  }, [animalNumber, nav, shift]);
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [animalNumber]);
 
-  // =========================
-  // UI
-  // =========================
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "android" ? "padding" : "padding"}
-    >
-      <View style={styles.container}>
-        <Text style={styles.subTitle}>Enter milk production</Text>
+    <View style={styles.container}>
+      <Text style={styles.subTitle}>Enter milk production</Text>
 
-        <TouchableOpacity
-          onPress={() => setUseLoadCell(!useLoadCell)}
-          style={styles.switchBtn}
-        >
-          <Text style={styles.switchBtnText}>
-            {useLoadCell ? "Use Manual Entry" : "Use Load Cell"}
-          </Text>
-        </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          setUseLoadCell(!useLoadCell);
+          setMilkKg("0");
+          setMilkLit("0");
+          setIsStable(false);
+        }}
+        style={styles.switchBtn}
+      >
+        <Text style={styles.switchBtnText}>
+          {useLoadCell ? "Use Manual Entry" : "Use Load Cell"}
+        </Text>
+      </TouchableOpacity>
 
-        {useLoadCell ? (
-          <View style={styles.box}>
-            <Text style={styles.label}>Load Cell Reading</Text>
+      {useLoadCell ? (
+        <View style={styles.box}>
+          <Text style={styles.label}>Milk from Load Cell</Text>
 
-            <View style={styles.displayBox}>
-              <Text style={styles.displayLabel}>Weight</Text>
-              <Text style={styles.displayText}>{milkKg} kg</Text>
-            </View>
-
-            <View style={[styles.displayBox, { marginTop: 10 }]}>
-              <Text style={styles.displayLabel}>Milk</Text>
-              <Text style={styles.displayText}>{milkLit} L</Text>
-            </View>
+          <View style={styles.displayBox}>
+            <Text style={styles.displayText}>{milkKg} kg</Text>
+            <Text style={styles.litreText}>{milkLit} litres</Text>
+            <Text style={styles.hintText}>
+              {isStable ? "STABLE" : "UNSTABLE"}
+            </Text>
           </View>
-        ) : (
-          <View style={styles.box}>
-            <Text style={styles.label}>Enter Milk (Litres)</Text>
 
-            <TextInput
-              style={styles.input}
-              value={milkLit}
-              onChangeText={setMilkLit}
-              keyboardType="numeric"
-            />
-          </View>
-        )}
+          <TouchableOpacity
+            onPress={fetchMilkFromLoadCell}
+            style={styles.fetchBtn}
+          >
+            <Text style={styles.fetchBtnText}>Get Milk Weight</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View style={styles.box}>
+          <Text style={styles.label}>Enter Milk (Litres)</Text>
 
-        <TouchableOpacity
-          onPress={saveMilk}
-          style={[styles.saveBtn, Number(milkLit) <= 0 && { opacity: 0.5 }]}
-          disabled={Number(milkLit) <= 0}
-        >
-          <Text style={styles.saveBtnText}>Save</Text>
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+          <TextInput
+            style={styles.input}
+            value={milkLit}
+            onChangeText={setMilkLit}
+            keyboardType="numeric"
+          />
+        </View>
+      )}
+
+      <TouchableOpacity onPress={saveMilk} style={styles.saveBtn}>
+        <Text style={styles.saveBtnText}>Save</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -579,6 +543,13 @@ const styles = StyleSheet.create({
   },
   displayText: { fontSize: 36, fontWeight: "700" },
   displayLabel: { fontSize: 16, fontWeight: "600", marginBottom: 6 },
+  fetchBtn: {
+    backgroundColor: "#10B981",
+    padding: 12,
+    borderRadius: 10,
+    marginTop: 15,
+  },
+  fetchBtnText: { color: "#fff", textAlign: "center", fontWeight: "700" },
   saveBtn: {
     backgroundColor: "#2563EB",
     padding: 15,
@@ -586,4 +557,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   saveBtnText: { textAlign: "center", color: "#fff", fontWeight: "700" },
+  litreText: { fontSize: 24, fontWeight: "600", marginTop: 10 },
+  hintText: { fontSize: 16, fontWeight: "600", marginTop: 6, color: "#555" },
 });
