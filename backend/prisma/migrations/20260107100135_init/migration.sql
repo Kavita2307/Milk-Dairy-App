@@ -182,6 +182,7 @@ CREATE TABLE `MixLog` (
     `plannedQty` DOUBLE NOT NULL,
     `actualQty` DOUBLE NOT NULL,
     `accuracyPercent` DOUBLE NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -233,3 +234,6 @@ ALTER TABLE `RationIngredient` ADD CONSTRAINT `RationIngredient_ingredientId_fke
 
 -- AddForeignKey
 ALTER TABLE `MixLog` ADD CONSTRAINT `MixLog_rationGroupId_fkey` FOREIGN KEY (`rationGroupId`) REFERENCES `RationGroup`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `MixLog` ADD CONSTRAINT `MixLog_rationIngredientId_fkey` FOREIGN KEY (`rationIngredientId`) REFERENCES `RationIngredient`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

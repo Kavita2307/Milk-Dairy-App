@@ -292,7 +292,7 @@ export default function MixAccuracyScreen() {
 
       <TouchableOpacity
         style={styles.doneBtn}
-        onPress={() => nav.navigate("Ration")}
+        onPress={() => nav.navigate("RationGroup")}
       >
         <Text style={styles.doneText}>Done</Text>
       </TouchableOpacity>

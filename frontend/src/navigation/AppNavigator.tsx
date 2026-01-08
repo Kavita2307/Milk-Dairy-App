@@ -41,6 +41,7 @@ import UpdateNonMilkAnimalInfo from "../screens/HerdInfo/NonMilkAnimal/UpdateNon
 import RationIngredientScreen from "../screens/Ration/RationIngredientScreen";
 import PrepareTmrScreen from "../screens/Ration/PrepareTmrScreen";
 import MixAccuracyScreen from "../screens/Ration/MixAccuracyScreen";
+import TestScreen from "../screens/Display/TestScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -182,6 +183,7 @@ export default function AppNavigator() {
         options={{ title: "MilkProduction" }}
       />
       <Stack.Screen name="MilkProduction" component={MilkProductionScreen} />
+      <Stack.Screen name="TestScreen" component={TestScreen} />
     </Stack.Navigator>
   );
 }

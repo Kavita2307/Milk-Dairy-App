@@ -3,14 +3,24 @@ import NetInfo from "@react-native-community/netinfo";
 import { readLoadCell } from "../api/loadCell";
 import { NetworkPolicy } from "../network/NetworkPolicy";
 
+// type NetworkContextType = {
+//   internetOnline: boolean;
+//   machineConnected: boolean;
+// };
 type NetworkContextType = {
   internetOnline: boolean;
   machineConnected: boolean;
+  wifiOn: boolean;
+  mobileOn: boolean;
+  readyForWeighing: boolean;
 };
 
 const NetworkContext = createContext<NetworkContextType>({
   internetOnline: false,
   machineConnected: false,
+  wifiOn: false,
+  mobileOn: false,
+  readyForWeighing: false,
 });
 
 export const useNetwork = () => useContext(NetworkContext);
@@ -42,13 +52,34 @@ export async function resolveNetwork(policy: NetworkPolicy) {
 export function NetworkProvider({ children }: { children: React.ReactNode }) {
   const [internetOnline, setInternetOnline] = useState(false);
   const [machineConnected, setMachineConnected] = useState(false);
+  const [wifiOn, setWifiOn] = useState(false);
+  const [mobileOn, setMobileOn] = useState(false);
 
   // 🌐 INTERNET STATUS
+  // useEffect(() => {
+  //   const unsubscribe = NetInfo.addEventListener((state) => {
+  //     const online =
+  //       Boolean(state.isConnected) && Boolean(state.isInternetReachable);
+  //     setInternetOnline(online);
+  //   });
+
+  //   return () => unsubscribe();
+  // }, []);
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
       const online =
         Boolean(state.isConnected) && Boolean(state.isInternetReachable);
+
       setInternetOnline(online);
+      setWifiOn(state.type === "wifi" && state.isConnected);
+
+      setMobileOn(
+        Boolean(
+          state.isConnected &&
+            state.details &&
+            "cellularGeneration" in state.details
+        )
+      );
     });
 
     return () => unsubscribe();
@@ -75,10 +106,19 @@ export function NetworkProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
+    // <NetworkContext.Provider
+    //   value={{
+    //     internetOnline,
+    //     machineConnected,
+    //   }}
+    // >
     <NetworkContext.Provider
       value={{
         internetOnline,
         machineConnected,
+        wifiOn,
+        mobileOn,
+        readyForWeighing: wifiOn && mobileOn && machineConnected,
       }}
     >
       {children}

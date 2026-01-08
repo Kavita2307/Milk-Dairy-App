@@ -3,17 +3,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMixAccuracyByGroup = exports.getMixAccuracy = exports.saveMixLog = exports.updateRationIngredient = exports.getIngredientsByGroup = exports.addRationIngredient = exports.feedTmr = exports.getRationGroupById = exports.updateRationGroup = exports.createRationGroup = exports.getGroupIngredients = exports.saveRationGroup = exports.createRationPlan = void 0;
+exports.getLatestRationGroup = exports.getMixAccuracyByGroup = exports.getMixAccuracy = exports.saveMixLog = exports.updateRationIngredient = exports.getIngredientsByGroup = exports.addRationIngredient = exports.feedTmr = exports.getRationGroupById = exports.updateRationGroup = exports.createRationGroup = exports.getGroupIngredients = exports.saveRationGroup = exports.createRationPlan = void 0;
 const client_1 = __importDefault(require("../prisma/client"));
 const createRationPlan = async (req, res) => {
     try {
-        const { date, createdBy } = req.body;
-        const plan = await client_1.default.rationPlan.upsert({
-            where: { date_createdBy: { date: new Date(date), createdBy } },
-            update: {},
-            create: {
+        const { date, userId } = req.body;
+        const plan = await client_1.default.rationPlan.create({
+            data: {
                 date: new Date(date),
-                createdBy,
+                createdBy: Number(userId),
             },
         });
         res.json(plan);
@@ -27,30 +25,39 @@ const saveRationGroup = async (req, res) => {
     try {
         const { rationPlanId, groupId, animalCount, rationPercentage, plannedTmrQty, userId, } = req.body;
         const offeredTmrQty = plannedTmrQty * (rationPercentage / 100);
-        const group = await client_1.default.rationGroup.upsert({
+        const group = await client_1.default.rationGroup.findFirst({
             where: {
-                rationPlanId_groupId_userId: {
-                    rationPlanId,
-                    groupId,
-                    userId,
-                },
-            },
-            update: {
-                animalCount,
-                rationPercentage,
-                plannedTmrQty,
-                offeredTmrQty,
-            },
-            create: {
                 rationPlanId,
                 groupId,
-                userId,
+                createdBy: Number(userId),
+            },
+        });
+        if (group) {
+            const updated = await client_1.default.rationGroup.update({
+                where: { id: group.id },
+                data: {
+                    animalCount,
+                    rationPercentage,
+                    plannedTmrQty,
+                    offeredTmrQty,
+                },
+            });
+            res.json(updated);
+            return;
+        }
+        const newGroup = await client_1.default.rationGroup.create({
+            data: {
+                rationPlanId,
+                groupId,
+                createdBy: Number(userId),
                 animalCount,
                 rationPercentage,
                 plannedTmrQty,
                 offeredTmrQty,
             },
         });
+        res.json(newGroup);
+        return;
         res.json(group);
     }
     catch (error) {
@@ -328,7 +335,7 @@ exports.updateRationIngredient = updateRationIngredient;
 const saveMixLog = async (req, res) => {
     try {
         const { rationGroupId, rationIngredientId, plannedQty, actualQty, accuracyPercent, } = req.body;
-        const log = await client_1.default.mixLog.create({
+        const mixLog = await client_1.default.mixLog.create({
             data: {
                 rationGroupId,
                 rationIngredientId,
@@ -337,7 +344,7 @@ const saveMixLog = async (req, res) => {
                 accuracyPercent,
             },
         });
-        res.status(201).json(log);
+        res.status(201).json(mixLog);
     }
     catch (error) {
         console.error(error);
@@ -374,24 +381,53 @@ exports.getMixAccuracy = getMixAccuracy;
  * - Used for reports
  */
 const getMixAccuracyByGroup = async (req, res) => {
+    const rationGroupId = Number(req.params.rationGroupId);
+    const logs = await client_1.default.mixLog.findMany({
+        where: { rationGroupId },
+        include: {
+            rationIngredient: {
+                include: {
+                    ingredient: true,
+                },
+            },
+        },
+        orderBy: { id: "asc" },
+    });
+    res.json(logs);
+};
+exports.getMixAccuracyByGroup = getMixAccuracyByGroup;
+// GET LATEST RATION GROUP BY HERD GROUP
+const getLatestRationGroup = async (req, res) => {
     try {
-        const rationGroupId = Number(req.params.rationGroupId);
-        const logs = await client_1.default.mixLog.findMany({
-            where: { rationGroupId },
+        const { groupId, userId } = req.params;
+        const rationGroup = await client_1.default.rationGroup.findFirst({
+            where: {
+                groupId: Number(groupId),
+                createdBy: Number(userId),
+            },
+            orderBy: {
+                createdAt: "desc",
+            },
             include: {
-                rationIngredient: {
+                ingredients: {
                     include: {
                         ingredient: true,
                     },
                 },
             },
-            orderBy: { id: "asc" },
         });
-        res.json(logs);
+        if (!rationGroup) {
+            return res.status(404).json({
+                message: "No ration group found",
+            });
+        }
+        return res.json(rationGroup);
     }
     catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Failed to fetch mix accuracy" });
+        res.status(500).json({
+            message: "Failed to fetch latest ration group",
+        });
     }
 };
-exports.getMixAccuracyByGroup = getMixAccuracyByGroup;
+exports.getLatestRationGroup = getLatestRationGroup;

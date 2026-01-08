@@ -7,41 +7,77 @@
 //   TextInput,
 //   KeyboardAvoidingView,
 //   Platform,
+//   Alert,
 // } from "react-native";
-
+// import NetInfo from "@react-native-community/netinfo";
+// import { API } from "../../api/api";
 // import { useNavigation, useRoute } from "@react-navigation/native";
-
 // import { readLoadCell } from "../../api/loadCell";
-// import api from "../../api/api";
-
-// import { resolveNetwork } from "../../network/NetworkManager";
-// import { SCREEN_NETWORK_MAP } from "../../network/ScreenNetworkMap";
-// import { saveAndQueue } from "../../network/offlineQueue";
 
 // export default function LeftoverScreen() {
-//   const SCREEN_NAME = "LeftoverScreen";
-
 //   const nav = useNavigation<any>();
 //   const route = useRoute<any>();
 //   const { groupId, userId, groupTitle } = route.params;
 
 //   const [weight, setWeight] = useState("0");
 //   const [useLoadCell, setUseLoadCell] = useState(false);
+//   const [isStable, setIsStable] = useState(false);
 
 //   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-//   const loadCellErrorShown = useRef(false);
 //   const isFetchingRef = useRef(false);
 
-//   // =========================
-//   // LOAD CELL HELPERS
-//   // =========================
-//   const readLoadCellWithTimeout = (timeout = 2000) => {
-//     return Promise.race([
-//       readLoadCell(),
-//       new Promise((_, reject) =>
-//         setTimeout(() => reject(new Error("timeout")), timeout)
-//       ),
-//     ]);
+//   /* =============================
+//      NETWORK CHECK (ANDROID LOGIC)
+//      ============================= */
+//   const checkNetwork = async () => {
+//     const state = await NetInfo.fetch();
+
+//     const wifiOn = state.type === "wifi" && state.isConnected;
+//     const mobileOn =
+//       state.isConnected &&
+//       state.details &&
+//       "cellularGeneration" in state.details;
+
+//     return wifiOn && mobileOn;
+//   };
+
+//   /* =============================
+//      LOAD CELL POLLING
+//      ============================= */
+//   const fetchFromLoadCell = async () => {
+//     if (isFetchingRef.current) return;
+
+//     const networkOk = await checkNetwork();
+//     if (!networkOk) {
+//       Alert.alert(
+//         "Network Required",
+//         "Please turn ON both Wi-Fi and Mobile Data"
+//       );
+//       return;
+//     }
+
+//     isFetchingRef.current = true;
+//     setIsStable(false);
+
+//     intervalRef.current = setInterval(async () => {
+//       try {
+//         const data: any = await readLoadCell();
+//         const kg = Number(data.weight);
+
+//         if (isNaN(kg)) return;
+
+//         setWeight(kg.toFixed(2));
+
+//         if (data.stable) {
+//           setIsStable(true);
+//           clearInterval(intervalRef.current!);
+//           intervalRef.current = null;
+//           isFetchingRef.current = false;
+//         }
+//       } catch {
+//         stopWithError();
+//       }
+//     }, 500);
 //   };
 
 //   const stopWithError = () => {
@@ -50,109 +86,52 @@
 //       intervalRef.current = null;
 //     }
 //     isFetchingRef.current = false;
-
-//     if (!loadCellErrorShown.current) {
-//       loadCellErrorShown.current = true;
-//       alert("Weighing machine not connected");
-//     }
+//     Alert.alert("Error", "Weighing machine not connected");
 //   };
 
-//   const fetchFromLoadCell = async () => {
-//     if (isFetchingRef.current) return;
-
-//     isFetchingRef.current = true;
-//     loadCellErrorShown.current = false;
-
-//     const readOnce = async () => {
-//       const data: any = await readLoadCellWithTimeout();
-//       setWeight(data.weight.toFixed(2));
-//       return data;
-//     };
-
-//     try {
-//       const data = await readOnce();
-
-//       if (data.stable) {
-//         isFetchingRef.current = false;
-//         return;
-//       }
-
-//       intervalRef.current = setInterval(async () => {
-//         try {
-//           const d = await readOnce();
-//           if (d.stable) {
-//             clearInterval(intervalRef.current!);
-//             intervalRef.current = null;
-//             isFetchingRef.current = false;
-//           }
-//         } catch {
-//           stopWithError();
-//         }
-//       }, 500);
-//     } catch {
-//       stopWithError();
-//     }
-//   };
-
-//   // =========================
-//   // SAVE LEFTOVER (OFFLINE SAFE)
-//   // =========================
+//   /* =============================
+//      SAVE LEFTOVER
+//      ============================= */
 //   const saveLeftover = async () => {
-//     if (Number(weight) <= 0) {
-//       alert("Please enter valid leftover quantity");
+//     if (useLoadCell && !isStable) {
+//       Alert.alert("Wait", "Please wait until weight is stable");
 //       return;
 //     }
 
-//     const payload = {
-//       groupId,
-//       leftoverKg: Number(weight),
-//       userId,
-//     };
-
-//     // 1️⃣ Save locally first
-//     await saveAndQueue({
-//       endpoint: "/leftover",
-//       payload,
-//     });
-
-//     // 2️⃣ Check network preference (Wi-Fi first)
-//     const policy = SCREEN_NETWORK_MAP[SCREEN_NAME];
-//     const decision = await resolveNetwork(policy);
-
-//     if (!decision.canSend) {
-//       alert("Saved offline. Will sync when network is available.");
-//       setWeight("0");
+//     const kg = Number(weight);
+//     if (kg <= 0) {
+//       Alert.alert("Invalid", "Please enter valid weight");
 //       return;
 //     }
 
-//     // 3️⃣ Try sending now
 //     try {
-//       await api.send({
-//         endpoint: "/leftover",
-//         payload,
+//       await API.post("/leftover", {
+//         groupId,
+//         leftoverKg: kg,
+//         userId,
 //       });
 
-//       alert("Saved successfully");
+//       Alert.alert("Success", "Saved successfully");
 //       setWeight("0");
+//       nav.goBack();
 //     } catch {
-//       alert("Saved offline. Will sync automatically.");
+//       Alert.alert("Error", "Error saving leftover");
 //     }
 //   };
 
-//   // =========================
-//   // NAV TITLE
-//   // =========================
+//   /* =============================
+//      CLEANUP
+//      ============================= */
 //   useEffect(() => {
 //     nav.setOptions({ title: groupTitle });
 
 //     return () => {
-//       if (intervalRef.current) clearInterval(intervalRef.current);
+//       if (intervalRef.current) {
+//         clearInterval(intervalRef.current);
+//       }
 //     };
 //   }, [groupTitle, nav]);
 
-//   // =========================
-//   // UI
-//   // =========================
 //   return (
 //     <KeyboardAvoidingView
 //       style={{ flex: 1 }}
@@ -161,8 +140,13 @@
 //       <View style={styles.container}>
 //         <Text style={styles.subTitle}>Get weight from wagon</Text>
 
+//         {/* SWITCH */}
 //         <TouchableOpacity
-//           onPress={() => setUseLoadCell(!useLoadCell)}
+//           onPress={() => {
+//             setUseLoadCell(!useLoadCell);
+//             setWeight("0");
+//             setIsStable(false);
+//           }}
 //           style={styles.switchBtn}
 //         >
 //           <Text style={styles.switchBtnText}>
@@ -170,12 +154,16 @@
 //           </Text>
 //         </TouchableOpacity>
 
+//         {/* LOAD CELL MODE */}
 //         {useLoadCell ? (
 //           <View style={styles.box}>
 //             <Text style={styles.label}>Partial Tara, Weight:</Text>
 
 //             <View style={styles.displayBox}>
 //               <Text style={styles.displayText}>{weight} kg</Text>
+//               <Text style={styles.hintText}>
+//                 {isStable ? "STABLE" : "UNSTABLE"}
+//               </Text>
 //             </View>
 
 //             <TouchableOpacity
@@ -186,6 +174,7 @@
 //             </TouchableOpacity>
 //           </View>
 //         ) : (
+//           /* MANUAL MODE */
 //           <View style={styles.box}>
 //             <Text style={styles.label}>Enter Weight (kg)</Text>
 
@@ -194,6 +183,7 @@
 //               value={weight}
 //               onChangeText={setWeight}
 //               keyboardType="numeric"
+//               placeholder="Enter weight"
 //             />
 
 //             <TouchableOpacity
@@ -205,6 +195,7 @@
 //           </View>
 //         )}
 
+//         {/* SAVE */}
 //         <TouchableOpacity
 //           onPress={saveLeftover}
 //           style={[styles.saveBtn, Number(weight) <= 0 && { opacity: 0.5 }]}
@@ -217,11 +208,9 @@
 //   );
 // }
 
-// // =========================
-// // STYLES
-// // =========================
 // const styles = StyleSheet.create({
 //   container: { flex: 1, padding: 20, backgroundColor: "#F3F4F6" },
+
 //   subTitle: {
 //     textAlign: "center",
 //     color: "#6B7280",
@@ -229,13 +218,19 @@
 //     fontSize: 18,
 //     fontWeight: "600",
 //   },
+
 //   switchBtn: {
 //     backgroundColor: "#0EA5E9",
 //     padding: 12,
 //     borderRadius: 10,
 //     marginBottom: 20,
 //   },
-//   switchBtnText: { color: "#fff", textAlign: "center", fontWeight: "700" },
+//   switchBtnText: {
+//     color: "#fff",
+//     textAlign: "center",
+//     fontWeight: "700",
+//   },
+
 //   box: {
 //     backgroundColor: "#fff",
 //     padding: 20,
@@ -244,12 +239,14 @@
 //     borderColor: "#D1D5DB",
 //     marginBottom: 20,
 //   },
+
 //   label: {
 //     fontSize: 18,
 //     fontWeight: "600",
 //     color: "#374151",
 //     marginBottom: 10,
 //   },
+
 //   input: {
 //     borderWidth: 1,
 //     borderColor: "#D1D5DB",
@@ -260,6 +257,7 @@
 //     textAlign: "center",
 //     backgroundColor: "#F9FAFB",
 //   },
+
 //   clearBtn: {
 //     marginTop: 12,
 //     backgroundColor: "#EF4444",
@@ -267,6 +265,7 @@
 //     borderRadius: 10,
 //   },
 //   clearBtnText: { color: "#fff", textAlign: "center", fontWeight: "700" },
+
 //   displayBox: {
 //     padding: 20,
 //     backgroundColor: "#E5E7EB",
@@ -274,13 +273,26 @@
 //     marginBottom: 15,
 //     alignItems: "center",
 //   },
-//   displayText: { fontSize: 36, fontWeight: "700" },
+
+//   displayText: {
+//     fontSize: 36,
+//     fontWeight: "700",
+//   },
+
+//   hintText: {
+//     marginTop: 6,
+//     fontSize: 14,
+//     fontWeight: "600",
+//     color: "#2563EB",
+//   },
+
 //   fetchBtn: {
 //     backgroundColor: "#10B981",
 //     padding: 12,
 //     borderRadius: 10,
 //   },
 //   fetchBtnText: { color: "#fff", textAlign: "center", fontWeight: "700" },
+
 //   saveBtn: {
 //     backgroundColor: "#2563EB",
 //     padding: 15,
@@ -298,91 +310,135 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  NativeModules,
+  PermissionsAndroid,
 } from "react-native";
-import NetInfo from "@react-native-community/netinfo";
-import { API } from "../../api/api";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { readLoadCell } from "../../api/loadCell";
+import { API } from "../../api/api";
+import { useAuth } from "../../context/AuthContext";
+
+const { DualNetworking } = NativeModules;
+
+// =========================
+// ESP CONFIG (FROM TESTSCREEN)
+// =========================
+const ESP_WIFI_SSID = "EDMILK";
+const ESP_WIFI_PASS = "12345678";
+const ESP_API_URL = "http://192.168.4.1/api/weight";
 
 export default function LeftoverScreen() {
   const nav = useNavigation<any>();
   const route = useRoute<any>();
   const { groupId, userId, groupTitle } = route.params;
 
+  const token = useAuth();
+
   const [weight, setWeight] = useState("0");
   const [useLoadCell, setUseLoadCell] = useState(false);
   const [isStable, setIsStable] = useState(false);
+  const [status, setStatus] = useState("");
 
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const isFetchingRef = useRef(false);
+  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  /* =============================
-     NETWORK CHECK (ANDROID LOGIC)
-     ============================= */
-  const checkNetwork = async () => {
-    const state = await NetInfo.fetch();
-
-    const wifiOn = state.type === "wifi" && state.isConnected;
-    const mobileOn =
-      state.isConnected &&
-      state.details &&
-      "cellularGeneration" in state.details;
-
-    return wifiOn && mobileOn;
-  };
-
-  /* =============================
-     LOAD CELL POLLING
-     ============================= */
-  const fetchFromLoadCell = async () => {
-    if (isFetchingRef.current) return;
-
-    const networkOk = await checkNetwork();
-    if (!networkOk) {
-      Alert.alert(
-        "Network Required",
-        "Please turn ON both Wi-Fi and Mobile Data"
-      );
+  // =========================
+  // CONNECT TO ESP (TESTSCREEN)
+  // =========================
+  useEffect(() => {
+    if (!useLoadCell) {
+      stopPolling();
       return;
     }
+    const init = async () => {
+      await requestPermissions();
+      // Give a small delay for permissions to settle
+      setTimeout(connectToEsp, 1000);
+    };
+    init();
 
-    isFetchingRef.current = true;
-    setIsStable(false);
+    return stopPolling;
+  }, [useLoadCell]);
 
-    intervalRef.current = setInterval(async () => {
+  const requestPermissions = async () => {
+    if (Platform.OS === "android") {
       try {
-        const data: any = await readLoadCell();
-        const kg = Number(data.weight);
-
-        if (isNaN(kg)) return;
-
-        setWeight(kg.toFixed(2));
-
-        if (data.stable) {
-          setIsStable(true);
-          clearInterval(intervalRef.current!);
-          intervalRef.current = null;
-          isFetchingRef.current = false;
-        }
-      } catch {
-        stopWithError();
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            title: "Location Permission",
+            message: "App needs location permission to scan for WiFi networks.",
+            buttonNeutral: "Ask Me Later",
+            buttonNegative: "Cancel",
+            buttonPositive: "OK",
+          }
+        );
+      } catch (err) {
+        console.warn(err);
       }
-    }, 500);
-  };
-
-  const stopWithError = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
     }
-    isFetchingRef.current = false;
-    Alert.alert("Error", "Weighing machine not connected");
+  };
+  const connectToEsp = async () => {
+    try {
+      setStatus("CONNECTING TO SCALE...");
+      await DualNetworking.connectToDeviceWifi(ESP_WIFI_SSID, ESP_WIFI_PASS);
+      setStatus("CONNECTED");
+      startPolling();
+    } catch (e) {
+      setStatus("CONNECTION FAILED");
+      setTimeout(connectToEsp, 3000);
+    }
   };
 
-  /* =============================
-     SAVE LEFTOVER
-     ============================= */
+  // =========================
+  // POLLING (TESTSCREEN)
+  // =========================
+  const startPolling = () => {
+    if (pollingRef.current) clearInterval(pollingRef.current);
+
+    pollingRef.current = setInterval(readWeight, 500);
+  };
+
+  const stopPolling = () => {
+    if (pollingRef.current) {
+      clearInterval(pollingRef.current);
+      pollingRef.current = null;
+    }
+  };
+
+  const readWeight = async () => {
+    try {
+      const raw = await DualNetworking.fetchWeight(ESP_API_URL);
+
+      let parsed = raw;
+
+      if (typeof raw === "string") {
+        const clean = raw.trim();
+        if (clean.startsWith("{")) {
+          const json = JSON.parse(clean);
+          parsed = json.weight ?? json.value;
+        }
+      }
+
+      const kg = Number(parsed);
+
+      if (isNaN(kg)) return;
+
+      setWeight(kg.toFixed(2));
+      setIsStable(kg > 0);
+      setStatus(kg > 0 ? "STABLE" : "MEASURING...");
+    } catch {
+      setStatus("READ ERROR");
+      setIsStable(false);
+    }
+  };
+
+  // =========================
+  // SAVE LEFTOVER (API.POST)
+  // =========================
   const saveLeftover = async () => {
+    if (token == null) {
+      Alert.alert("Error", "User not authenticated");
+      return;
+    }
     if (useLoadCell && !isStable) {
       Alert.alert("Wait", "Please wait until weight is stable");
       return;
@@ -403,25 +459,24 @@ export default function LeftoverScreen() {
 
       Alert.alert("Success", "Saved successfully");
       setWeight("0");
+      setIsStable(false);
       nav.goBack();
     } catch {
       Alert.alert("Error", "Error saving leftover");
     }
   };
 
-  /* =============================
-     CLEANUP
-     ============================= */
+  // =========================
+  // NAV TITLE
+  // =========================
   useEffect(() => {
     nav.setOptions({ title: groupTitle });
+    return stopPolling;
+  }, [groupTitle]);
 
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [groupTitle, nav]);
-
+  // =========================
+  // UI (UNCHANGED MANUAL FLOW)
+  // =========================
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -452,19 +507,12 @@ export default function LeftoverScreen() {
             <View style={styles.displayBox}>
               <Text style={styles.displayText}>{weight} kg</Text>
               <Text style={styles.hintText}>
-                {isStable ? "STABLE" : "UNSTABLE"}
+                {isStable ? "STABLE" : status || "MEASURING"}
               </Text>
             </View>
-
-            <TouchableOpacity
-              onPress={fetchFromLoadCell}
-              style={styles.fetchBtn}
-            >
-              <Text style={styles.fetchBtnText}>Get Weight</Text>
-            </TouchableOpacity>
           </View>
         ) : (
-          /* MANUAL MODE */
+          /* MANUAL MODE (UNCHANGED) */
           <View style={styles.box}>
             <Text style={styles.label}>Enter Weight (kg)</Text>
 
@@ -498,6 +546,9 @@ export default function LeftoverScreen() {
   );
 }
 
+// =========================
+// STYLES (UNCHANGED)
+// =========================
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: "#F3F4F6" },
 
@@ -575,13 +626,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#2563EB",
   },
-
-  fetchBtn: {
-    backgroundColor: "#10B981",
-    padding: 12,
-    borderRadius: 10,
-  },
-  fetchBtnText: { color: "#fff", textAlign: "center", fontWeight: "700" },
 
   saveBtn: {
     backgroundColor: "#2563EB",

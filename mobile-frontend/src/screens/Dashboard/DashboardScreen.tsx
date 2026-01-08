@@ -69,6 +69,13 @@ const menuItems: {
     route: "Display",
     color: "#9333EA",
   },
+  {
+    id: "9",
+    title: "Test Screen",
+    icon: "flask",
+    route: "TestScreen",
+    color: "#DB2777",
+  },
 ];
 
 export default function DashboardScreen() {

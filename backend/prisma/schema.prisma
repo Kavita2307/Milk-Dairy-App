@@ -199,6 +199,7 @@ model RationIngredient {
 
   rationGroup RationGroup @relation(fields: [rationGroupId], references: [id])
   ingredient  Ingredient  @relation(fields: [ingredientId], references: [id])
+  mixLogs         MixLog[]   
 }
 
 model MixLog {
@@ -209,7 +210,9 @@ model MixLog {
   actualQty          Float
   accuracyPercent    Float
 
-  rationGroup      RationGroup      @relation(fields: [rationGroupId], references: [id])
-  rationIngredient RationIngredient @relation(fields: [rationIngredientId], references: [id])
+rationGroup        RationGroup      @relation(fields: [rationGroupId], references: [id])
+  rationIngredient   RationIngredient @relation(fields: [rationIngredientId], references: [id])
+
+  createdAt          DateTime @default(now())
 }
 

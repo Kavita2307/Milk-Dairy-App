@@ -3,14 +3,12 @@ import prisma from "../prisma/client";
 
 export const createRationPlan = async (req: Request, res: Response) => {
   try {
-    const { date, createdBy } = req.body;
+    const { date, userId } = req.body;
 
-    const plan = await prisma.rationPlan.upsert({
-      where: { date_createdBy: { date: new Date(date), createdBy } },
-      update: {},
-      create: {
+    const plan = await prisma.rationPlan.create({
+      data: {
         date: new Date(date),
-        createdBy,
+        createdBy: Number(userId),
       },
     });
 
@@ -32,30 +30,42 @@ export const saveRationGroup = async (req: Request, res: Response) => {
 
     const offeredTmrQty = plannedTmrQty * (rationPercentage / 100);
 
-    const group = await prisma.rationGroup.upsert({
+    const group = await prisma.rationGroup.findFirst({
       where: {
-        rationPlanId_groupId_userId: {
-          rationPlanId,
-          groupId,
-          userId,
-        },
-      },
-      update: {
-        animalCount,
-        rationPercentage,
-        plannedTmrQty,
-        offeredTmrQty,
-      },
-      create: {
         rationPlanId,
         groupId,
-        userId,
+        createdBy: Number(userId),
+      },
+    });
+
+    if (group) {
+      const updated = await prisma.rationGroup.update({
+        where: { id: group.id },
+        data: {
+          animalCount,
+          rationPercentage,
+          plannedTmrQty,
+          offeredTmrQty,
+        },
+      });
+      res.json(updated);
+      return;
+    }
+
+    const newGroup = await prisma.rationGroup.create({
+      data: {
+        rationPlanId,
+        groupId,
+        createdBy: Number(userId),
         animalCount,
         rationPercentage,
         plannedTmrQty,
         offeredTmrQty,
       },
     });
+
+    res.json(newGroup);
+    return;
 
     res.json(group);
   } catch (error) {
@@ -428,24 +438,55 @@ export const getMixAccuracy = async (req: Request, res: Response) => {
  * - Used for reports
  */
 export const getMixAccuracyByGroup = async (req: Request, res: Response) => {
-  try {
-    const rationGroupId = Number(req.params.rationGroupId);
+  const rationGroupId = Number(req.params.rationGroupId);
 
-    const logs = await prisma.mixLog.findMany({
-      where: { rationGroupId },
+  const logs = await prisma.mixLog.findMany({
+    where: { rationGroupId },
+    include: {
+      rationIngredient: {
+        include: {
+          ingredient: true,
+        },
+      },
+    },
+    orderBy: { id: "asc" },
+  });
+
+  res.json(logs);
+};
+// GET LATEST RATION GROUP BY HERD GROUP
+export const getLatestRationGroup = async (req: Request, res: Response) => {
+  try {
+    const { groupId, userId } = req.params;
+
+    const rationGroup = await prisma.rationGroup.findFirst({
+      where: {
+        groupId: Number(groupId),
+        createdBy: Number(userId),
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
       include: {
-        rationIngredient: {
+        ingredients: {
           include: {
             ingredient: true,
           },
         },
       },
-      orderBy: { id: "asc" },
     });
 
-    res.json(logs);
+    if (!rationGroup) {
+      return res.status(404).json({
+        message: "No ration group found",
+      });
+    }
+
+    return res.json(rationGroup);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Failed to fetch mix accuracy" });
+    res.status(500).json({
+      message: "Failed to fetch latest ration group",
+    });
   }
 };

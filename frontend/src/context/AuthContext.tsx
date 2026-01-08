@@ -56,8 +56,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     console.log("inside login of auth context");
     console.log("login called with:", username, password);
     const res = await API.post("/auth/login", { username, password });
-    await AsyncStorage.setItem("token", res.data.token);
     await AsyncStorage.setItem("user", JSON.stringify(res.data.user));
+    await AsyncStorage.setItem("token", JSON.stringify(res.data.token));
+
     setUser(res.data.user);
   };
 
@@ -93,3 +94,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     </AuthContext.Provider>
   );
 };
+export async function getToken() {
+  return AsyncStorage.getItem("token");
+}
